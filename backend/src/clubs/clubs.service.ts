@@ -30,21 +30,86 @@ export class ClubsService {
           };
     return this.listVisible(actor, q, visible);
   }
-  async managed(actor: Actor, q: ClubQuery) {
-    return this.listVisible(actor, q, {
-      members: { some: { userId: actor.id, role: 'ADMIN' } },
-    });
+  async mine(actor: Actor, q: ClubQuery) {
+    pagination(q, ['createdAt', 'name']);
+    if (actor.role === 'STUDENT') return page([], 0, q);
+    return this.listVisible(
+      actor,
+      q,
+      {
+        members: { some: { userId: actor.id, role: 'ADMIN' } },
+      },
+      q.sortBy === undefined,
+    );
+  }
+  private listInclude(userId: string) {
+    return {
+      _count: { select: { followers: true, members: true, events: true } },
+      followers: { where: { userId }, select: { id: true } },
+    } satisfies Prisma.ClubInclude;
+  }
+  private async approvedFirstPage(
+    actor: Actor,
+    q: ClubQuery,
+    where: Prisma.ClubWhereInput,
+  ) {
+    // Page across the approved/non-approved boundary without loading unbounded memberships.
+    return this.db.$transaction(
+      async (tx) => {
+        const approvedWhere: Prisma.ClubWhereInput = {
+          AND: [where, { status: 'APPROVED' }],
+        };
+        const [total, approvedTotal] = await Promise.all([
+          tx.club.count({ where }),
+          tx.club.count({ where: approvedWhere }),
+        ]);
+        const offset = (q.page - 1) * q.limit;
+        const approvedTake = Math.min(
+          q.limit,
+          Math.max(0, approvedTotal - offset),
+        );
+        const otherTake = q.limit - approvedTake;
+        const orderBy: Prisma.ClubOrderByWithRelationInput[] = [
+          { name: 'asc' },
+          { id: 'asc' },
+        ];
+        const include = this.listInclude(actor.id);
+        const [approved, others] = await Promise.all([
+          approvedTake
+            ? tx.club.findMany({
+                where: approvedWhere,
+                skip: offset,
+                take: approvedTake,
+                orderBy,
+                include,
+              })
+            : Promise.resolve([]),
+          otherTake
+            ? tx.club.findMany({
+                where: { AND: [where, { status: { not: 'APPROVED' } }] },
+                skip: Math.max(0, offset - approvedTotal),
+                take: otherTake,
+                orderBy,
+                include,
+              })
+            : Promise.resolve([]),
+        ]);
+        return [[...approved, ...others], total] as const;
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
+    );
   }
   private async listVisible(
     actor: Actor,
     q: ClubQuery,
     visible: Prisma.ClubWhereInput,
+    approvedFirst = false,
   ) {
     const where: Prisma.ClubWhereInput = {
       AND: [
         visible,
         {
-          ...(q.status ? { status: q.status } : {}),
+          status: q.status,
           category: q.category,
           ...(q.search
             ? {
@@ -57,17 +122,17 @@ export class ClubsService {
         },
       ],
     };
-    const [data, total] = await Promise.all([
-      this.db.club.findMany({
-        where,
-        ...pagination(q, ['createdAt', 'name']),
-        include: {
-          _count: { select: { followers: true, members: true, events: true } },
-          followers: { where: { userId: actor.id }, select: { id: true } },
-        },
-      }),
-      this.db.club.count({ where }),
-    ]);
+    const options = pagination(q, ['createdAt', 'name']);
+    const [data, total] = approvedFirst
+      ? await this.approvedFirstPage(actor, q, where)
+      : await Promise.all([
+          this.db.club.findMany({
+            where,
+            ...options,
+            include: this.listInclude(actor.id),
+          }),
+          this.db.club.count({ where }),
+        ]);
     return page(
       data.map(({ followers, ...club }) => ({
         ...club,

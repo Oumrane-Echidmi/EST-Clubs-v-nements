@@ -1,11 +1,13 @@
 import 'package:add_2_calendar/add_2_calendar.dart' as cal;
 import 'package:flutter/material.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/network/paged.dart';
 import '../../../core/widgets/event_widgets.dart';
 import '../../../core/widgets/paged_list.dart';
 import '../../../core/widgets/state_views.dart';
+import '../../club_admin/data/club_admin_repository.dart' show eventCategories;
 import '../data/events_repository.dart';
 import '../domain/event.dart';
 import '../domain/registration_state.dart';
@@ -18,6 +20,7 @@ class EventsTab extends ConsumerStatefulWidget {
 
 class _EventsTabState extends ConsumerState<EventsTab> {
   String _q = '';
+  String? _cat;
   @override
   Widget build(BuildContext context) => Column(children: [
         Padding(
@@ -29,10 +32,16 @@ class _EventsTabState extends ConsumerState<EventsTab> {
             onSubmitted: (v) => setState(() => _q = v.trim()),
           ),
         ),
+        const SizedBox(height: 8),
+        FilterChipsRow(
+            options: eventCategories.keys.toList(),
+            selected: _cat,
+            onChanged: (v) => setState(() => _cat = v)),
         Expanded(
           child: PagedListView<Event>(
-            key: ValueKey(_q),
-            fetch: (p) => ref.read(eventsRepositoryProvider).list(p, search: _q),
+            key: ValueKey('$_q|$_cat'),
+            fetch: (p) =>
+                ref.read(eventsRepositoryProvider).list(p, search: _q, category: eventCategories[_cat]),
             emptyMessage: 'Aucun événement trouvé',
             itemBuilder: (c, e) =>
                 EventCard(event: e, onTap: () => c.push('/events/${e.id}')),
@@ -81,7 +90,7 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
   Widget _action(Event e) {
     final repo = ref.read(eventsRepositoryProvider);
     final s = e.registrationState;
-    if (s.canRegister) {
+    if (e.canRegister) {
       return FilledButton(
         style: FilledButton.styleFrom(
             backgroundColor: const Color(0xFFF97316), minimumSize: const Size.fromHeight(54)),
@@ -113,7 +122,7 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
   }
 
   /// Adds the event to the device calendar (add_2_calendar).
-  /// TODO: fallback to GET /events/:id/calendar.ics when this fails.
+  /// Falls back to the backend .ics file when the device calendar fails.
   Future<void> _addToCalendar(Event e) async {
     final ok = await cal.Add2Calendar.addEvent2Cal(cal.Event(
       title: e.title,
@@ -122,9 +131,15 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
       startDate: e.startAt.toLocal(),
       endDate: (e.endAt ?? e.startAt.add(const Duration(hours: 1))).toLocal(),
     ));
-    if (!ok && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Impossible d'ajouter au calendrier")));
+    if (ok || !mounted) return;
+    try {
+      final dir = (await getTemporaryDirectory()).path;
+      final path = await ref.read(eventsRepositoryProvider).downloadIcs(e.id, dir);
+      await OpenFilex.open(path);
+    } catch (err) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$err')));
+      }
     }
   }
 
@@ -195,10 +210,11 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
 class MyRegistrationsTab extends ConsumerWidget {
   const MyRegistrationsTab({super.key});
 
+  // Server-side tab filter (GET /me/registrations?tab=...).
   static const _tabs = {
-    'À venir': 'CONFIRMED',
-    'Terminées': 'ATTENDED',
-    'Annulées': 'CANCELLED',
+    'À venir': 'upcoming',
+    'Terminées': 'completed',
+    'Annulées': 'cancelled',
   };
 
   @override
@@ -210,11 +226,8 @@ class MyRegistrationsTab extends ConsumerWidget {
             child: TabBarView(children: [
               for (final status in _tabs.values)
                 PagedListView<Registration>(
-                  fetch: (p) async {
-                    final page = await ref.read(eventsRepositoryProvider).myRegistrations(p);
-                    return Paged(page.items.where((r) => r.status == status).toList(),
-                        page.page, page.totalPages);
-                  },
+                  fetch: (p) =>
+                      ref.read(eventsRepositoryProvider).myRegistrations(p, status),
                   emptyMessage: 'Aucune inscription',
                   itemBuilder: (c, r) => EventCard(
                       event: r.event, onTap: () => c.push('/events/${r.event.id}')),

@@ -401,8 +401,7 @@ export function completeContract(document: OpenAPIObject) {
           ? 'SUPER_ADMIN'
           : path.endsWith('/register')
             ? 'STUDENT'
-            : path === '/api/me/clubs' ||
-                path === '/api/clubs/{id}/dashboard' ||
+            : path === '/api/clubs/{id}/dashboard' ||
                 (method === 'post' &&
                   (path === '/api/events' ||
                     path === '/api/clubs' ||

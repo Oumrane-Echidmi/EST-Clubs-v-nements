@@ -22,10 +22,11 @@ class FakeRepo extends EventsRepository {
 Map<String, dynamic> _json(String state, {bool canCancel = false}) => {
       'id': '9',
       'title': 'Conférence IA',
-      'startAt': '2031-01-01T10:00:00Z',
+      'startsAt': '2031-01-01T10:00:00Z',
       'registrationState': state,
-      'myRegistrationId': 'r1',
+      'registrationId': 'r1',
       'canCancel': canCancel,
+      'canRegister': state == 'OPEN' || state == 'CANCELLED_BY_ME',
       'capacity': 50,
       'availableSeats': 10,
       'registeredCount': 40,

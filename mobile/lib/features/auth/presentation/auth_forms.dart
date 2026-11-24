@@ -99,7 +99,8 @@ class RegisterScreen extends ConsumerStatefulWidget {
 
 class _RegisterState extends ConsumerState<RegisterScreen> {
   final _key = GlobalKey<FormState>();
-  final _name = TextEditingController();
+  final _first = TextEditingController();
+  final _last = TextEditingController();
   final _email = TextEditingController();
   final _pass = TextEditingController();
 
@@ -110,10 +111,15 @@ class _RegisterState extends ConsumerState<RegisterScreen> {
         submitLabel: "S'inscrire",
         fields: [
           TextFormField(
-              controller: _name,
-              decoration: const InputDecoration(labelText: 'Nom complet'),
+              controller: _first,
+              decoration: const InputDecoration(labelText: 'Prénom'),
               validator: (v) =>
-                  (v == null || v.trim().length < 2) ? 'Nom requis' : null),
+                  (v == null || v.trim().isEmpty) ? 'Prénom requis' : null),
+          TextFormField(
+              controller: _last,
+              decoration: const InputDecoration(labelText: 'Nom'),
+              validator: (v) =>
+                  (v == null || v.trim().isEmpty) ? 'Nom requis' : null),
           TextFormField(
               controller: _email,
               keyboardType: TextInputType.emailAddress,
@@ -127,7 +133,8 @@ class _RegisterState extends ConsumerState<RegisterScreen> {
         ],
         onSubmit: () async {
           final repo = ref.read(authRepositoryProvider);
-          await repo.register(_name.text.trim(), _email.text.trim(), _pass.text);
+          await repo.register(
+              _first.text.trim(), _last.text.trim(), _email.text.trim(), _pass.text);
           // Sign in right away so the user lands on their home screen.
           await ref
               .read(authStateProvider.notifier)

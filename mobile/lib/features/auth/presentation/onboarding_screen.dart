@@ -5,8 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 const _seenKey = 'onboarding_seen';
 
 /// Has the user already seen the welcome pages?
-Future<bool> onboardingSeen() async =>
-    (await SharedPreferences.getInstance()).getBool(_seenKey) ?? false;
+Future<bool> onboardingSeen() async {
+  try {
+    final p = await SharedPreferences.getInstance().timeout(const Duration(seconds: 3));
+    return p.getBool(_seenKey) ?? false;
+  } catch (_) {
+    return true; // cannot read: do not block the app on onboarding
+  }
+}
 
 Future<void> markOnboardingSeen() async =>
     (await SharedPreferences.getInstance()).setBool(_seenKey, true);

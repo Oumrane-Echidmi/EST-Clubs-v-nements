@@ -46,14 +46,18 @@ final onboardingSeenProvider = FutureProvider<bool>((_) => onboardingSeen());
 
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier(0);
-  ref.listen(authStateProvider, (_, __) => refresh.value++);
+  ref.listen(authStateProvider, (_, _) => refresh.value++);
+  // The onboarding flag loads asynchronously: re-run the redirect when it arrives.
+  ref.listen(onboardingSeenProvider, (_, _) => refresh.value++);
   return GoRouter(
     initialLocation: '/splash',
     refreshListenable: refresh,
     redirect: (_, s) {
       final a = ref.read(authStateProvider);
+      final seen = ref.read(onboardingSeenProvider);
       return redirectFor(
-          loading: a.loading,
+          // Stay on the splash until both the session and the flag are known.
+          loading: a.loading || seen.isLoading,
           role: a.user?.role,
           location: s.matchedLocation,
           seenOnboarding: ref.read(onboardingSeenProvider).value ?? true);
@@ -61,38 +65,38 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
           path: '/splash',
-          builder: (_, __) => const Scaffold(
+          builder: (_, _) => const Scaffold(
               body: Center(child: CircularProgressIndicator()))),
-      GoRoute(path: '/welcome', builder: (_, __) => const OnboardingScreen()),
-      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
+      GoRoute(path: '/welcome', builder: (_, _) => const OnboardingScreen()),
+      GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+      GoRoute(path: '/register', builder: (_, _) => const RegisterScreen()),
       GoRoute(
           path: '/forgot-password',
-          builder: (_, __) => const ForgotPasswordScreen()),
+          builder: (_, _) => const ForgotPasswordScreen()),
       GoRoute(
           path: '/reset-password',
-          builder: (_, __) => const ResetPasswordScreen()),
+          builder: (_, _) => const ResetPasswordScreen()),
       GoRoute(
           path: '/events/:id',
           builder: (_, s) => EventDetailScreen(s.pathParameters['id']!)),
       GoRoute(
           path: '/clubs/:id',
           builder: (_, s) => ClubDetailScreen(s.pathParameters['id']!)),
-      GoRoute(path: '/student', builder: (_, __) => const StudentShell()),
+      GoRoute(path: '/student', builder: (_, _) => const StudentShell()),
       GoRoute(
           path: '/club-admin',
-          builder: (_, __) => const ClubAdminHome()),
+          builder: (_, _) => const ClubAdminHome()),
       GoRoute(
           path: '/super-admin',
-          builder: (_, __) => const SuperAdminHome()),
+          builder: (_, _) => const SuperAdminHome()),
       GoRoute(
-          path: '/profile/edit', builder: (_, __) => const ProfileEditScreen()),
+          path: '/profile/edit', builder: (_, _) => const ProfileEditScreen()),
       GoRoute(
           path: '/profile/password',
-          builder: (_, __) => const ChangePasswordScreen()),
+          builder: (_, _) => const ChangePasswordScreen()),
       GoRoute(
           path: '/notifications',
-          builder: (_, __) => const NotificationsScreen()),
+          builder: (_, _) => const NotificationsScreen()),
     ],
   );
 });

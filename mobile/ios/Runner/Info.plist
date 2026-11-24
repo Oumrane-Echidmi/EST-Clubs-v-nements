@@ -7,7 +7,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Est Clubs Events</string>
+	<string>EST Clubs</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -66,5 +66,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choisir une photo de profil, une affiche ou un logo.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Ajouter les événements à votre calendrier.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Ajouter les événements à votre calendrier.</string>
 </dict>
 </plist>

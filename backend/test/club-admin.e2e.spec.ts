@@ -158,12 +158,14 @@ describe('club administrator discovery and dashboard', () => {
     expect(filtered.body.meta.total).toBe(1);
     expect(filtered.body.data[0].id).toBe(pendingId);
   });
-  it('rejects students and unauthenticated requests and validates sort and limit', async () => {
+  it('preserves student compatibility, requires authentication and validates sort and limit', async () => {
     await api().get('/api/me/clubs').expect(401);
-    await api()
+    const student = await api()
       .get('/api/me/clubs')
       .auth(accounts.student.token, { type: 'bearer' })
-      .expect(403);
+      .expect(200);
+    expect(student.body.data).toEqual([]);
+    expect(student.body.meta.total).toBe(0);
     await api()
       .get('/api/me/clubs?limit=51')
       .auth(accounts.owner.token, { type: 'bearer' })
@@ -172,6 +174,45 @@ describe('club administrator discovery and dashboard', () => {
       .get('/api/me/clubs?sortBy=email')
       .auth(accounts.owner.token, { type: 'bearer' })
       .expect(400);
+  });
+  it('preserves approved-first compatibility across default pages and supports explicit sorting', async () => {
+    await db.club.update({
+      where: { id: pendingId },
+      data: { name: `Aardvark-${suffix}` },
+    });
+    try {
+      const first = await api()
+        .get('/api/me/clubs?limit=1')
+        .auth(accounts.owner.token, { type: 'bearer' })
+        .expect(200);
+      const second = await api()
+        .get('/api/me/clubs?limit=1&page=2')
+        .auth(accounts.owner.token, { type: 'bearer' })
+        .expect(200);
+      expect(first.body.data[0].id).toBe(clubId);
+      expect(second.body.data[0].id).toBe(pendingId);
+      const all = await api()
+        .get('/api/me/clubs?limit=2')
+        .auth(accounts.owner.token, { type: 'bearer' })
+        .expect(200);
+      expect(all.body.data.map((club: { id: string }) => club.id)).toEqual([
+        clubId,
+        pendingId,
+      ]);
+      const sorted = await api()
+        .get('/api/me/clubs?sortBy=name&sortOrder=asc')
+        .auth(accounts.owner.token, { type: 'bearer' })
+        .expect(200);
+      expect(sorted.body.data.map((club: { id: string }) => club.id)).toEqual([
+        pendingId,
+        clubId,
+      ]);
+    } finally {
+      await db.club.update({
+        where: { id: pendingId },
+        data: { name: `Beta-${suffix}` },
+      });
+    }
   });
   it('does not list unassigned clubs for a super administrator', async () => {
     const response = await api()
@@ -266,7 +307,7 @@ describe('club administrator discovery and dashboard', () => {
   it('documents the paginated discovery and dashboard response contracts', () => {
     const document = createOpenApi(app);
     expect(document.paths['/api/me/clubs']?.get?.description).toContain(
-      'CLUB_ADMIN',
+      'Any active authenticated user',
     );
     expect(
       document.paths['/api/clubs/{id}/dashboard']?.get?.responses['200'],
@@ -323,7 +364,7 @@ describe('club administrator discovery and dashboard', () => {
       fillRate: 0,
     });
   });
-  it('removes discovery and access immediately when ADMIN membership is demoted', async () => {
+  it('removes discovery and access immediately when ADMIN membership or user role is revoked', async () => {
     await db.clubMember.update({
       where: { clubId_userId: { clubId, userId: accounts.owner.id } },
       data: { role: 'MEMBER' },
@@ -337,6 +378,19 @@ describe('club administrator discovery and dashboard', () => {
     ]);
     await api()
       .get(`/api/clubs/${clubId}/dashboard`)
+      .auth(accounts.owner.token, { type: 'bearer' })
+      .expect(403);
+    await db.user.update({
+      where: { id: accounts.owner.id },
+      data: { role: 'STUDENT' },
+    });
+    const demoted = await api()
+      .get('/api/me/clubs')
+      .auth(accounts.owner.token, { type: 'bearer' })
+      .expect(200);
+    expect(demoted.body.data).toEqual([]);
+    await api()
+      .get(`/api/clubs/${pendingId}/dashboard`)
       .auth(accounts.owner.token, { type: 'bearer' })
       .expect(403);
   });

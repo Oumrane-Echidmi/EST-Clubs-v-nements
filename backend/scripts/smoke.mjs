@@ -42,6 +42,7 @@ function main() {
   const clubs = call(admin, 'GET', '/me/clubs?limit=50');
   const club = clubs.find((c) => c.name === 'EST Robotics');
   assert.ok(club);
+  assert.deepEqual(call(student, 'GET', '/me/clubs'), []);
   call(student, 'POST', `/clubs/${club.id}/follow`);
   const startsAt = new Date(Date.now() + 96 * 3600000).toISOString();
   const event = call(admin, 'POST', '/events', {

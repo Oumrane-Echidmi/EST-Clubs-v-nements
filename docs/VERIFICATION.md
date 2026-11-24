@@ -27,6 +27,10 @@ Initial backend verification: lint passed, strict TypeScript build passed, 10 un
 
 Added paginated managed-club discovery and a scoped club dashboard with counts and grouped event fill rates. Administrator event responses now correctly return canRegister=false. The new tests first failed against the previous backend, including the reproduced administrator eligibility bug, then passed after implementation.
 
-Latest execution: strict build passed, ESLint/Prettier passed, 10 unit tests passed and 38 PostgreSQL integration tests passed across four suites. The original 20-student registration capacity test remains unchanged and passed. The new dashboard boundary test exercises 22 additional upcoming events and verifies the 20-result cap and chronological ordering. OpenAPI was regenerated. Backend Git attributes now enforce LF to prevent Windows checkout formatting failures.
+Latest execution: strict build passed, ESLint/Prettier passed, 10 unit tests passed and 39 PostgreSQL integration tests passed across four suites. The original 20-student registration capacity test remains unchanged and passed. The new dashboard boundary test exercises 22 additional upcoming events and verifies the 20-result cap and chronological ordering. OpenAPI was regenerated. Backend Git attributes now enforce LF to prevent Windows checkout formatting failures.
 
 The continuation curl smoke also passed against the running updated API, including managed-club discovery and scoped dashboard data.
+
+The upstream mobile branch independently introduced /me/clubs while this increment was in progress. Its data-array shape, student empty-list behavior, approved-first default ordering and OpenAPI operation ID were preserved while adding pagination and filters. Compatibility tests failed against the unreconciled branch and passed after the merge. Final merged-source results: 39 PostgreSQL integration tests, 10 unit tests, strict build, lint and the updated live curl smoke all passed. Frontend repository-level integration results are preserved from the mobile developer's commits; Flutter was not rerun by this backend stream.
+
+Review also inverted the administrator eligibility condition temporarily. The regression test failed as expected, the original source was restored, and the final suite passed. Local documentation links were checked and none were missing.

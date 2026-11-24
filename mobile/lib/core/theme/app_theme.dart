@@ -35,8 +35,9 @@ ThemeData buildTheme(Brightness brightness) {
     error: AppColors.error,
     surface: light ? AppColors.surface : null,
   );
-  return ThemeData(
+  final theme = ThemeData(
     useMaterial3: true,
+    fontFamily: "Inter", // bundled in assets/fonts
     colorScheme: scheme,
     scaffoldBackgroundColor: scheme.surface,
     // Stitch look: flat surface app bar with a bold primary title.
@@ -46,6 +47,7 @@ ThemeData buildTheme(Brightness brightness) {
       elevation: 0,
       scrolledUnderElevation: 0,
       titleTextStyle: TextStyle(
+          fontFamily: "PlusJakartaSans",
           color: scheme.primary, fontSize: 20, fontWeight: FontWeight.w800),
     ),
     // White rounded cards with a soft shadow.
@@ -76,6 +78,17 @@ ThemeData buildTheme(Brightness brightness) {
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.md)),
       ),
+    ),
+  );
+  // Headlines use Plus Jakarta Sans (Stitch); everything else stays Inter.
+  TextStyle? h(TextStyle? t) => t?.copyWith(fontFamily: "PlusJakartaSans");
+  final t = theme.textTheme;
+  return theme.copyWith(
+    textTheme: t.copyWith(
+      headlineLarge: h(t.headlineLarge),
+      headlineMedium: h(t.headlineMedium),
+      headlineSmall: h(t.headlineSmall),
+      titleLarge: h(t.titleLarge),
     ),
   );
 }

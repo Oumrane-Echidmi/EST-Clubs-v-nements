@@ -2606,7 +2606,7 @@
     },
     "/api/me/clubs": {
       "get": {
-        "operationId": "ManagedClubsController_list",
+        "operationId": "MyClubsController_mine",
         "parameters": [
           {
             "name": "page",
@@ -2820,7 +2820,7 @@
         "tags": [
           "Clubs"
         ],
-        "description": "Required roles: CLUB_ADMIN (own club) or SUPER_ADMIN. See API.md for business rules and retry semantics."
+        "description": "Required roles: Any active authenticated user. See API.md for business rules and retry semantics."
       }
     },
     "/api/clubs/{clubId}/members": {

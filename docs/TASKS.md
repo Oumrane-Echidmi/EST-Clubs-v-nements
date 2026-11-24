@@ -15,7 +15,7 @@ Project "EST Clubs & Événements App" (id 16966480898115530928). Exported HTML 
 (PNG screenshots could not be downloaded; re-fetch via Stitch MCP `list_screens` with an API key, never commit the key).
 Tokens (already in `mobile/lib/core/theme/app_theme.dart`): primary #00236F / container #1E3A8A,
 secondary #9D4300 / container #FD761A, surface #F8F9FF, radius 8–16, fonts Plus Jakarta Sans (headlines) + Inter (body).
-TODO: fonts. google_fonts 8.x does NOT compile with Flutter 3.47 (TextTheme type mismatch) -> bundle Plus Jakarta Sans + Inter as assets in pubspec instead.
+Fonts: Inter + Plus Jakarta Sans bundled in mobile/assets/fonts (variable TTFs, OFL licence).
 
 ## Done (branch feature/mobile-foundation)
 
@@ -52,9 +52,34 @@ TODO: fonts. google_fonts 8.x does NOT compile with Flutter 3.47 (TextTheme type
 4. P2: firebase_messaging (optional, must work without config), l10n ARB fr/en/ar, Plus Jakarta Sans + Inter fonts
 5. When backend publishes docs/openapi.json: verify ALL assumed field names/endpoints (auth_repository, event.dart, clubs_repository, home_tab HomeData, registrations status values), consider freezed models
 
+- Pass 4: bundled fonts, category filter chips on Clubs (Tech/Sport/Art/Impact/Social) and Events (Tech & IA/Ateliers/Compétitions) sent as ?category= (ASSUMED param + values), club member count + tags on cards (ASSUMED memberCount, tags[]), .ics fallback (downloads /events/:id/calendar.ics with auth, opens with open_filex)
+- Deliberately NOT done (per owner): Firebase push, super admin club management/role assignment
+
+## Mobile <-> backend contract reconciliation (done against docs/API.md + openapi.json)
+
+- Fixed: startsAt/endsAt, registrationId, canRegister/canCancel used directly, firstName/lastName (register, profile, auth), password key on reset/change, PATCH approve/reject with rejectionReason, upload clubId for poster/logo, home sections {data,meta}, dashboard data.counts, /me/registrations?tab=, club isFollowed + _count.members, category enums, required category + registrationDeadline on event create
+- Club admin club selection now uses the new backend route GET /me/clubs (added to backend/src/clubs, docs/API.md and openapi.json; verified by the live test).
+- Club tags (shown on cards) do not exist in the API: the UI only renders them if a tags field appears.
+- Not verified against the live API (no emulator/server run yet). Line endings: mobile Dart files normalised to LF.
+
+## LIVE integration (executed 2026-11-24)
+
+Backend run locally (docker postgres + migrate + seed + npm start), then `mobile/test/live_api_test.dart` ran the app's real repositories and models against it: 6/6 passed (student login/restore/lists/detail/category filter/register/cancel/my registrations/notifications/home; wrong password; club admin own clubs + events + create/edit/delete event; super admin dashboard/pending/users; .ics download).
+
+Run it yourself: start the backend (backend/README.md), then
+`flutter test test/live_api_test.dart --dart-define=LIVE_API=http://localhost:3000/api --dart-define=SEED_PASSWORD=<value from backend/.env>`
+
+Notes: auth endpoints are throttled to 10 per 15 min per IP (restart the API to reset while testing). On Windows kill the API by port 3000.
+
+## Build & boot checks (executed)
+
+- `flutter build apk --debug` succeeds (Android SDK 36, manifest has INTERNET + debug-only cleartext for 10.0.2.2); `flutter build web` succeeds and the login screen was rendered in headless Chrome (Stitch look + bundled fonts confirmed visually).
+- App boot widget tests: first launch -> onboarding, returning user -> login. Fixed a race where the first-launch onboarding was skipped because the router did not wait for the stored flag.
+- NOT done: no Android emulator/device available here, so authenticated screens were not visually inspected; Firebase push and super-admin club management intentionally excluded.
+
 ## Blockers / notes
 
-- Backend contract is now available (see below); frontend integration against the live API remains pending.
+- Backend contract is now available (see below); repository-level live API integration passed in the frontend stream; device/emulator verification remains pending.
 - 10 lint infos remain (parameter names in interceptor, underscores in router) — cosmetic.
 - No emulator smoke test run.
 
@@ -68,7 +93,7 @@ Backend P0, P1 and P2 are implemented in backend/. API contract: API.md and open
 
 - Strict TypeScript build and ESLint/Prettier checks passed.
 - 10 unit tests passed in the completed unit run; final repetition after review is recorded in VERIFICATION.md.
-- Latest PostgreSQL integration run: 38 passed, zero skipped or weakened tests.
+- Latest PostgreSQL integration run: 39 passed, zero skipped or weakened tests.
 - Mandatory capacity race: 20 distinct students, 5 successes, 15 EVENT_FULL failures, exactly 5 active database registrations.
 - SQL migrations applied to isolated development/test databases.
 - Idempotent seed ran twice: 12 accounts, 7 clubs, 15 events.
@@ -77,7 +102,7 @@ Backend P0, P1 and P2 are implemented in backend/. API contract: API.md and open
 
 ## Integration status
 
-Backend endpoints are ready for the frontend developer to integrate against the published contract. Mobile has not been tested against the live API. The mobile code on GitHub main was inspected; concrete field/route mismatches are listed in INTEGRATION.md for the frontend owner.
+Backend endpoints are ready for the frontend developer to integrate against the published contract. The frontend stream reports six passing repository-level live API tests; device/emulator verification remains pending. The initial contract differences, their upstream reconciliation and the dashboard handoff are documented in INTEGRATION.md.
 
 Original architecture v2 was not supplied. Provisional choices are recorded in API.md. External SMTP/FCM delivery remains unverified without credentials. Prisma CLI's remaining Effect advisory and review deadline are documented in SECURITY.md. Additional operational limitations are in VERIFICATION.md.
 
@@ -86,5 +111,5 @@ Original architecture v2 was not supplied. Provisional choices are recorded in A
 - Added GET /api/me/clubs for paginated discovery of the caller's ADMIN club memberships, including pending/rejected clubs and normal category/status/search filters.
 - Added GET /api/clubs/{id}/dashboard with scoped membership/follower/event/registration totals and up to 20 chronological upcoming event fill rates. Counts use a consistent database snapshot and grouped registrations.
 - Corrected event canRegister to remain false for administrators, matching the student-only registration route.
-- Added 10 PostgreSQL integration tests covering discovery, role restrictions, membership revocation, accurate occupancy counts, empty dashboards, bounded results and OpenAPI response contracts.
-- Build, lint, 10 unit tests and all 38 integration tests passed. No mobile source changed; frontend should replace its assumed AuthUser.clubId with the new discovery route.
+- Added 11 PostgreSQL integration tests covering discovery, role restrictions, membership revocation, accurate occupancy counts, empty dashboards, bounded results and OpenAPI response contracts.
+- Build, lint, 10 unit tests and all 39 integration tests passed. No mobile source changed by this stream; upstream mobile code already consumes /me/clubs, whose data-array and approved-first behavior are preserved.

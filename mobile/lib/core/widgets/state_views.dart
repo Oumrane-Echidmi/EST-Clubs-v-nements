@@ -44,3 +44,43 @@ class ErrorView extends StatelessWidget {
         ),
       );
 }
+
+/// Horizontal single-choice chips ("Tous" first), Stitch style: selected chip is
+/// navy with white text, the others light blue. [selected] == null means "Tous".
+class FilterChipsRow extends StatelessWidget {
+  const FilterChipsRow(
+      {super.key, required this.options, required this.selected, required this.onChanged});
+  final List<String> options;
+  final String? selected;
+  final ValueChanged<String?> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    Widget chip(String label, bool on, VoidCallback tap) => Padding(
+          padding: const EdgeInsetsDirectional.only(end: 8),
+          child: ChoiceChip(
+            label: Text(label),
+            selected: on,
+            onSelected: (_) => tap(),
+            showCheckmark: false,
+            selectedColor: AppColors.primaryContainer,
+            backgroundColor: const Color(0xFFDCE9FF),
+            side: BorderSide.none,
+            shape: const StadiumBorder(),
+            labelStyle: TextStyle(
+                color: on ? Colors.white : AppColors.primary, fontWeight: FontWeight.w700),
+          ),
+        );
+    return SizedBox(
+      height: 44,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          chip('Tous', selected == null, () => onChanged(null)),
+          for (final o in options) chip(o, selected == o, () => onChanged(o)),
+        ],
+      ),
+    );
+  }
+}

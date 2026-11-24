@@ -82,16 +82,15 @@ export class ClubsController {
 }
 @ApiTags('Clubs')
 @ApiBearerAuth()
-@Roles('CLUB_ADMIN', 'SUPER_ADMIN')
 @Controller('me/clubs')
-export class ManagedClubsController {
+export class MyClubsController {
   constructor(private clubs: ClubsService) {}
-  @Get() list(@CurrentUser() actor: Actor, @Query() q: ClubQuery) {
-    return this.clubs.managed(actor, q);
+  @Get() mine(@CurrentUser() actor: Actor, @Query() q: ClubQuery) {
+    return this.clubs.mine(actor, q);
   }
 }
 @Module({
-  controllers: [ClubsController, ManagedClubsController],
+  controllers: [ClubsController, MyClubsController],
   providers: [ClubsService],
   exports: [ClubsService],
 })
