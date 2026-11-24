@@ -63,12 +63,35 @@ class ClubCard extends StatelessWidget {
                               .titleMedium
                               ?.copyWith(fontWeight: FontWeight.w800))),
                 ]),
+                if (club.memberCount != null)
+                  Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Row(children: [
+                        const Icon(Icons.groups_2_outlined, size: 16, color: Color(0xFF1E3A8A)),
+                        const SizedBox(width: 4),
+                        Text('${club.memberCount} membres',
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                      ])),
                 if (club.description != null) ...[
                   const SizedBox(height: 10),
                   Text(club.description!,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                ],
+                if (club.tags.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Wrap(spacing: 6, runSpacing: 6, children: [
+                    for (final t in club.tags.take(4))
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                            color: const Color(0xFFDCE9FF), borderRadius: BorderRadius.circular(16)),
+                        child: Text(t,
+                            style: const TextStyle(
+                                fontSize: 11, fontWeight: FontWeight.w600, color: Color(0xFF00236F))),
+                      ),
+                  ]),
                 ],
                 const SizedBox(height: 12),
                 Row(children: [
@@ -154,6 +177,8 @@ class ClubsTab extends ConsumerStatefulWidget {
 
 class _ClubsTabState extends ConsumerState<ClubsTab> {
   String _q = '';
+  String? _cat;
+  static const _categories = ['Tech', 'Sport', 'Art', 'Impact', 'Social'];
   @override
   Widget build(BuildContext context) => Column(children: [
         Padding(
@@ -164,11 +189,17 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
             onSubmitted: (v) => setState(() => _q = v.trim()),
           ),
         ),
+        const SizedBox(height: 8),
+        FilterChipsRow(
+            options: _categories,
+            selected: _cat,
+            onChanged: (v) => setState(() => _cat = v)),
         Expanded(
           child: PagedListView<Club>(
-            key: ValueKey(_q), // new key => reload
-            fetch: (p) =>
-                ref.read(clubsRepositoryProvider).list(p, search: _q),
+            key: ValueKey('$_q|$_cat'), // new key => reload
+            fetch: (p) => ref
+                .read(clubsRepositoryProvider)
+                .list(p, search: _q, category: _cat),
             emptyMessage: 'Aucun club trouvé',
             itemBuilder: (c, club) => ClubCard(
                 club: club, onTap: () => context.push('/clubs/${club.id}')),

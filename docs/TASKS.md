@@ -47,6 +47,9 @@ Fonts: Inter + Plus Jakarta Sans bundled in mobile/assets/fonts (variable TTFs, 
 4. P2: firebase_messaging (optional, must work without config), l10n ARB fr/en/ar, Plus Jakarta Sans + Inter fonts
 5. When backend publishes docs/openapi.json: verify ALL assumed field names/endpoints (auth_repository, event.dart, clubs_repository, home_tab HomeData, registrations status values), consider freezed models
 
+- Pass 4: bundled fonts, category filter chips on Clubs (Tech/Sport/Art/Impact/Social) and Events (Tech & IA/Ateliers/Compétitions) sent as ?category= (ASSUMED param + values), club member count + tags on cards (ASSUMED memberCount, tags[]), .ics fallback (downloads /events/:id/calendar.ics with auth, opens with open_filex)
+- Deliberately NOT done (per owner): Firebase push, super admin club management/role assignment
+
 ## Blockers / notes
 - No backend / openapi.json in repo yet; nothing was tested against a real API.
 - 10 lint infos remain (parameter names in interceptor, underscores in router) — cosmetic.

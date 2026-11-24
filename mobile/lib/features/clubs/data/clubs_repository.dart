@@ -11,7 +11,13 @@ class Club {
     this.logoUrl,
     this.category,
     this.isFollowing = false,
+    this.memberCount,
+    this.tags = const [],
   });
+
+  /// ASSUMED optional fields (verify with openapi): memberCount, tags[].
+  final int? memberCount;
+  final List<String> tags;
   final String id;
   final String name;
   final String? description;
@@ -26,6 +32,8 @@ class Club {
         logoUrl: j['logoUrl'] as String?,
         category: j['category'] as String?,
         isFollowing: j['isFollowing'] as bool? ?? false,
+        memberCount: (j['memberCount'] ?? j['membersCount']) as int?,
+        tags: ((j['tags'] ?? const []) as List).map((t) => '$t').toList(),
       );
 }
 
@@ -33,9 +41,11 @@ class ClubsRepository {
   ClubsRepository(this._dio);
   final Dio _dio;
 
-  Future<Paged<Club>> list(int page, {String? search}) => fetchPaged(
-      _dio, '/clubs', Club.fromJson,
-      page: page, query: {if (search != null && search.isNotEmpty) 'search': search});
+  Future<Paged<Club>> list(int page, {String? search, String? category}) =>
+      fetchPaged(_dio, '/clubs', Club.fromJson, page: page, query: {
+        if (search != null && search.isNotEmpty) 'search': search,
+        if (category != null) 'category': category,
+      });
 
   Future<Club> get(String id) => guarded(() async {
         final r = await _dio.get('/clubs/$id');
