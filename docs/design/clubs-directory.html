@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-background": "#0b1c30", "on-primary-container": "#90a8ff", "on-tertiary-fixed": "#001a42", "on-primary-fixed": "#00164e", "tertiary-container": "#003d88", "error": "#ba1a1a", "tertiary": "#00285e", "on-secondary-fixed": "#341100", "tertiary-fixed-dim": "#adc6ff", "on-secondary-fixed-variant": "#783200", "on-surface-variant": "#444651", "background": "#f8f9ff", "secondary-container": "#fd761a", "tertiary-fixed": "#d8e2ff", "surface-dim": "#cbdbf5", "secondary-fixed": "#ffdbca", "surface-container-low": "#eff4ff", "inverse-on-surface": "#eaf1ff", "surface-variant": "#d3e4fe", "inverse-surface": "#213145", "surface-container-high": "#dce9ff", "on-primary-fixed-variant": "#264191", "on-tertiary-container": "#82abff", "surface-tint": "#4059aa", "error-container": "#ffdad6", "primary-fixed": "#dce1ff", "secondary": "#9d4300", "on-primary": "#ffffff", "surface-container-highest": "#d3e4fe", "on-error-container": "#93000a", "on-surface": "#0b1c30", "inverse-primary": "#b6c4ff", "surface-bright": "#f8f9ff", "primary-container": "#1e3a8a", "outline": "#757682", "primary-fixed-dim": "#b6c4ff", "on-error": "#ffffff", "on-tertiary": "#ffffff", "outline-variant": "#c5c5d3", "surface": "#f8f9ff", "on-secondary": "#ffffff", "on-tertiary-fixed-variant": "#004395", "secondary-fixed-dim": "#ffb690", "surface-container-lowest": "#ffffff", "primary": "#00236f", "on-secondary-container": "#5c2400", "surface-container": "#e5eeff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-2xs": "0.25rem", "space-xs": "0.5rem", "space-sm": "0.75rem", "gutter-compact": "0.75rem", "space-md": "1rem", "gutter": "1rem", "margin": "1rem", "space-lg": "1.25rem", "margin-expanded": "1.25rem", "space-xl": "1.5rem", "space-2xl": "2rem" }, "fontFamily": { "headline-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Inter"], "caption-sm": ["Inter"], "display": ["Plus Jakarta Sans"], "caption-bold": ["Inter"], "label-md": ["Inter"], "body-sm": ["Inter"], "body-lg": ["Inter"], "headline-lg": ["Plus Jakarta Sans"] }, "fontSize": { "headline-md": ["20px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600"}], "body-md": ["15px", {"lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400"}], "caption-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500"}], "display": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "caption-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}], "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600"}], "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "500"}], "headline-lg": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "700"}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)] pt-safe"><div class="h-6 px-margin flex items-center justify-between text-on-surface select-none"><span class="font-label-md text-label-md font-semibold tracking-tight">9:41</span><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[16px] leading-none">signal_cellular_alt</span><span class="material-symbols-outlined text-[16px] leading-none">wifi</span><span class="material-symbols-outlined text-[18px] leading-none">battery_full</span></div></div><div class="h-14 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs min-w-0"><img alt="Logo EST Clubs &amp; Événements" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida/ALJJyrDHdoi5NqkPDZnc79G1LChRluaj1lCigYuhP-aQjpLyXqxHPOfyHHST4tNUWtw1ndhLNDhoJs9yqnFIlMqPqPidviYkfPq6Rn1V9XCax-9QzO9du3-dxAK3cxtJbzBcdwim6PYHm5_JEjA_lgH5BlLpmJnHJfjYEwyr8mZla4bXVZzFtR5OSuoG2cEIiGND-lDSZMy3u53I3hvJ59OHgujL_Bzab01QkryKojUFX027"/><div class="flex flex-col truncate"><div class="flex items-center gap-1"><span class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight leading-none">EST Clubs</span><span class="font-caption-sm text-caption-sm uppercase tracking-wider text-secondary font-bold px-1.5 py-0.5 rounded-full bg-secondary-fixed/50">UIZ</span></div><span class="font-caption-sm text-caption-sm text-on-surface-variant truncate font-medium">Clubs</span></div></div><div class="flex items-center gap-space-2xs shrink-0"><button aria-label="Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors text-on-surface-variant active:scale-95"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2 right-2 min-w-[18px] h-[18px] px-1 bg-secondary-container text-on-primary font-caption-bold text-[10px] leading-none flex items-center justify-center rounded-full shadow-[0_0_8px_rgba(253,118,26,0.6)] ring-2 ring-surface">3</span></button><div class="relative flex items-center justify-center p-0.5"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_1px_4px_rgba(0,0,0,0.08)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC-T-ok4kkV08CrljDKp4RUM4eXQmPTAat_5LdMXJ1Qp0pr_aV6Yn4oEwrwcZ8GtIrkKv_ZIax2N_yWDatAUexmOJmfsuhiF6MvyTLPeOw6noZ2yQc1gAtmwkTsUvaaracWkDf2XRjkN8IxPkhRnpLPlPjEKFHnyLy7KqLnX2UW1eNje46T0n-O9U9v5dQbi4kYSoCXAK8IVbgrgVJtJnQy08AMmDltyrwhDq5htI"/><span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-surface"></span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-20 pb-24 bg-surface"><div class="flex flex-col w-full pb-10">
+<!-- Status Banner / Campus Metric Strip -->
+<section class="px-margin mb-space-md">
+<div class="bg-surface-container-high rounded-xl p-space-md shadow-sm flex items-center justify-between gap-space-sm relative overflow-hidden">
+<div class="flex items-center gap-space-sm min-w-0">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-2xs flex-wrap">
+<span class="font-caption-bold text-caption-bold text-primary font-bold">8 clubs accrédités</span>
+<span class="w-1 h-1 rounded-full bg-outline"></span>
+<span class="font-caption-bold text-caption-bold text-secondary font-bold">1 450 étudiants engagés</span>
+</div>
+<p class="font-caption-sm text-caption-sm text-on-surface-variant truncate">Semestre d'Automne 2026 • Campus EST UIZ</p>
+</div>
+</div>
+<div class="hidden sm:flex items-center gap-1 bg-surface-container-lowest px-2.5 py-1 rounded-full shadow-sm text-on-surface shrink-0">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">bolt</span>
+<span class="font-caption-bold text-caption-bold">Actifs</span>
+</div>
+</div>
+</section>
+<!-- Search & Filter Controls -->
+<section class="px-margin mb-space-lg flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-xs">
+<div class="flex-1 relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-[20px] pointer-events-none">search</span>
+<input class="w-full h-11 pl-10 pr-9 bg-surface-container-low text-on-surface placeholder:text-outline rounded-lg font-body-sm text-body-sm focus:outline-none focus:bg-surface-container-lowest transition-all" id="club-search-input" placeholder="Rechercher un club, compétence, projet..." type="text"/>
+<button aria-label="Effacer la recherche" class="hidden absolute right-2.5 w-6 h-6 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center text-[14px]" id="clear-search-btn">
+<span class="material-symbols-outlined text-[16px]">close</span>
+</button>
+</div>
+<!-- Sort Toggle Button -->
+<button aria-label="Trier l'annuaire" class="h-11 px-3.5 bg-surface-container-low text-on-surface rounded-lg flex items-center justify-center gap-1.5 active:scale-95 transition-all shadow-sm" id="sort-trigger">
+<span class="material-symbols-outlined text-[20px] text-primary">swap_vert</span>
+<span class="font-label-md text-label-md hidden xs:inline" id="sort-label">Membres</span>
+</button>
+</div>
+<!-- Pole Filter Chips (Horizontal Scrollable) -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-0.5" id="pole-filter-container">
+<button class="pole-chip shrink-0 px-3.5 h-8 rounded-full font-label-md text-label-md bg-primary text-on-primary flex items-center gap-1.5 transition-all shadow-sm" data-pole="all">
+<span class="material-symbols-outlined text-[16px]">grid_view</span>
+<span>Tous (8)</span>
+</button>
+<button class="pole-chip shrink-0 px-3.5 h-8 rounded-full font-label-md text-label-md bg-surface-container-low text-on-surface-variant flex items-center gap-1.5 hover:bg-surface-container transition-all" data-pole="tech">
+<span class="material-symbols-outlined text-[16px] text-primary">terminal</span>
+<span>Technologie</span>
+</button>
+<button class="pole-chip shrink-0 px-3.5 h-8 rounded-full font-label-md text-label-md bg-surface-container-low text-on-surface-variant flex items-center gap-1.5 hover:bg-surface-container transition-all" data-pole="art">
+<span class="material-symbols-outlined text-[16px] text-secondary">theater_comedy</span>
+<span>Art &amp; Culture</span>
+</button>
+<button class="pole-chip shrink-0 px-3.5 h-8 rounded-full font-label-md text-label-md bg-surface-container-low text-on-surface-variant flex items-center gap-1.5 hover:bg-surface-container transition-all" data-pole="sport">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">sports_soccer</span>
+<span>Sport</span>
+</button>
+<button class="pole-chip shrink-0 px-3.5 h-8 rounded-full font-label-md text-label-md bg-surface-container-low text-on-surface-variant flex items-center gap-1.5 hover:bg-surface-container transition-all" data-pole="citoyennete">
+<span class="material-symbols-outlined text-[16px] text-tertiary-container">diversity_3</span>
+<span>Citoyenneté</span>
+</button>
+</div>
+</section>
+<!-- Clubs Directory Stream -->
+<section class="px-margin flex flex-col gap-space-lg" id="clubs-directory-list">
+<!-- Card 1: Club Informatique & Cybersécurité -->
+<article class="club-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-200" data-members="320" data-name="informatique cybersecurite dev pentest" data-pole="tech">
+<!-- Media Cover -->
+<div class="relative w-full h-40 bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Young North African engineering students coding cyber defense software in modern tech laboratory with neon blue accent lighting, holographic code screens, cyber threat maps, university student team working intently at midnight" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRYuIVnScObzXomfnIHIVBpdk_9NNBBf0-gLZjYXR3I_Yl-BQUIA8RH44YRUJdPZ1YpKWcsqCrMM3ciZv_bOjWHjkre4DcFUEImAbddtytadj7tWwFTHERhMaTh37dxZcnkq3077GhbcmH2Ba57JtQj0ZnXJWDH7oiIgMTao9sAQ9DyXijI0wntfeNBJqh1w9wBCFpNKFVZ8TYF2KKPLWGZCLBkQuzqoGVBn8fyjg"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<!-- Pinned Top Badges -->
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="bg-primary text-on-primary px-2.5 py-1 rounded-full font-caption-bold text-caption-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span>Certifié EST</span>
+</span>
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2 py-1 rounded-full">
+            Tech
+          </span>
+</div>
+<!-- Favorite Button -->
+<button aria-label="Ajouter aux favoris" class="favorite-toggle absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<!-- Dynamic Recruitment Highlight Ribbon -->
+<div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-on-primary">
+<div class="flex items-center gap-1 bg-secondary-container/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-on-primary shadow-sm">
+<span class="material-symbols-outlined text-[14px] animate-pulse">local_fire_department</span>
+<span class="font-caption-bold text-caption-bold">Recrutements ouverts - Dev &amp; Pentest</span>
+</div>
+</div>
+</div>
+<!-- Card Content -->
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-primary flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[26px]">terminal</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Club Informatique &amp; Cybersécurité</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption-sm text-caption-sm mt-0.5">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">groups</span> 320 membres</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary font-medium"><span class="material-symbols-outlined text-[15px]">event</span> 3 événements prévus</span>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Pôle d'excellence en développement full-stack, CTF éthique, audit réseau et ateliers pratiques Linux pour les futurs ingénieurs de l'EST.
+        </p>
+<!-- Skill Tags -->
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Python</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Ethical Hacking</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Docker</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Web3 Security</span>
+</div>
+<!-- Action Row -->
+<div class="pt-2 flex items-center justify-between gap-space-sm mt-auto">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">how_to_reg</span>
+<span class="font-caption-sm text-caption-sm">Test technique le 12 Oct</span>
+</div>
+<button class="px-4 py-2 bg-secondary-container hover:bg-secondary text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-1.5 active:scale-95 transition-all">
+<span>Postuler</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 2: Club Robotique & Systèmes Embarqués -->
+<article class="club-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-200" data-members="240" data-name="robotique systemes embarques arduino iot coupe maroc" data-pole="tech">
+<div class="relative w-full h-40 bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Robotics workshop at high-tech Moroccan university with autonomous mobile robot prototype chassis, Arduino circuits, soldering irons, precision mechanical gear assembly with blue and copper warm highlights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCiCjQAXvk_UezzsHHVBu_ieCcM80eCCUmGZB5NALAwLMYapjj1eybb9alT3R1axdmXKWTMHjOW94AqlhO2HX4OOwxfN33J-xyGJZQwVAPcK7b7grUkZbxdOvDj9O46Zhkrlw8bq1GGMoK7R7U9jSi8RncOdUlphKgReC0S4HwWLFiEei2qbr_MhIDpIF2G4KLHvzqvz3HSln0BjepxmjvXKaNhId_xoCvQ5Yl3_S4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="bg-primary text-on-primary px-2.5 py-1 rounded-full font-caption-bold text-caption-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+<span>Élite Robotique</span>
+</span>
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2 py-1 rounded-full">
+            Tech
+          </span>
+</div>
+<button aria-label="Ajouter aux favoris" class="favorite-toggle absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-on-primary">
+<span class="bg-primary-container/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-caption-bold text-caption-bold text-on-primary">
+            Préparation Coupe du Maroc 2026
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-primary flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[26px]">precision_manufacturing</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Robotique &amp; Systèmes Embarqués</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption-sm text-caption-sm mt-0.5">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">groups</span> 240 membres</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary font-medium"><span class="material-symbols-outlined text-[15px]">event</span> 2 hackathons</span>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Conception de robots autonomes, cartes électroniques sur mesure et programmation IoT sous microcontrôleurs STM32 &amp; ESP32.
+        </p>
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Arduino / C++</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">IoT &amp; Capteurs</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">PCB Design</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">CAO 3D</span>
+</div>
+<div class="pt-2 flex items-center justify-between gap-space-sm mt-auto">
+<span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-full font-caption-bold text-caption-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+            Suivi actif
+          </span>
+<button class="px-4 py-2 bg-secondary-container hover:bg-secondary text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-1.5 active:scale-95 transition-all">
+<span>Postuler</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 3: Enactus EST -->
+<article class="club-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-200" data-members="195" data-name="enactus entrepreneuriat social startups lauréates business impact" data-pole="citoyennete">
+<div class="relative w-full h-40 bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Young university innovators presenting a social enterprise pitch to jury in a bright auditorium, professional presentation slides, smiling Moroccan students holding sustainable technology prototype trophies" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD4Asr5wWjRAGCS7t3Czd4tFpxHUJDw0cF7DkCTPcty86_zEb_of2sVfouph_iyMahyx1VYAuQqUHlmN0TOtgpMMz07VbX18KY9qBO4v42CADi6pjTALoq0mEjEnyI3XhEZyBUJW_HTFOkf7CzKJfsaqkKZUHz45P1yxag8LKEfkT8muylnwphQ-qICmxAopTVpSVYg8CsuAAUnfkj3xYcT6QIJwRBf7gs5fePkMt4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="bg-secondary-container text-on-primary px-2.5 py-1 rounded-full font-caption-bold text-caption-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">stars</span>
+<span>4 Startups Lauréates</span>
+</span>
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2 py-1 rounded-full">
+            Impact
+          </span>
+</div>
+<button aria-label="Ajouter aux favoris" class="favorite-toggle absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-on-primary">
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2 py-0.5 rounded-full">
+            Saison 2025-2026
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[26px]">lightbulb</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Enactus EST</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption-sm text-caption-sm mt-0.5">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">groups</span> 195 membres</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary font-medium"><span class="material-symbols-outlined text-[15px]">event</span> 4 sessions pitch</span>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Création de projets entrepreneuriaux à fort impact sociétal et environnemental. Incubation, business model et compétitions nationales Enactus Morocco.
+        </p>
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Business Model Canvas</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Pitch Deck</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Green Tech</span>
+</div>
+<div class="pt-2 flex items-center justify-between gap-space-sm mt-auto">
+<span class="px-2.5 py-1 bg-surface-container text-on-surface font-caption-bold text-caption-bold rounded-full">
+            Inscriptions Session 2
+          </span>
+<button class="px-4 py-2 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-1.5 active:scale-95 transition-all">
+<span>Rejoindre</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 4: Théâtre & Expression Scénique -->
+<article class="club-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-200" data-members="110" data-name="theatre masques improvisation eloquence art culture scenique" data-pole="art">
+<div class="relative w-full h-40 bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="University theatre stage with dramatic spotlighting, young actors performing emotional dialogue, backstage warm amber lighting, theatrical masks and wooden stage props" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAuh_6USatt_qzx1QkiAmlBssrurRKmcoPsojvKEvVY-nuPFP5u48-9fJ-YUp2rDXpbTXBfNvmCkfowmKjtjCFuqEDp8xj-kCQV2Ep-cpfZM46nNqiVPYDDJFVWBiDn1k7NYcHPV94xRYLydnor2P0Xirqd42fY2fHzvEcPS9PwDCVoe-8UKzsbZarK1cGXr2KLFT2OBfSiGrms0JSE6uZK1ORgP_FQ342rp6ukM0"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-secondary font-caption-bold text-caption-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">masks</span>
+<span>Les Masques de l'EST</span>
+</span>
+</div>
+<button aria-label="Ajouter aux favoris" class="favorite-toggle absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-on-primary">
+<div class="bg-secondary-container/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-on-primary font-caption-bold text-caption-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">mic</span>
+<span>Casting Acteurs &amp; Régie Ouvert</span>
+</div>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-secondary flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[26px]">theater_comedy</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Théâtre &amp; Expression Scénique</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption-sm text-caption-sm mt-0.5">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">groups</span> 110 membres</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary font-medium"><span class="material-symbols-outlined text-[15px]">event</span> 1 pièce annuelle</span>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Maîtrise du trac, prise de parole en public, techniques de stand-up, scénographie et création d'œuvres théâtrales contemporaines.
+        </p>
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Éloquence</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Improvisation</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Mise en scène</span>
+</div>
+<div class="pt-2 flex items-center justify-between gap-space-sm mt-auto">
+<span class="text-on-surface-variant font-caption-sm text-caption-sm">Auditions : Samedi 18h</span>
+<button class="px-4 py-2 bg-secondary-container hover:bg-secondary text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-1.5 active:scale-95 transition-all">
+<span>Postuler</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 5: Club Sport & Outdoor EST -->
+<article class="club-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-200" data-members="280" data-name="sport outdoor football basket rando fitness tournoi athletisme" data-pole="sport">
+<div class="relative w-full h-40 bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Dynamic outdoor hiking and sports group of Moroccan university students on scenic Atlas mountain trail, athletic gear, sun flare, team bonding spirit, high energy sports photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLyIV_Ib_tnFJsMHCRJKxU83efiaW6YFPviXfd6VjLAu7Kwhfq7wbMF0MY8FW8ae6DczkzLXdZAebDoeor1C6IKo1IR5ht-q42EhpDTY3yD_d6cNiTjpEopXaLbRei5IOoAtsF13PjFKnyMTXpisTpJOhhwJ8N5aU22dIFPbwYpDkgu3sWCIKlEw83XpKhkmOb_Umvn9rURJPufgswyQw4s5VYU_JvV3u3XUynqUY"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-emerald-700 font-caption-bold text-caption-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">fitness_center</span>
+<span>Multisport</span>
+</span>
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2 py-1 rounded-full">
+            Sport
+          </span>
+</div>
+<button aria-label="Ajouter aux favoris" class="favorite-toggle absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-on-primary">
+<span class="bg-primary/90 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-caption-bold text-caption-bold text-on-primary">
+            Tournoi Inter-Écoles 2026
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-emerald-700 flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[26px]">sports_soccer</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Club Sport &amp; Outdoor EST</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption-sm text-caption-sm mt-0.5">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">groups</span> 280 membres</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary font-medium"><span class="material-symbols-outlined text-[15px]">event</span> 5 matchs / mois</span>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Ligues internes de Football, Basketball, sorties trail &amp; trekking dans la région du Souss, et programmes de préparation physique.
+        </p>
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Football 7v7</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Trekking Atlas</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Team Spirit</span>
+</div>
+<div class="pt-2 flex items-center justify-between gap-space-sm mt-auto">
+<span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-full font-caption-bold text-caption-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Adhésion continue
+          </span>
+<button class="px-4 py-2 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-1.5 active:scale-95 transition-all">
+<span>S'inscrire</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 6: Club Photographie & Cinéma -->
+<article class="club-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-200" data-members="95" data-name="photographie cinema audiovisuel cadrage montage gala video" data-pole="art">
+<div class="relative w-full h-40 bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Student filmmaker holding modern cinema mirrorless camera on gimbal stabilizer at university night gala with soft bokeh fairy lights, artistic depth of field, cinematic blue and amber tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMInaENXioNd3UWX9PAXRCp-bhz54RZ2n-G_KcUj8hJnz0K6umKc8M7nWkRWbFuGswoFvvaSeiu1VlPMnRisp2o2orFd6uoXhbjQ7dXIm7IcbxGztWwCSKtQmlHWtWysV8Py3UEN5YF_MmeiLEEAvg_0NxVRbiPPS5OubSmNbPBJgFRozrJbhPMqW8L8gUP0ZgyDi-D0s3XRsshsaybD_NLPE-NR-RomHTFQ8c6IE"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">photo_camera</span>
+<span>Studio Médias</span>
+</span>
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2 py-1 rounded-full">
+            Art
+          </span>
+</div>
+<button aria-label="Ajouter aux favoris" class="favorite-toggle absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-on-primary">
+<span class="bg-primary-container/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-caption-bold text-caption-bold text-on-primary">
+            Couverture Officielle Galas EST
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-primary flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[26px]">videocam</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Photographie &amp; Cinéma</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption-sm text-caption-sm mt-0.5">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">groups</span> 95 membres</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary font-medium"><span class="material-symbols-outlined text-[15px]">event</span> 6 reportages</span>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Formation au cadrage cinématographique, étalonnage DaVinci Resolve, réalisation de courts-métrages universitaires et archivage photo.
+        </p>
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">DaVinci Resolve</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Cadrage Reflex</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Storytelling</span>
+</div>
+<div class="pt-2 flex items-center justify-between gap-space-sm mt-auto">
+<span class="text-on-surface-variant font-caption-sm text-caption-sm">Prêt matériel disponible</span>
+<button class="px-4 py-2 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-1.5 active:scale-95 transition-all">
+<span>Rejoindre</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 7: Club Solidarité & Humanitaire EST -->
+<article class="club-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-200" data-members="160" data-name="solidarite humanitaire caravane medicale don sang tutorat lyceens" data-pole="citoyennete">
+<div class="relative w-full h-40 bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Moroccan students handing educational backpacks and school supplies to rural elementary students in mountain village school, warm golden hour natural light, genuine smiles of solidarity and warmth" src="https://lh3.googleusercontent.com/aida-public/AB6AXuANuEf4AnuugIYFIT5Lxq3DP5TF5tfLnouB3_-K0Q9ROjLin4aB3s_ARLYX3xL67TG_11r3aICLkNsEYbcXSAL-TPII0M51OL4mh9sHi6eeh9LAGAOrN1SLbE71qesO6wdynUdYQJyh55zcPmnEeTh-zatIqgqZqzaUr-PNovON0AWGy3l8xPiFhgGl42vUbLXQ1ZnkHzdoD4krGO2yUUjzqM4qo9gzsTJHXvTK4oQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="bg-rose-600 text-white px-2.5 py-1 rounded-full font-caption-bold text-caption-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">volunteer_activism</span>
+<span>Caravane Hiver 2026</span>
+</span>
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2 py-1 rounded-full">
+            Social
+          </span>
+</div>
+<button aria-label="Ajouter aux favoris" class="favorite-toggle absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-on-primary">
+<div class="bg-secondary-container/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-on-primary font-caption-bold text-caption-bold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">favorite</span>
+<span>Appel aux Bénévoles Actif</span>
+</div>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-rose-600 flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[26px]">handshake</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Solidarité &amp; Humanitaire EST</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption-sm text-caption-sm mt-0.5">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">groups</span> 160 membres</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary font-medium"><span class="material-symbols-outlined text-[15px]">event</span> 3 caravanes</span>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Caravanes médicales d'urgence, campagnes de don de sang en partenariat avec le CRTS, et parrainage scolaire de lycéens ruraux.
+        </p>
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Logistique Terrain</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Tutorat Lycée</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Action Sociale</span>
+</div>
+<div class="pt-2 flex items-center justify-between gap-space-sm mt-auto">
+<span class="px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-full font-caption-bold text-caption-bold flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            Ouvert à tous
+          </span>
+<button class="px-4 py-2 bg-secondary-container hover:bg-secondary text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-1.5 active:scale-95 transition-all">
+<span>Postuler</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 8: Club Musique & Harmonique -->
+<article class="club-card bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm flex flex-col transition-all duration-200" data-members="65" data-name="musique harmonique orchestre universitaire concert chant guitare oud" data-pole="art">
+<div class="relative w-full h-40 bg-surface-dim overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="University acoustic musical ensemble rehearsing on stage with acoustic guitars, Moroccan traditional oud, violin and cajon drum, warm stage illumination, student musicians focused in harmony" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAiTR29cUjmjWNTxzH3Dq9c2LgwzVSylv7XBfDTKAsW4xAB3hVW75RYma14LjT7sz51V6eJxKmWE3yUtiHRW80FOHWA5ux2JFcehI9AqhPft7bubQxxUeHVlsEAZQf5dqmhR5cFissAZcP1xxk08uKh7_qGmFC4Ka5XT0En20yPNqKwAnfCp1jv2FbCSnWM92siWVrqMghQ4HpyTrS1ATFuS755PTxyJKxjjvWL4fw"/>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5">
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">music_note</span>
+<span>Orchestre Universitaire</span>
+</span>
+<span class="bg-surface-container-lowest/90 backdrop-blur-sm text-primary font-caption-bold text-caption-bold px-2 py-1 rounded-full">
+            Art
+          </span>
+</div>
+<button aria-label="Ajouter aux favoris" class="favorite-toggle absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-sm text-on-surface flex items-center justify-center shadow-sm active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[20px]">favorite</span>
+</button>
+<div class="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-on-primary">
+<span class="bg-primary-container/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-caption-bold text-caption-bold text-on-primary">
+            Concert de Fin d'Année en Préparation
+          </span>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-12 h-12 rounded-xl bg-surface-container-high text-primary flex items-center justify-center font-display text-headline-sm font-bold shadow-sm">
+<span class="material-symbols-outlined text-[26px]">piano</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Club Musique &amp; Harmonique</h2>
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption-sm text-caption-sm mt-0.5">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[15px] text-primary">groups</span> 65 membres</span>
+<span>•</span>
+<span class="flex items-center gap-1 text-secondary font-medium"><span class="material-symbols-outlined text-[15px]">event</span> 2 concerts live</span>
+</div>
+</div>
+</div>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Pratique instrumentale collective (Oud, violon, guitare, piano), chorale polyphonique et arrangements fusion marocaine / jazz.
+        </p>
+<div class="flex flex-wrap gap-1.5 pt-1">
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Solfège &amp; Rythme</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Musique Andalouse</span>
+<span class="px-2.5 py-1 rounded-md bg-surface-container-high text-primary font-caption-bold text-caption-bold">Acoustique</span>
+</div>
+<div class="pt-2 flex items-center justify-between gap-space-sm mt-auto">
+<span class="text-on-surface-variant font-caption-sm text-caption-sm">Répétition chaque Jeudi</span>
+<button class="px-4 py-2 bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md rounded-lg shadow-sm flex items-center gap-1.5 active:scale-95 transition-all">
+<span>Rejoindre</span>
+<span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+<!-- Empty Search Feedback State (Hidden by default) -->
+<div class="hidden px-margin py-space-2xl flex-col items-center justify-center text-center" id="empty-state">
+<div class="w-16 h-16 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center mb-space-sm">
+<span class="material-symbols-outlined text-[32px]">search_off</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-on-surface mb-1">Aucun club trouvé</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs mb-space-md">
+      Essayez de modifier votre mot-clé ou sélectionnez un autre pôle d'activité.
+    </p>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md shadow-sm" id="reset-filters-btn">
+      Réinitialiser les filtres
+    </button>
+</div>
+<!-- Bottom Interactive Delight Pill (Campus Tip) -->
+<aside class="px-margin mt-space-lg">
+<div class="bg-surface-container-low rounded-xl p-space-md flex items-center gap-space-sm shadow-sm">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">info</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="font-caption-bold text-caption-bold text-on-surface">Règle de cumul inter-clubs</p>
+<p class="font-caption-sm text-caption-sm text-on-surface-variant">Chaque étudiant de l'EST peut être membre actif dans 2 clubs maximum simultanément.</p>
+</div>
+</div>
+</aside>
+</div>
+<script>
+  (function initClubsDirectory() {
+    const searchInput = document.getElementById('club-search-input');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+    const poleChips = document.querySelectorAll('.pole-chip');
+    const clubCards = Array.from(document.querySelectorAll('.club-card'));
+    const emptyState = document.getElementById('empty-state');
+    const resetFiltersBtn = document.getElementById('reset-filters-btn');
+    const sortTrigger = document.getElementById('sort-trigger');
+    const sortLabel = document.getElementById('sort-label');
+    const directoryList = document.getElementById('clubs-directory-list');
+
+    let currentPole = 'all';
+    let currentQuery = '';
+    let sortDescending = true; // default by member count
+
+    // Filtering logic
+    function applyFilters() {
+      let visibleCount = 0;
+      const normalizedQuery = currentQuery.trim().toLowerCase();
+
+      clubCards.forEach(card => {
+        const cardPole = card.getAttribute('data-pole');
+        const cardKeywords = (card.getAttribute('data-name') || '').toLowerCase();
+        const cardText = card.textContent.toLowerCase();
+
+        const matchesPole = (currentPole === 'all') || (cardPole === currentPole);
+        const matchesQuery = !normalizedQuery || cardKeywords.includes(normalizedQuery) || cardText.includes(normalizedQuery);
+
+        if (matchesPole && matchesQuery) {
+          card.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+
+      if (visibleCount === 0) {
+        emptyState.classList.remove('hidden');
+        emptyState.classList.add('flex');
+      } else {
+        emptyState.classList.add('hidden');
+        emptyState.classList.remove('flex');
+      }
+
+      if (clearSearchBtn) {
+        if (currentQuery.length > 0) {
+          clearSearchBtn.classList.remove('hidden');
+          clearSearchBtn.classList.add('flex');
+        } else {
+          clearSearchBtn.classList.add('hidden');
+          clearSearchBtn.classList.remove('flex');
+        }
+      }
+    }
+
+    // Search input listener
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        currentQuery = e.target.value;
+        applyFilters();
+      });
+    }
+
+    if (clearSearchBtn) {
+      clearSearchBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        currentQuery = '';
+        applyFilters();
+        searchInput.focus();
+      });
+    }
+
+    // Pole Chip Click listeners
+    poleChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        poleChips.forEach(c => {
+          c.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+          c.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+
+        chip.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        chip.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+
+        currentPole = chip.getAttribute('data-pole') || 'all';
+        applyFilters();
+      });
+    });
+
+    // Reset button
+    if (resetFiltersBtn) {
+      resetFiltersBtn.addEventListener('click', () => {
+        if (searchInput) searchInput.value = '';
+        currentQuery = '';
+        currentPole = 'all';
+
+        poleChips.forEach((c, idx) => {
+          if (idx === 0) {
+            c.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+            c.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+          } else {
+            c.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+            c.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+          }
+        });
+
+        applyFilters();
+      });
+    }
+
+    // Sort Toggle (Member Count Desc vs Asc)
+    if (sortTrigger) {
+      sortTrigger.addEventListener('click', () => {
+        sortDescending = !sortDescending;
+        if (sortLabel) {
+          sortLabel.textContent = sortDescending ? 'Membres (Max)' : 'Membres (Min)';
+        }
+
+        const sorted = [...clubCards].sort((a, b) => {
+          const mA = parseInt(a.getAttribute('data-members') || '0', 10);
+          const mB = parseInt(b.getAttribute('data-members') || '0', 10);
+          return sortDescending ? (mB - mA) : (mA - mB);
+        });
+
+        sorted.forEach(card => directoryList.appendChild(card));
+      });
+    }
+
+    // Favorite heart toggle micro-interaction
+    document.querySelectorAll('.favorite-toggle').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const icon = btn.querySelector('.material-symbols-outlined');
+        const isFavorited = btn.getAttribute('data-favorited') === 'true';
+
+        if (!isFavorited) {
+          btn.setAttribute('data-favorited', 'true');
+          btn.classList.add('text-rose-500');
+          btn.classList.remove('text-on-surface');
+          if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+        } else {
+          btn.setAttribute('data-favorited', 'false');
+          btn.classList.remove('text-rose-500');
+          btn.classList.add('text-on-surface');
+          if (icon) icon.style.fontVariationSettings = "'FILL' 0";
+        }
+      });
+    });
+
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.03)]" data-active-classes="text-primary font-bold"><div class="flex items-center justify-around h-16 px-space-xs"><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-on-surface-variant hover:text-on-surface transition-all active:scale-95 group" data-path="accueil" href="#"><span class="material-symbols-outlined text-[24px] group-hover:scale-105 transition-transform">home</span><span class="font-caption-bold text-caption-bold">Accueil</span></a><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 transition-all active:scale-95 group text-primary font-bold" data-path="clubs" href="#"><span class="material-symbols-outlined text-[24px] group-hover:scale-105 transition-transform">groups</span><span class="font-caption-bold text-caption-bold">Clubs</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-on-surface-variant hover:text-on-surface transition-all active:scale-95 group" data-path="agenda" href="#"><span class="material-symbols-outlined text-[24px] group-hover:scale-105 transition-transform">calendar_month</span><span class="font-caption-bold text-caption-bold">Agenda</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-on-surface-variant hover:text-on-surface transition-all active:scale-95 group" data-path="inscriptions-profil" href="#"><span class="material-symbols-outlined text-[24px] group-hover:scale-105 transition-transform">confirmation_number</span><span class="font-caption-bold text-caption-bold">Pass &amp; Profil</span></a></div></nav></body></html>

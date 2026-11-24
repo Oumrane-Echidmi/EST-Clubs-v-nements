@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100%;margin:0;padding:0;min-height:100%;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-background": "#0b1c30", "on-primary-container": "#90a8ff", "on-tertiary-fixed": "#001a42", "on-primary-fixed": "#00164e", "tertiary-container": "#003d88", "error": "#ba1a1a", "tertiary": "#00285e", "on-secondary-fixed": "#341100", "tertiary-fixed-dim": "#adc6ff", "on-secondary-fixed-variant": "#783200", "on-surface-variant": "#444651", "background": "#f8f9ff", "secondary-container": "#fd761a", "tertiary-fixed": "#d8e2ff", "surface-dim": "#cbdbf5", "secondary-fixed": "#ffdbca", "surface-container-low": "#eff4ff", "inverse-on-surface": "#eaf1ff", "surface-variant": "#d3e4fe", "inverse-surface": "#213145", "surface-container-high": "#dce9ff", "on-primary-fixed-variant": "#264191", "on-tertiary-container": "#82abff", "surface-tint": "#4059aa", "error-container": "#ffdad6", "primary-fixed": "#dce1ff", "secondary": "#9d4300", "on-primary": "#ffffff", "surface-container-highest": "#d3e4fe", "on-error-container": "#93000a", "on-surface": "#0b1c30", "inverse-primary": "#b6c4ff", "surface-bright": "#f8f9ff", "primary-container": "#1e3a8a", "outline": "#757682", "primary-fixed-dim": "#b6c4ff", "on-error": "#ffffff", "on-tertiary": "#ffffff", "outline-variant": "#c5c5d3", "surface": "#f8f9ff", "on-secondary": "#ffffff", "on-tertiary-fixed-variant": "#004395", "secondary-fixed-dim": "#ffb690", "surface-container-lowest": "#ffffff", "primary": "#00236f", "on-secondary-container": "#5c2400", "surface-container": "#e5eeff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-2xs": "0.25rem", "space-xs": "0.5rem", "space-sm": "0.75rem", "gutter-compact": "0.75rem", "space-md": "1rem", "gutter": "1rem", "margin": "1rem", "space-lg": "1.25rem", "margin-expanded": "1.25rem", "space-xl": "1.5rem", "space-2xl": "2rem" }, "fontFamily": { "headline-md": ["Plus Jakarta Sans"], "headline-sm": ["Plus Jakarta Sans"], "body-md": ["Inter"], "caption-sm": ["Inter"], "display": ["Plus Jakarta Sans"], "caption-bold": ["Inter"], "label-md": ["Inter"], "body-sm": ["Inter"], "body-lg": ["Inter"], "headline-lg": ["Plus Jakarta Sans"] }, "fontSize": { "headline-md": ["20px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}], "headline-sm": ["18px", {"lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "600"}], "body-md": ["15px", {"lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400"}], "caption-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.02em", "fontWeight": "500"}], "display": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}], "caption-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600"}], "label-md": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600"}], "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400"}], "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "500"}], "headline-lg": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.015em", "fontWeight": "700"}] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface antialiased flex flex-col min-h-screen selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)] pt-safe"><div class="h-6 px-margin flex items-center justify-between text-on-surface select-none"><span class="font-label-md text-label-md font-semibold tracking-tight">9:41</span><div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-[16px] leading-none">signal_cellular_alt</span><span class="material-symbols-outlined text-[16px] leading-none">wifi</span><span class="material-symbols-outlined text-[18px] leading-none">battery_full</span></div></div><div class="h-14 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs min-w-0"><img alt="Logo EST Clubs &amp; Événements" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida/ALJJyrDHdoi5NqkPDZnc79G1LChRluaj1lCigYuhP-aQjpLyXqxHPOfyHHST4tNUWtw1ndhLNDhoJs9yqnFIlMqPqPidviYkfPq6Rn1V9XCax-9QzO9du3-dxAK3cxtJbzBcdwim6PYHm5_JEjA_lgH5BlLpmJnHJfjYEwyr8mZla4bXVZzFtR5OSuoG2cEIiGND-lDSZMy3u53I3hvJ59OHgujL_Bzab01QkryKojUFX027"/><div class="flex flex-col truncate"><div class="flex items-center gap-1"><span class="font-headline-sm text-headline-sm font-bold text-primary tracking-tight leading-none">EST Clubs</span><span class="font-caption-sm text-caption-sm uppercase tracking-wider text-secondary font-bold px-1.5 py-0.5 rounded-full bg-secondary-fixed/50">UIZ</span></div><span class="font-caption-sm text-caption-sm text-on-surface-variant truncate font-medium">Accueil</span></div></div><div class="flex items-center gap-space-2xs shrink-0"><button aria-label="Notifications" class="relative w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface-container transition-colors text-on-surface-variant active:scale-95"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2 right-2 min-w-[18px] h-[18px] px-1 bg-secondary-container text-on-primary font-caption-bold text-[10px] leading-none flex items-center justify-center rounded-full shadow-[0_0_8px_rgba(253,118,26,0.6)] ring-2 ring-surface">3</span></button><div class="relative flex items-center justify-center p-0.5"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_1px_4px_rgba(0,0,0,0.08)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCC-T-ok4kkV08CrljDKp4RUM4eXQmPTAat_5LdMXJ1Qp0pr_aV6Yn4oEwrwcZ8GtIrkKv_ZIax2N_yWDatAUexmOJmfsuhiF6MvyTLPeOw6noZ2yQc1gAtmwkTsUvaaracWkDf2XRjkN8IxPkhRnpLPlPjEKFHnyLy7KqLnX2UW1eNje46T0n-O9U9v5dQbi4kYSoCXAK8IVbgrgVJtJnQy08AMmDltyrwhDq5htI"/><span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-surface"></span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-20 pb-24 bg-surface"><div class="flex flex-col w-full px-margin pb-space-2xl gap-space-lg select-none">
+<!-- Pull-to-refresh subtle interaction hint -->
+<div class="flex items-center justify-center gap-space-xs text-on-surface-variant/70 -mt-1 mb-1 transition-opacity duration-300" id="pull-refresh-indicator">
+<span class="material-symbols-outlined text-[15px] animate-bounce">expand_more</span>
+<span class="font-caption-sm text-caption-sm">Glisser pour actualiser le flux campus</span>
+</div>
+<!-- En-tête de bienvenue personnalisé -->
+<div class="flex flex-col gap-0.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">Bonjour Yassine</span>
+<span class="inline-block origin-bottom-right animate-[wave_1.5s_infinite_ease-in-out] text-[22px]">👋</span>
+</div>
+<div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-caption-bold text-caption-bold shadow-sm">
+<span class="material-symbols-outlined text-[14px]">local_fire_department</span>
+<span>Saison 2026</span>
+</div>
+</div>
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px] text-primary">school</span>
+<span class="font-label-md text-label-md font-semibold text-primary">DUT Génie Informatique</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-caption-bold text-caption-bold text-on-surface-variant">Promo 2026</span>
+</div>
+</div>
+<!-- Stories rondes des 8 clubs actifs -->
+<div class="flex flex-col gap-space-xs -mx-margin">
+<div class="flex items-center justify-between px-margin">
+<span class="font-caption-bold text-caption-bold uppercase tracking-wider text-on-surface-variant">Clubs en direct</span>
+<span class="font-caption-sm text-caption-sm font-semibold text-primary">8 actifs</span>
+</div>
+<div class="flex items-center gap-3 overflow-x-auto px-margin no-scrollbar py-1">
+<!-- Story 1: Info -->
+<button class="flex flex-col items-center gap-1.5 shrink-0 group active:scale-95 transition-transform text-left">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-secondary-container via-primary-container to-primary shadow-sm group-hover:shadow-md transition-all">
+<div class="p-0.5 rounded-full bg-surface">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Close-up creative logo sticker of a high-tech university computer club with futuristic cyber neon blue accents and modern software developer badge aesthetics on glossy slate background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAOSSuNvyvXcGdGBeFuK62Zoo7n6r2h9G1SIyhOnvIssY1dAP2FS3p3G7Ol95pBELmO9rX2dtGAttWmsSoSRNnXslriXtd2kCJ26mHBQzZl0S-sYLGT5gK6EPIuQkGXHkudhgZk9cmeZl_zJO1eYCTv4kimwFqekfs8uX8upGyzXshA6wNoDrZ3OfOcENQ-6vGAKkr1bj3Td_5DkQsfqpXLWvL2IJbIdR1S1zNb7ig"/>
+</div>
+</div>
+<span class="font-caption-sm text-caption-sm font-semibold text-on-surface text-center max-w-[62px] truncate">Club Info</span>
+</button>
+<!-- Story 2: Robotique -->
+<button class="flex flex-col items-center gap-1.5 shrink-0 group active:scale-95 transition-transform text-left">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-secondary-container via-primary to-primary-container shadow-sm group-hover:shadow-md transition-all">
+<div class="p-0.5 rounded-full bg-surface">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Macro photo of a micro autonomous robot with copper circuit traces, mechanical aluminum gears and orange laser LED lighting representing a university robotics engineering lab" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBmg5bhhTK5aASbASfR91M_VRjg4dyD_4yLuZ88KNjklkuAj_u3zxdq-r5B2tEF0KIBo6RBu6X3-kL9_SYw8n1LwH3RYZBmrMpYc3i7cQQa29YC0JTp688_OxypP9yC9Hwt9rqr6fjH7HaO8LTzmAw7fC4euKgExsdSzoYj2RbEIM-ioSkTUZgH9WlAiifPDtsUNGwtoUXTYGeGKFgZniBCaOHAmkWWcS7efr_fP9M"/>
+</div>
+</div>
+<span class="font-caption-sm text-caption-sm font-semibold text-on-surface text-center max-w-[62px] truncate">Robotique</span>
+</button>
+<!-- Story 3: Enactus -->
+<button class="flex flex-col items-center gap-1.5 shrink-0 group active:scale-95 transition-transform text-left">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-secondary-container to-secondary shadow-sm group-hover:shadow-md transition-all">
+<div class="p-0.5 rounded-full bg-surface">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Modern startup pitch podium with student entrepreneur sketches, golden lightbulb symbol and university social venture trophies on polished wooden table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDjeDiZV9ww2W76CTCNjGOqUNffCnHe7N_jJQCr05U55EfkqVGfEatOclUxfiEOkMJ2ILyVqTGMAz4ct69OWCxCZRY8aQSSC3ul2hJcZak7DijsAh4zMV0ZhJvTJLApEA0M3IcByBG-6eIrhScGQlPj5ZhzXEc70AszZpAiP604JSfl6T8ZQ-vwgCa_u8Vy3iU1TkNv2FqqJaDVFzIbEkZBDJ3_LOEaG-glSiL6KiU"/>
+</div>
+</div>
+<span class="font-caption-sm text-caption-sm font-semibold text-on-surface text-center max-w-[62px] truncate">Enactus</span>
+</button>
+<!-- Story 4: Théâtre -->
+<button class="flex flex-col items-center gap-1.5 shrink-0 group active:scale-95 transition-transform text-left">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-primary to-secondary-container shadow-sm group-hover:shadow-md transition-all">
+<div class="p-0.5 rounded-full bg-surface">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Dramatic theatrical masks and warm stage spotlights with velvet red curtains and dramatic golden studio shadows for campus drama society" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfi4-iwfnuegnT4UrGjnDJqgXPVkCh1Q6E74xhiBi4b30u6IFSZLnXOdEKvvBL3MTi9iJs9408kPrDcewErQzt6N8WSlCIU3zg0yXGTNWqjCQydDgm3Q78PcPsGS8tHt_WJSgGarjLrxdOkPlJlxhS7qh3mqRXr4YSvGwQ_T6I6zlznk6Z0lyC_4A7DbrDAZxq5uTNSjVw5WwYTYe7_ALZNkbNEI-XmZ_D4hWanKc"/>
+</div>
+</div>
+<span class="font-caption-sm text-caption-sm font-semibold text-on-surface text-center max-w-[62px] truncate">Théâtre</span>
+</button>
+<!-- Story 5: Sport & Santé -->
+<button class="flex flex-col items-center gap-1.5 shrink-0 group active:scale-95 transition-transform text-left">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-secondary to-primary-container shadow-sm group-hover:shadow-md transition-all">
+<div class="p-0.5 rounded-full bg-surface">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="University athletic championship gold medal over indoor basketball hardwood court with leather sports equipment in dynamic motion lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAfLhVz7AETnJkUnTBg7aMtTJ1xT6_tMfhz6HRQMFE2Jg2EMK0iGlDxsujapgnMZMnVw4XN2bRGCw6a4EHFAm6WwwmKM0GTs9S9QgSQfwaAscwY3bQLjm3ujUO7OvrijykbFAdDIVGhNOKHb2x20M5lc1RH6RqdHFyUAmcppOSDDSm43iPfIC3A3ujJ5ltdZbUlxtA3eAKwUQxLrBOppF7yDYL1ffOs1uV38-P27o8"/>
+</div>
+</div>
+<span class="font-caption-sm text-caption-sm font-semibold text-on-surface text-center max-w-[62px] truncate">Sport</span>
+</button>
+<!-- Story 6: Photo & Cinéma -->
+<button class="flex flex-col items-center gap-1.5 shrink-0 group active:scale-95 transition-transform text-left">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-primary-container to-secondary-container shadow-sm group-hover:shadow-md transition-all">
+<div class="p-0.5 rounded-full bg-surface">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Vintage 35mm film camera lens reflection with professional studio aperture blades and cinematic dark blue ambient reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCS3TNwkG8ySwzypPGjAYcHq-ijp_orJPz-Gp6BYgfEfAzMgxXZvnk-rIhxdHBg7908zOxYCVBtiid7aWIdsUJ0YAHGOqX-5IiDjc7Ut-oSE3LTqcGFTZNYzXRwNn-2QA9V8FEu2f5EJD-_T6stptI9GYvbiC1JbJdhw2zfT6DNgvFGgz17cxta8fLtg-j6P1y8rTL2T-2NQqkdGslhp1xy2NwfjGn4kulOHm84aF4"/>
+</div>
+</div>
+<span class="font-caption-sm text-caption-sm font-semibold text-on-surface text-center max-w-[62px] truncate">Photo/Ciné</span>
+</button>
+<!-- Story 7: Rotaract -->
+<button class="flex flex-col items-center gap-1.5 shrink-0 group active:scale-95 transition-transform text-left">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-secondary-container via-secondary to-primary shadow-sm group-hover:shadow-md transition-all">
+<div class="p-0.5 rounded-full bg-surface">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Warm community charity symbol with diverse student hands clasped together supporting an illuminated heart icon in soft sunset lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA6AcuPAgN5b8zVpbNfbqxGSqcrRtHjs9SMUujUHYMzw0KwNTcyXFxLflNC4t5_snuAiCgxUUNZKZRNu5F2qST5Mv5RX9kgeZr1gti85BnqUjlHnaSMZ8ya-Rk8Mt7e-8bQ5kJzKeKzuWZD8_GHQl8h15JYEUgG_m-M8V8K-QLP_kwrli8CbUtH4uIJLlBFugZycwXbR-qqeiyeQ3hrNP2qYdk5n_rMn6Ocohh1tek"/>
+</div>
+</div>
+<span class="font-caption-sm text-caption-sm font-semibold text-on-surface text-center max-w-[62px] truncate">Rotaract</span>
+</button>
+<!-- Story 8: Musique -->
+<button class="flex flex-col items-center gap-1.5 shrink-0 group active:scale-95 transition-transform text-left">
+<div class="p-0.5 rounded-full bg-gradient-to-tr from-primary via-primary-container to-secondary-container shadow-sm group-hover:shadow-md transition-all">
+<div class="p-0.5 rounded-full bg-surface">
+<img class="w-14 h-14 rounded-full object-cover" data-alt="Acoustic wooden guitar peghead and audio equalizer synth console in a cozy university acoustic studio booth with warm neon lights" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtCzVPRYClz370gtSPC8_DaloH8PNg9gzdVOoUNjzOqrV7HZpVaOrwL_vtv3KLOtwJrFR7ZXQwxvsTVCszkuGKkwDAvNoUA3kkMAkxKTH3nEOF3IVw0bRSqYZfYC2FN8aQA3anzw4zwlNkq1sUjzdRkSxrjDI2dpuVdbFBqbvNMBnLdfGi_sv8phCTE0iGgRimwe1UHBMHhwh8ezXGOl6CFZKzO6gNnJ9MOHn_2BQ"/>
+</div>
+</div>
+<span class="font-caption-sm text-caption-sm font-semibold text-on-surface text-center max-w-[62px] truncate">Musique</span>
+</button>
+</div>
+</div>
+<!-- Hero Événement Majeur -->
+<div class="relative w-full rounded-2xl bg-surface-container-lowest shadow-md overflow-hidden flex flex-col group">
+<!-- Visual Image with overlays -->
+<div class="relative w-full h-44 bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A vibrant university tech hackathon hall packed with energetic young engineering students coding intensely on laptops late at night with vibrant blue projection screens and warm orange stage lamps" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCU5yip5aOLBEFhi7aKtlHUONVzDMbPKVAi5ssKMln7b_apkqp86_MmTcaiSXIgU-GCm6WWFGGj-ZKi7yaULBhtuZaXPFuKdRRvshuhSQJdWCYc-PLqxwwSgnvcK96hWLlWHnf9pS0k-K2fTU5FQzwXY0aX5YJNjFpygzYQyTD4VGfn8JI38WHUtPOK4uGmUM9UKeRYv_GQtryDfYDOzfBB2dzWvF6BpvfpZTxFzCA"/>
+<div class="absolute inset-0 bg-gradient-to-t from-on-background/90 via-on-background/40 to-transparent"></div>
+<!-- Top badges -->
+<div class="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none">
+<div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container text-on-primary font-caption-bold text-caption-bold shadow-md animate-pulse">
+<span class="material-symbols-outlined text-[15px]">timer</span>
+<span>Plus que 2j 14h</span>
+</div>
+<div class="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-md text-primary font-caption-bold text-caption-bold shadow-sm">
+          Hackathon EST 2026
+        </div>
+</div>
+<!-- Title & Club badge over image -->
+<div class="absolute bottom-3 inset-x-3 flex flex-col gap-1 pointer-events-none">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded-full bg-primary text-on-primary font-caption-sm text-caption-sm font-bold uppercase tracking-wider">Officiel UIZ</span>
+<span class="font-caption-sm text-caption-sm text-surface-container-highest flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">groups</span>
+            Organisé par Club Info
+          </span>
+</div>
+<h2 class="font-headline-lg text-headline-lg font-bold text-surface-container-lowest tracking-tight leading-snug">
+          HACKATHON EST INNOV 2026
+        </h2>
+</div>
+</div>
+<!-- Event details & Capacity & Action -->
+<div class="p-space-md flex flex-col gap-space-sm bg-surface-container-lowest">
+<!-- Date & Location -->
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">calendar_month</span>
+<span class="font-semibold text-on-surface">Ven. 27 Nov. 2026</span>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant font-caption-bold text-caption-bold">
+<span class="material-symbols-outlined text-[16px] text-secondary">pin_drop</span>
+<span>Amphi Central EST</span>
+</div>
+</div>
+<!-- Jauge de Remplissage -->
+<div class="p-3 rounded-xl bg-surface-container-low flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary-container text-[16px]">local_fire_department</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">142 / 160 inscrits</span>
+<span class="font-caption-sm text-caption-sm text-on-surface-variant font-medium">(89%)</span>
+</div>
+<span class="px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-caption-bold text-caption-bold">
+            Presque complet !
+          </span>
+</div>
+<!-- Progress Bar Track -->
+<div class="w-full h-2 rounded-full bg-surface-container-high overflow-hidden relative">
+<div class="h-full rounded-full bg-gradient-to-r from-primary via-secondary to-secondary-container transition-all duration-1000" style="width: 89%;"></div>
+</div>
+<div class="flex items-center justify-between font-caption-sm text-caption-sm text-on-surface-variant">
+<span>Il reste seulement 18 places</span>
+<span class="text-secondary font-semibold">Fermeture dans 48h</span>
+</div>
+</div>
+<!-- Hero Action CTA -->
+<button class="w-full py-3 px-4 rounded-xl bg-secondary-container hover:bg-secondary text-on-primary font-headline-sm text-headline-sm font-bold flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-all" id="btn-hero-reserve">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+<span>Réserver ma place en 1 clic</span>
+</button>
+<div class="hidden p-2 rounded-lg bg-surface-container text-primary font-caption-bold text-caption-bold text-center items-center justify-center gap-1" id="hero-confirmation-toast">
+<span class="material-symbols-outlined text-[16px] text-emerald-600">check_circle</span>
+<span>Votre badge étudiant #EST-2026-Y94 a réservé la place 143 !</span>
+</div>
+</div>
+</div>
+<!-- Filtres Horizontaux Chips -->
+<div class="flex flex-col gap-2 -mx-margin">
+<div class="flex items-center justify-between px-margin">
+<span class="font-caption-bold text-caption-bold uppercase tracking-wider text-on-surface-variant">Filtrer par thématique</span>
+<span class="font-caption-sm text-caption-sm text-primary font-semibold">Réinitialiser</span>
+</div>
+<div class="flex items-center gap-2 overflow-x-auto px-margin no-scrollbar py-0.5">
+<button class="px-4 py-2 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold shrink-0 shadow-sm transition-all active:scale-95">
+        Tous
+      </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-semibold shrink-0 transition-all active:scale-95">
+        Tech &amp; IA
+      </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-semibold shrink-0 transition-all active:scale-95">
+        Ateliers
+      </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-semibold shrink-0 transition-all active:scale-95">
+        Compétitions
+      </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-semibold shrink-0 transition-all active:scale-95">
+        Culture &amp; Arts
+      </button>
+<button class="px-4 py-2 rounded-full bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md font-semibold shrink-0 transition-all active:scale-95">
+        Sport
+      </button>
+</div>
+</div>
+<!-- Section 'Cette semaine à l'EST' -->
+<div class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface">Cette semaine à l'EST</h3>
+<span class="font-caption-sm text-caption-sm text-on-surface-variant font-medium">24 Nov - 30 Nov 2026</span>
+</div>
+<!-- Empty state toggle for UX review rigor -->
+<button class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container text-primary font-caption-bold text-caption-bold active:scale-95 transition-all" id="toggle-state-btn">
+<span class="material-symbols-outlined text-[14px]">tune</span>
+<span>Aperçu UX</span>
+</button>
+</div>
+<!-- Active Feed of Events -->
+<div class="flex flex-col gap-space-md" id="events-list-container">
+<!-- Carte 1: Atelier Robotique & Drones -->
+<div class="w-full rounded-2xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-3 transition-transform active:scale-[0.99]">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<img class="w-12 h-12 rounded-xl object-cover shrink-0" data-alt="Miniature of a high tech mini quadcopter drone with precision brushless motors inside an engineering workshop" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBuKOX6-7rQ8nxhNyhaiw-GBoLhfr9obdqhfQkGoi6cU6oBxw3xPVyrzGRJrtHQlt1QoqplYUlBCR_bJmwKA9mptO9mSsGENlgYJ5FJylX21fZqCKrgHeu6UKZsnGzF8sVV1iKGZwYxGCHKTmgpZqLtP_CSbqazkppDCiAfAPI9fwRHUDrJ_8uizNZYpzp78sVA0oFcKQZ_SMMY1ib-zMwuhtslp1yzIjAb4SBq1WQ"/>
+<div class="flex flex-col">
+<span class="font-caption-sm text-caption-sm font-semibold text-primary">Club Robotique EST</span>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Atelier Robotique &amp; Drones</h4>
+</div>
+</div>
+<!-- Badge Statut Confirmé vert -->
+<span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-caption-bold text-caption-bold shrink-0 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
+            Confirmé
+          </span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span>Mer. 25 Nov • 14:30</span>
+</div>
+<div class="flex items-center gap-1 font-caption-bold text-caption-bold">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span>FabLab Bloc B</span>
+</div>
+</div>
+<!-- Jauge 32/40 places -->
+<div class="pt-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between font-caption-bold text-caption-bold">
+<span class="text-on-surface">32 / 40 places réservées</span>
+<span class="text-emerald-700">8 places libres</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 80%;"></div>
+</div>
+</div>
+<div class="pt-1 flex items-center justify-between">
+<div class="flex -space-x-1.5 overflow-hidden">
+<div class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center text-[10px] font-bold text-primary ring-2 ring-surface">ME</div>
+<div class="w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center text-[10px] font-bold text-on-secondary-fixed ring-2 ring-surface">KA</div>
+<div class="w-6 h-6 rounded-full bg-surface-variant flex items-center justify-center text-[10px] font-bold text-on-surface-variant ring-2 ring-surface">+29</div>
+</div>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md font-bold transition-colors">
+            Détails &amp; Inscription
+          </button>
+</div>
+</div>
+<!-- Carte 2: Tournoi E-Sport & FIFA Inter-Filières -->
+<div class="w-full rounded-2xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-3 transition-transform active:scale-[0.99]">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<img class="w-12 h-12 rounded-xl object-cover shrink-0" data-alt="Playstation gaming controller and colorful mechanical gaming keyboard illuminated with neon purple and cyan university e-sports arena lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpkYSNASprt79s38G66ji2M101rKX6ekaaXpeoBIynK051apcbeqaVBx0t-dZ-R7X1TIEx6zV-cxC5oZ6pFlY_-x6HQniJxogH9AuJp87uWifzvjlh4XeVYtCs2OaFtlz_dNYL8LMJVTF0C0Ql_Ht0ir8lBTqhwwzgbFT5nRl9wdwtgQmOMl8XdaBs13TXcvwO932KmlafMC3auW4lxC8LR2w6DSLVVC5pjTRInHM"/>
+<div class="flex flex-col">
+<span class="font-caption-sm text-caption-sm font-semibold text-secondary">Club Sport &amp; Gaming</span>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Tournoi E-Sport &amp; FIFA Inter-Filières</h4>
+</div>
+</div>
+<!-- Badge Liste d'attente orange -->
+<span class="px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-caption-bold text-caption-bold shrink-0 flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">hourglass_top</span>
+            Liste d'attente
+          </span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span>Jeu. 26 Nov • 17:00</span>
+</div>
+<div class="flex items-center gap-1 font-caption-bold text-caption-bold">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span>Foyer des Étudiants</span>
+</div>
+</div>
+<!-- Jauge Pleine + File d'attente -->
+<div class="pt-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between font-caption-bold text-caption-bold">
+<span class="text-on-surface">64 / 64 places (Complet)</span>
+<span class="text-secondary-container font-semibold">12 en attente</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full rounded-full bg-secondary-container" style="width: 100%;"></div>
+</div>
+</div>
+<div class="pt-1 flex items-center justify-between">
+<span class="font-caption-sm text-caption-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">sports_esports</span>
+            Format 1v1 Elimination
+          </span>
+<button class="px-3.5 py-1.5 rounded-lg bg-secondary-fixed hover:bg-secondary-fixed-dim text-on-secondary-fixed font-label-md text-label-md font-bold transition-colors">
+            Rejoindre la file
+          </button>
+</div>
+</div>
+<!-- Carte 3: Masterclass Pitch & Financement Startup -->
+<div class="w-full rounded-2xl bg-surface-container-lowest p-space-md shadow-sm flex flex-col gap-3 transition-transform active:scale-[0.99]">
+<div class="flex items-start justify-between gap-2">
+<div class="flex items-center gap-2.5">
+<img class="w-12 h-12 rounded-xl object-cover shrink-0" data-alt="Charismatic speaker with microphone presenting investor pitch deck presentation graphics on large cinema lecture hall screen in academic business seminar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsaqgnMQPJJEpCGjj83z1w40pXajgGzXJ7icm59nkZ5fF7742xgOY3OPUysuVTZR3C6ayv0_INsKmOHjdbeYT4owkeLUXaIcU6C4MypwfTf_q3mxyjFDtxE5Nw7u42VgSvcvgLilY8w5Uly2_WL1jbwLdKbFekjbqJvNdM3XuBud1b0YRM2-gQ8WCPWSUb-5iWGGuRHrlcSoRNYcEJcqe3ymStUhT7owivWNZ9feQ"/>
+<div class="flex flex-col">
+<span class="font-caption-sm text-caption-sm font-semibold text-primary">Enactus EST</span>
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface leading-tight">Masterclass Pitch &amp; Startup</h4>
+</div>
+</div>
+<!-- Badge Complet rouge doux -->
+<span class="px-2.5 py-1 rounded-full bg-error-container text-on-error-container font-caption-bold text-caption-bold shrink-0 flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">block</span>
+            Complet
+          </span>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">schedule</span>
+<span>Sam. 28 Nov • 10:00</span>
+</div>
+<div class="flex items-center gap-1 font-caption-bold text-caption-bold">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+<span>Salle des Thèses EST</span>
+</div>
+</div>
+<!-- Jauge 100% clôturé -->
+<div class="pt-2 flex flex-col gap-1.5">
+<div class="flex items-center justify-between font-caption-bold text-caption-bold">
+<span class="text-on-surface">80 / 80 inscrits validés</span>
+<span class="text-error font-semibold">Inscriptions closes</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full rounded-full bg-outline" style="width: 100%;"></div>
+</div>
+</div>
+<div class="pt-1 flex items-center justify-between">
+<span class="font-caption-sm text-caption-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">videocam</span>
+            Enregistrement dispo après
+          </span>
+<button class="px-3.5 py-1.5 rounded-lg bg-surface-container text-outline font-label-md text-label-md font-semibold cursor-not-allowed">
+            Voir le replay
+          </button>
+</div>
+</div>
+</div>
+<!-- Empty State Switcher Container (Hidden by default, toggleable for UX demo) -->
+<div class="hidden w-full rounded-2xl bg-surface-container-low p-space-xl flex flex-col items-center text-center gap-3" id="events-empty-state">
+<div class="w-14 h-14 rounded-full bg-surface-variant flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[28px]">event_busy</span>
+</div>
+<div class="flex flex-col gap-1">
+<h4 class="font-headline-sm text-headline-sm font-bold text-on-surface">Aucun événement trouvé</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">
+          Aucune session ne correspond à cette sélection pour l'instant. Proposez une idée d'activité à votre BDE !
+        </p>
+</div>
+<button class="mt-1 px-4 py-2 rounded-xl bg-primary text-on-primary font-caption-bold text-caption-bold flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+<span>Proposer un événement</span>
+</button>
+</div>
+<!-- Skeleton Loading Hint Discret pour démonstration de rigueur UX -->
+<div class="w-full rounded-xl bg-surface-container-low/70 p-3 flex items-center justify-between" id="skeleton-loader-hint">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-secondary-container animate-ping"></span>
+<span class="font-caption-sm text-caption-sm text-on-surface-variant font-medium">Flux synchronisé en temps réel avec le serveur EST</span>
+</div>
+<span class="font-caption-sm text-caption-sm font-mono text-primary font-bold">14:02 EST</span>
+</div>
+</div>
+</div>
+<script>
+  // Simple interactive micro-delights
+  const reserveBtn = document.getElementById('btn-hero-reserve');
+  const confirmationToast = document.getElementById('hero-confirmation-toast');
+  if (reserveBtn && confirmationToast) {
+    reserveBtn.addEventListener('click', () => {
+      reserveBtn.classList.add('hidden');
+      confirmationToast.classList.remove('hidden');
+      confirmationToast.classList.add('flex');
+    });
+  }
+
+  // Toggle state demo switcher for Lead UX review
+  const toggleBtn = document.getElementById('toggle-state-btn');
+  const eventsList = document.getElementById('events-list-container');
+  const emptyState = document.getElementById('events-empty-state');
+  if (toggleBtn && eventsList && emptyState) {
+    let showEmpty = false;
+    toggleBtn.addEventListener('click', () => {
+      showEmpty = !showEmpty;
+      if (showEmpty) {
+        eventsList.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        toggleBtn.querySelector('span:last-child').textContent = 'Vue Normale';
+      } else {
+        eventsList.classList.remove('hidden');
+        emptyState.classList.add('hidden');
+        toggleBtn.querySelector('span:last-child').textContent = 'Aperçu UX';
+      }
+    });
+  }
+
+  // Pull-to-refresh micro indicator feedback
+  const pullIndicator = document.getElementById('pull-refresh-indicator');
+  if (pullIndicator) {
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 20) {
+        pullIndicator.classList.add('opacity-0', 'pointer-events-none');
+      } else {
+        pullIndicator.classList.remove('opacity-0', 'pointer-events-none');
+      }
+    });
+  }
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.03)]" data-active-classes="text-primary font-bold"><div class="flex items-center justify-around h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 transition-all active:scale-95 group text-primary font-bold" data-path="accueil" href="#"><span class="material-symbols-outlined text-[24px] group-hover:scale-105 transition-transform">home</span><span class="font-caption-bold text-caption-bold">Accueil</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-on-surface-variant hover:text-on-surface transition-all active:scale-95 group" data-path="clubs" href="#"><span class="material-symbols-outlined text-[24px] group-hover:scale-105 transition-transform">groups</span><span class="font-caption-bold text-caption-bold">Clubs</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-on-surface-variant hover:text-on-surface transition-all active:scale-95 group" data-path="agenda" href="#"><span class="material-symbols-outlined text-[24px] group-hover:scale-105 transition-transform">calendar_month</span><span class="font-caption-bold text-caption-bold">Agenda</span></a><a class="flex flex-col items-center justify-center gap-0.5 min-w-[64px] h-12 text-on-surface-variant hover:text-on-surface transition-all active:scale-95 group" data-path="inscriptions-profil" href="#"><span class="material-symbols-outlined text-[24px] group-hover:scale-105 transition-transform">confirmation_number</span><span class="font-caption-bold text-caption-bold">Pass &amp; Profil</span></a></div></nav></body></html>
