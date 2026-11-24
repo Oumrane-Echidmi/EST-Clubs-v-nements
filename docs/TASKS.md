@@ -93,7 +93,7 @@ Backend P0, P1 and P2 are implemented in backend/. API contract: API.md and open
 
 - Strict TypeScript build and ESLint/Prettier checks passed.
 - 10 unit tests passed in the completed unit run; final repetition after review is recorded in VERIFICATION.md.
-- Latest PostgreSQL integration run: 39 passed, zero skipped or weakened tests.
+- Latest PostgreSQL integration run: 55 passed, zero skipped or weakened tests.
 - Mandatory capacity race: 20 distinct students, 5 successes, 15 EVENT_FULL failures, exactly 5 active database registrations.
 - SQL migrations applied to isolated development/test databases.
 - Idempotent seed ran twice: 12 accounts, 7 clubs, 15 events.
@@ -113,3 +113,12 @@ Original architecture v2 was not supplied. Provisional choices are recorded in A
 - Corrected event canRegister to remain false for administrators, matching the student-only registration route.
 - Added 11 PostgreSQL integration tests covering discovery, role restrictions, membership revocation, accurate occupancy counts, empty dashboards, bounded results and OpenAPI response contracts.
 - Build, lint, 10 unit tests and all 39 integration tests passed. No mobile source changed by this stream; upstream mobile code already consumes /me/clubs, whose data-array and approved-first behavior are preserved.
+
+## Registration notification reliability
+
+- Added an additive NotificationOutbox migration and transactionally recorded confirmation/cancellation intents. HTTP response schemas remain unchanged.
+- Added immediate post-commit delivery and a once-per-minute worker with 50-job batches, 60-second leases, lease-owner fencing, exponential backoff capped at one hour and 30-day processed-record cleanup.
+- Superseded registration versions are skipped; preferences and notification uniqueness still control in-app delivery and push. Push and event publication/update/reminder dispatch remain best effort.
+- Added 16 real PostgreSQL integration tests, including a killed child application process, restart recovery, rollback, concurrent workers, stale leases, batch limits and failure isolation. Full suite: 55 integration tests and 10 unit tests passed; the original capacity race remains unchanged.
+- Migration applied to development and test databases; Prisma drift check reported no difference. Build, lint, OpenAPI export and the updated live curl confirmation/cancellation smoke passed.
+- Apply migrations before restarting the updated API to activate durable delivery. No mobile code changed.

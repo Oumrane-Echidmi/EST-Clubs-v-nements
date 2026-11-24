@@ -1,3 +1,4 @@
+import { NotificationOutboxService } from './notification-outbox.service';
 import {
   Body,
   Controller,
@@ -97,6 +98,7 @@ export class NotificationsController {
   controllers: [NotificationsController],
   providers: [
     NotificationsService,
+    NotificationOutboxService,
     {
       provide: PushService,
       inject: [CONFIG],
@@ -104,6 +106,6 @@ export class NotificationsController {
         config.firebase ? new FcmPushService(config) : new NoopPushService(),
     },
   ],
-  exports: [NotificationsService],
+  exports: [NotificationsService, NotificationOutboxService],
 })
 export class NotificationsModule {}

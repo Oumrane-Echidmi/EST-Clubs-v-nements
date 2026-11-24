@@ -6,7 +6,7 @@ import { ApiError } from '../common/http';
 import { CONFIG, Configuration } from '../config/environment';
 import { EventsService, activeStatuses } from '../events/events.service';
 import { eventState } from '../events/event-state';
-import { NotificationsService } from '../notifications/notifications.service';
+import { NotificationOutboxService } from '../notifications/notification-outbox.service';
 import { page, pagination, PaginationDto } from '../common/pagination';
 import { RegistrationQuery } from './registrations.dto';
 @Injectable()
@@ -15,7 +15,7 @@ export class RegistrationsService {
     private db: PrismaService,
     private scope: ScopeService,
     private events: EventsService,
-    private notifications: NotificationsService,
+    private outbox: NotificationOutboxService,
     @Inject(CONFIG) private config: Configuration,
   ) {}
   private async lock(tx: Prisma.TransactionClient, eventId: string) {
@@ -45,7 +45,7 @@ export class RegistrationsService {
       throw new ApiError('EVENT_FULL', 'No available seats', 409);
   }
   async register(actor: Actor, eventId: string) {
-    const registration = await this.db.$transaction(
+    const { registration, notificationId } = await this.db.$transaction(
       async (tx) => {
         const event = await this.lock(tx, eventId);
         this.assertOpen(event);
@@ -55,8 +55,8 @@ export class RegistrationsService {
         if (previous && previous.status !== 'CANCELLED')
           throw new ApiError('ALREADY_REGISTERED', 'Already registered', 409);
         await this.assertSeat(tx, event);
-        return previous
-          ? tx.registration.update({
+        const registration = previous
+          ? await tx.registration.update({
               where: { id: previous.id },
               data: {
                 status: 'CONFIRMED',
@@ -65,25 +65,22 @@ export class RegistrationsService {
                 version: { increment: 1 },
               },
             })
-          : tx.registration.create({ data: { userId: actor.id, eventId } });
+          : await tx.registration.create({
+              data: { userId: actor.id, eventId },
+            });
+        return this.recordNotification(tx, registration);
       },
       { maxWait: 60000, timeout: 30000 },
     );
-    await this.registrationNotification(registration);
+    if (notificationId) await this.outbox.tryDispatch(notificationId);
     return { ...registration, event: await this.events.detail(actor, eventId) };
   }
-  private async registrationNotification(r: Registration) {
-    const cancelled = r.status === 'CANCELLED';
-    await this.notifications.safe(() =>
-      this.notifications.notify(
-        r.userId,
-        cancelled ? 'REGISTRATION_CANCELLED' : 'REGISTRATION_CONFIRMED',
-        r.eventId,
-        `${cancelled ? 'registration-cancelled' : 'registration-confirmed'}:${r.id}:${r.version}`,
-        cancelled ? 'Registration cancelled' : 'Registration confirmed',
-        cancelled ? 'Your seat has been released.' : 'Your seat is reserved.',
-      ),
-    );
+  private async recordNotification(
+    tx: Prisma.TransactionClient,
+    registration: Registration,
+  ) {
+    const intent = await this.outbox.enqueueRegistration(tx, registration);
+    return { registration, notificationId: intent?.id ?? null };
   }
   async change(
     actor: Actor,
@@ -93,14 +90,14 @@ export class RegistrationsService {
   ) {
     const found = await this.db.registration.findUnique({ where: { id } });
     if (!found) throw new ApiError('NOT_FOUND', 'Registration not found', 404);
-    const registration = await this.db.$transaction(
+    const { registration, notificationId } = await this.db.$transaction(
       async (tx) => {
         const event = await this.lock(tx, found.eventId);
         const r = await tx.registration.findUnique({ where: { id } });
         if (!r) throw new ApiError('NOT_FOUND', 'Registration not found', 404);
         if (!(ownerAllowed && r.userId === actor.id))
           await this.scope.assertClub(actor, event.clubId);
-        if (r.status === status) return r;
+        if (r.status === status) return this.recordNotification(tx, r);
         if (status === 'CANCELLED') {
           const state = eventState(
             event,
@@ -136,7 +133,7 @@ export class RegistrationsService {
               'Attendance cannot be reverted',
             );
         }
-        return tx.registration.update({
+        const updated = await tx.registration.update({
           where: { id },
           data: {
             status,
@@ -145,11 +142,11 @@ export class RegistrationsService {
             ...(r.status === 'CANCELLED' ? { registeredAt: new Date() } : {}),
           },
         });
+        return this.recordNotification(tx, updated);
       },
       { maxWait: 60000, timeout: 30000 },
     );
-    if (registration.status !== 'ATTENDED')
-      await this.registrationNotification(registration);
+    if (notificationId) await this.outbox.tryDispatch(notificationId);
     // Registration remains accessible to its owner even if the event returns to approval.
     const event = await this.db.event.findUniqueOrThrow({
       where: { id: registration.eventId },

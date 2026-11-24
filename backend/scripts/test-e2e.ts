@@ -14,6 +14,7 @@ if (
   throw new Error('Refusing non-isolated test database');
 const env = { ...process.env, DATABASE_URL: url, NODE_ENV: 'test' };
 for (const args of [
+  ['node_modules/typescript/bin/tsc', '-p', 'tsconfig.build.json'],
   ['node_modules/prisma/build/index.js', 'migrate', 'deploy'],
   [
     'node_modules/jest/bin/jest.js',

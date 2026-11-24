@@ -39,3 +39,23 @@ Production must use HTTPS, explicit CORS origins, SMTP, externally managed secre
 Firebase is optional. Set all three Firebase variables together; the private key supports escaped newlines. Without Firebase, the no-op push implementation is used and in-app notifications still work. Console mail intentionally prints recovery links in development only; production requires SMTP.
 
 See docs/VERIFICATION.md for executed results and limitations.
+
+## Registration notification delivery
+
+Registration confirmations and cancellations now persist a NotificationOutbox intent inside the business transaction. Only after that transaction commits does the API attempt in-app delivery. A delivery or worker-claim failure leaves the registration intact and the intent queued. Rollback removes both registration and intent.
+
+The worker runs every minute, claims at most 50 due intents using a single PostgreSQL SKIP LOCKED statement, and uses 60-second expiring leases. Failed attempts back off from five seconds up to one hour. Lease IDs prevent a slow worker from acknowledging a replacement worker's lease. Current notification preferences are checked at delivery. Already-superseded registration versions are marked SUPERSEDED instead of sending stale confirmations or cancellations. Notification uniqueness prevents duplicate in-app rows and push on replay. Push transport remains best effort: a crash after creating the in-app row can still lose push, and external push is not retried by this outbox.
+
+Apply `npm run db:migrate` before starting the updated API. The migration is additive; older binaries ignore the table. Restart the API to activate the worker. No new environment variables or HTTP routes are required. `npm run test:e2e` now builds the production source before tests so its child-process crash test executes the same compiled services used by the server.
+
+Processed outbox rows are removed after 30 days by a daily UTC job; in-app notification history is retained. Pending rows remain until processed or their related registration/user/event is deleted. Event publication, event updates and reminders still use their existing delivery paths.
+
+For operational inspection (without reading notification bodies):
+
+```sql
+SELECT COUNT(*) AS pending, MIN("createdAt") AS oldest_pending
+FROM "NotificationOutbox"
+WHERE "processedAt" IS NULL;
+```
+
+The queue claim follows [PostgreSQL's documented SKIP LOCKED queue-consumer pattern](https://www.postgresql.org/docs/17/sql-select.html#SQL-FOR-UPDATE-SHARE).

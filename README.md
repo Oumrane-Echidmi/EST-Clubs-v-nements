@@ -21,6 +21,7 @@ docker-compose.yml   Development PostgreSQL and a separate test database
 - Event creation, approval, search and server-calculated registration eligibility.
 - Transactional registrations with PostgreSQL row locks to prevent overbooking.
 - In-app notifications, optional Firebase push and scheduled event reminders.
+- Durable registration notification delivery with crash recovery and retry backoff.
 - Image uploads, calendar exports, announcements and personalized recommendations.
 - Administration statistics and a documented REST API.
 
@@ -124,7 +125,7 @@ With a running API and seeded development database, run `npm run test:smoke` for
 
 The completed backend verification recorded:
 
-- 10 passing unit tests and 39 passing PostgreSQL integration tests.
+- 10 passing unit tests and 55 passing PostgreSQL integration tests.
 - A capacity race with 20 distinct students: exactly five successful registrations, 15 `EVENT_FULL` responses and five active database registrations.
 - Successful migrations, two idempotent seed runs, lint, build and OpenAPI export.
 - A successful live curl smoke test covering registration, cancellation, seat availability, event approval and follower notifications.
@@ -142,4 +143,4 @@ For mobile checks, run `flutter analyze` and `flutter test` from `mobile/`. Mobi
 | [Verification results](docs/VERIFICATION.md) | Executed checks and operational limitations                           |
 | [Security review](docs/SECURITY.md)          | Remaining Prisma CLI dependency advisory and mitigation               |
 
-The referenced original architecture v2 was not supplied; provisional contract choices are identified in the API documentation. Live SMTP/FCM delivery has not been verified, and the Flutter app has been exercised against the API only through repository-level live tests (no emulator run yet). Notification dispatch is best effort, the default rate limiter is process-local, and local uploads need durable storage for deployment. The dependency audit has a documented unresolved advisory through Prisma CLI configuration.
+The referenced original architecture v2 was not supplied; provisional contract choices are identified in the API documentation. Live SMTP/FCM delivery has not been verified, and the Flutter app has been exercised against the API only through repository-level live tests (no emulator run yet). Registration in-app notifications use a durable outbox; push and other notification categories remain best effort. The default rate limiter is process-local, and local uploads need durable storage for deployment. The dependency audit has a documented unresolved advisory through Prisma CLI configuration.
