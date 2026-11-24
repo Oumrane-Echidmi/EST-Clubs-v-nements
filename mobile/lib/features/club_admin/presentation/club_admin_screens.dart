@@ -41,6 +41,7 @@ class _DashboardHeader extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final club = ref.watch(clubDetailProvider(clubId)).value;
+    final approved = club == null || club.status == 'APPROVED';
     final events = ref.watch(_firstPageProvider(clubId)).value ?? const <Event>[];
     final withSeats = events.where((e) => e.fillRatio != null).toList()
       ..sort((a, b) => b.fillRatio!.compareTo(a.fillRatio!));
@@ -122,11 +123,26 @@ class _DashboardHeader extends ConsumerWidget {
             ]),
           ),
         ],
+        if (!approved) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+                color: const Color(0xFFFFDBCA), borderRadius: BorderRadius.circular(12)),
+            child: const Row(children: [
+              Icon(Icons.hourglass_top, color: Color(0xFF9D4300)),
+              SizedBox(width: 8),
+              Expanded(
+                  child: Text(
+                      "Ce club est en attente de validation : la création d'événements sera possible après approbation.")),
+            ]),
+          ),
+        ],
         const SizedBox(height: 12),
         FilledButton.icon(
           style: FilledButton.styleFrom(
               backgroundColor: navy, minimumSize: const Size.fromHeight(52)),
-          onPressed: onCreate,
+          onPressed: approved ? onCreate : null,
           icon: const Icon(Icons.add_circle_outline),
           label: const Text('Créer un nouvel événement de club',
               style: TextStyle(fontWeight: FontWeight.w800)),

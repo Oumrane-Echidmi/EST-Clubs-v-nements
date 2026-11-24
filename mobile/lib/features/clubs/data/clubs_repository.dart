@@ -13,7 +13,11 @@ class Club {
     this.isFollowing = false,
     this.memberCount,
     this.tags = const [],
+    this.status = 'APPROVED',
   });
+
+  /// PENDING | APPROVED | REJECTED (moderation state).
+  final String status;
 
   /// memberCount comes from `_count.members`; the API has no tags field.
   final int? memberCount;
@@ -34,6 +38,7 @@ class Club {
         isFollowing: j['isFollowed'] as bool? ?? false,
         memberCount: (j['_count'] is Map) ? (j['_count'] as Map)['members'] as int? : null,
         tags: ((j['tags'] ?? const []) as List).map((t) => '$t').toList(),
+        status: j['status'] as String? ?? 'APPROVED',
       );
 }
 

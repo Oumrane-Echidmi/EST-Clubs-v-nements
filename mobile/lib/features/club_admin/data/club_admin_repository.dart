@@ -99,7 +99,9 @@ class ClubAdminRepository {
         return null;
       }
     }));
-    return found.whereType<Club>().toList();
+    // Approved clubs first: only those can host events.
+    return found.whereType<Club>().toList()
+      ..sort((a, b) => (a.status == 'APPROVED' ? 0 : 1).compareTo(b.status == 'APPROVED' ? 0 : 1));
   }
 
   Future<Paged<Event>> myClubEvents(String clubId, int page) =>

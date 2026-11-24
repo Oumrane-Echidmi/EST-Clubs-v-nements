@@ -61,6 +61,14 @@ Fonts: Inter + Plus Jakarta Sans bundled in mobile/assets/fonts (variable TTFs, 
 - Club tags (shown on cards) do not exist in the API: the UI only renders them if a tags field appears.
 - Not verified against the live API (no emulator/server run yet). Line endings: mobile Dart files normalised to LF.
 
+## LIVE integration (executed 2026-11-24)
+Backend run locally (docker postgres + migrate + seed + npm start), then `mobile/test/live_api_test.dart` ran the app's real repositories and models against it: 6/6 passed (student login/restore/lists/detail/category filter/register/cancel/my registrations/notifications/home; wrong password; club admin own clubs + events + create/edit/delete event; super admin dashboard/pending/users; .ics download).
+
+Run it yourself: start the backend (backend/README.md), then
+`flutter test test/live_api_test.dart --dart-define=LIVE_API=http://localhost:3000/api --dart-define=SEED_PASSWORD=<value from backend/.env>`
+
+Notes: auth endpoints are throttled to 10 per 15 min per IP (restart the API to reset while testing). On Windows kill the API by port 3000.
+
 ## Blockers / notes
 
 - Backend contract is now available (see below); frontend integration against the live API remains pending.
