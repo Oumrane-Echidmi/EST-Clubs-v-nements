@@ -6,7 +6,7 @@ import '../../../core/widgets/event_widgets.dart';
 import '../../../core/widgets/paged_list.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../events/data/events_repository.dart';
-import '../../club_admin/data/club_admin_repository.dart' show eventCategories;
+import '../../club_admin/data/club_admin_repository.dart' show eventCategories, categoryLabel;
 import '../data/clubs_repository.dart';
 
 class ClubCard extends StatelessWidget {
@@ -36,7 +36,7 @@ class ClubCard extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(
                           color: Colors.white, borderRadius: BorderRadius.circular(20)),
-                      child: Text(club.category!,
+                      child: Text(categoryLabel(club.category),
                           style: const TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF1E3A8A)))),
             ),

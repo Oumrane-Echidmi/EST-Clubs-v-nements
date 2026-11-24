@@ -15,6 +15,11 @@ const eventCategories = {
   'Entrepreneuriat': 'ENTREPRENEURSHIP',
 };
 
+/// API enum value -> French label (for display).
+String categoryLabel(String? value) => eventCategories.entries
+    .firstWhere((e) => e.value == value, orElse: () => MapEntry(value ?? '', value ?? ''))
+    .key;
+
 /// Values sent when creating / editing an event.
 class EventInput {
   EventInput({
