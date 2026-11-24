@@ -68,6 +68,7 @@ model User {
   follows ClubFollow[]
   registrations Registration[]
   notifications Notification[]
+  notificationOutbox NotificationOutbox[]
   deviceTokens DeviceToken[]
   refreshTokens RefreshToken[]
   resetTokens PasswordResetToken[]
@@ -138,6 +139,7 @@ model Event {
   createdBy User @relation(fields: [createdById], references: [id], onDelete: Restrict)
   registrations Registration[]
   notifications Notification[]
+  notificationOutbox NotificationOutbox[]
   @@index([status, startsAt])
   @@index([clubId, startsAt])
   @@index([category, startsAt])
@@ -150,6 +152,7 @@ model Registration {
   version Int @default(1)
   registeredAt DateTime @default(now()) @db.Timestamptz(3)
   cancelledAt DateTime? @db.Timestamptz(3)
+  notificationOutbox NotificationOutbox[]
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
@@ -216,4 +219,30 @@ model PasswordResetToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@index([userId])
   @@index([expiresAt])
+}
+
+model NotificationOutbox {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  eventId String @db.Uuid
+  registrationId String @db.Uuid
+  type NotificationType
+  dedupeKey String
+  title String
+  body String
+  attempts Int @default(0)
+  availableAt DateTime @default(now()) @db.Timestamptz(3)
+  leaseId String? @db.Uuid
+  lockedUntil DateTime? @db.Timestamptz(3)
+  processedAt DateTime? @db.Timestamptz(3)
+  lastError String?
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  registration Registration @relation(fields: [registrationId], references: [id], onDelete: Cascade)
+  @@unique([userId, dedupeKey])
+  @@index([processedAt, availableAt, lockedUntil])
+  @@index([registrationId])
+  @@index([eventId])
 }

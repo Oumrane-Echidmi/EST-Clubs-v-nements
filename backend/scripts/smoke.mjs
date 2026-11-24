@@ -40,7 +40,7 @@ function main() {
   const call = (session, method, path, data) =>
     curl(method, path, data, session.accessToken);
   const clubs = call(admin, 'GET', '/me/clubs?limit=50');
-  const club = clubs.find((c) => c.name === 'EST Robotics');
+  const club = clubs.find((c) => c.status === 'APPROVED');
   assert.ok(club);
   assert.deepEqual(call(student, 'GET', '/me/clubs'), []);
   call(student, 'POST', `/clubs/${club.id}/follow`);
@@ -83,8 +83,16 @@ function main() {
         (n) => n.eventId === event.id && n.type === 'NEW_EVENT',
       ),
     );
+    for (const type of ['REGISTRATION_CONFIRMED', 'REGISTRATION_CANCELLED']) {
+      assert.ok(
+        notifications.some(
+          (notification) =>
+            notification.eventId === event.id && notification.type === type,
+        ),
+      );
+    }
     console.log(
-      'PASS curl smoke: managed clubs, scoped dashboard, login, pending event, approval, follower notification, event detail, registration, decreased seats, cancellation, restored seats.',
+      'PASS curl smoke: durable registration notifications, managed clubs, scoped dashboard, login, pending event, approval, follower notification, event detail, registration, decreased seats, cancellation, restored seats.',
     );
   } finally {
     call(superAdmin, 'DELETE', `/events/${event.id}`);
