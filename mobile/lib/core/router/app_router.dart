@@ -47,6 +47,8 @@ final onboardingSeenProvider = FutureProvider<bool>((_) => onboardingSeen());
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier(0);
   ref.listen(authStateProvider, (_, _) => refresh.value++);
+  // The onboarding flag loads asynchronously: re-run the redirect when it arrives.
+  ref.listen(onboardingSeenProvider, (_, _) => refresh.value++);
   return GoRouter(
     initialLocation: '/splash',
     refreshListenable: refresh,

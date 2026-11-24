@@ -29,7 +29,16 @@ class AuthNotifier extends Notifier<AuthState> {
   }
 
   Future<void> _restore() async {
-    final u = await ref.read(authRepositoryProvider).restore();
+    // Never stay on the splash: any storage/network problem means "signed out".
+    AuthUser? u;
+    try {
+      u = await ref
+          .read(authRepositoryProvider)
+          .restore()
+          .timeout(const Duration(seconds: 8));
+    } catch (_) {
+      u = null;
+    }
     state = AuthState(user: u, loading: false);
   }
 

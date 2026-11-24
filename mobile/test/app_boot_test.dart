@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:est_clubs_events/core/router/app_router.dart';
 import 'package:est_clubs_events/core/storage/token_storage.dart';
 import 'package:est_clubs_events/features/auth/presentation/auth_providers.dart';
@@ -32,6 +33,7 @@ Future<void> _launch(WidgetTester t, {required bool seen}) async {
 }
 
 void main() {
+  realFlagTests();
   testWidgets('first launch shows onboarding, then login', (t) async {
     await _launch(t, seen: false);
     expect(find.text('Passer'), findsOneWidget);
@@ -44,5 +46,20 @@ void main() {
     await _launch(t, seen: true);
     expect(find.text('Se connecter avec mon compte étudiant'), findsOneWidget);
     expect(find.text('Créer un compte'), findsOneWidget);
+  });
+}
+
+void realFlagTests() {
+  testWidgets('real onboarding flag provider: leaves the splash', (t) async {
+    SharedPreferences.setMockInitialValues({'onboarding_seen': true});
+    await t.pumpWidget(ProviderScope(
+      overrides: [tokenStorageProvider.overrideWithValue(_NoTokens())],
+      child: const EstApp(),
+    ));
+    for (var i = 0; i < 6; i++) {
+      await t.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 100)));
+      await t.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.text('Se connecter avec mon compte étudiant'), findsOneWidget);
   });
 }

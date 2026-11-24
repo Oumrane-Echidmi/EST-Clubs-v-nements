@@ -78,7 +78,13 @@ class AuthRepository {
       });
 
   Future<AuthUser?> restore() async {
-    if (await _tokens.accessToken == null) return null;
+    String? token;
+    try {
+      token = await _tokens.accessToken;
+    } catch (_) {
+      return null; // unreadable secure storage => treat as signed out
+    }
+    if (token == null) return null;
     try {
       final r = await _dio.get('/auth/me');
       return AuthUser.fromJson(
