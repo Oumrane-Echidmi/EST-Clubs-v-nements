@@ -6,6 +6,7 @@ import '../../../core/widgets/event_widgets.dart';
 import '../../../core/widgets/paged_list.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../events/data/events_repository.dart';
+import '../../club_admin/data/club_admin_repository.dart' show eventCategories;
 import '../data/clubs_repository.dart';
 
 class ClubCard extends StatelessWidget {
@@ -178,7 +179,6 @@ class ClubsTab extends ConsumerStatefulWidget {
 class _ClubsTabState extends ConsumerState<ClubsTab> {
   String _q = '';
   String? _cat;
-  static const _categories = ['Tech', 'Sport', 'Art', 'Impact', 'Social'];
   @override
   Widget build(BuildContext context) => Column(children: [
         Padding(
@@ -191,7 +191,7 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
         ),
         const SizedBox(height: 8),
         FilterChipsRow(
-            options: _categories,
+            options: eventCategories.keys.toList(),
             selected: _cat,
             onChanged: (v) => setState(() => _cat = v)),
         Expanded(
@@ -199,7 +199,7 @@ class _ClubsTabState extends ConsumerState<ClubsTab> {
             key: ValueKey('$_q|$_cat'), // new key => reload
             fetch: (p) => ref
                 .read(clubsRepositoryProvider)
-                .list(p, search: _q, category: _cat),
+                .list(p, search: _q, category: eventCategories[_cat]),
             emptyMessage: 'Aucun club trouvé',
             itemBuilder: (c, club) => ClubCard(
                 club: club, onTap: () => context.push('/clubs/${club.id}')),

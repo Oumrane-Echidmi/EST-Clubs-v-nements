@@ -20,6 +20,13 @@ String statusLabel(String? s) => switch (s) {
       _ => s ?? '',
     };
 
+/// Clubs the signed-in club admin administers (see ClubAdminRepository.myAdminClubs).
+final adminClubsProvider = FutureProvider.autoDispose<List<Club>>((ref) {
+  final user = ref.watch(authStateProvider).user;
+  if (user == null) return const <Club>[];
+  return ref.watch(clubAdminRepositoryProvider).myAdminClubs(user.id);
+});
+
 final _firstPageProvider = FutureProvider.autoDispose.family<List<Event>, String>(
     (ref, clubId) async =>
         (await ref.watch(clubAdminRepositoryProvider).myClubEvents(clubId, 1)).items);
@@ -145,6 +152,8 @@ class ClubAdminHome extends ConsumerStatefulWidget {
 
 class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
   int _reload = 0; // change => PagedListView reloads
+  String? _clubId; // chosen club when the admin manages several
+  String? _activeClubId;
 
   Future<void> _delete(Event e) async {
     final ok = await showDialog<bool>(
@@ -170,20 +179,33 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
 
   Future<void> _openForm([Event? e]) async {
     final saved = await Navigator.of(context).push<bool>(
-        MaterialPageRoute(builder: (_) => EventFormScreen(event: e)));
+        MaterialPageRoute(
+            builder: (_) => EventFormScreen(event: e, clubId: _activeClubId!)));
     if (saved == true && mounted) {
-      final id = ref.read(authStateProvider).user?.clubId;
-      if (id != null) ref.invalidate(_firstPageProvider(id));
+      ref.invalidate(_firstPageProvider);
       setState(() => _reload++);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = ref.watch(authStateProvider).user;
-    final clubId = user?.clubId;
+    final clubsAsync = ref.watch(adminClubsProvider);
+    final clubs = clubsAsync.value ?? const <Club>[];
+    final clubId = _clubId ?? (clubs.isEmpty ? null : clubs.first.id);
+    _activeClubId = clubId;
     return Scaffold(
       appBar: AppBar(title: const Text('Espace club'), actions: [
+        if (clubs.length > 1)
+          PopupMenuButton<String>(
+              icon: const Icon(Icons.swap_horiz),
+              tooltip: 'Changer de club',
+              onSelected: (v) => setState(() {
+                    _clubId = v;
+                    _reload++;
+                  }),
+              itemBuilder: (_) => [
+                    for (final c in clubs) PopupMenuItem(value: c.id, child: Text(c.name))
+                  ]),
         if (clubId != null)
           IconButton(
               tooltip: 'Mon club',
@@ -194,8 +216,10 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
             icon: const Icon(Icons.logout),
             onPressed: () => ref.read(authStateProvider.notifier).logout()),
       ]),
-      body: clubId == null
-          ? const EmptyState(message: "Aucun club associé à ce compte.")
+      body: clubsAsync.isLoading
+          ? const LoadingView()
+          : clubId == null
+          ? const EmptyState(message: "Aucun club administré par ce compte.")
           : Column(children: [
               _DashboardHeader(clubId: clubId, onCreate: _openForm),
               Expanded(child: PagedListView<Event>(
@@ -258,7 +282,7 @@ class _ClubEditState extends ConsumerState<ClubEditScreen> {
       _msg = null;
     });
     try {
-      final url = await ref.read(profileRepositoryProvider).uploadImage('logo', f.path,
+      final url = await ref.read(profileRepositoryProvider).uploadImage('logo', f.path, clubId: widget.clubId,
           onProgress: (p) => mounted ? setState(() => _progress = p) : null);
       if (mounted) setState(() => _logoUrl = url);
     } catch (e) {
@@ -360,8 +384,9 @@ class _RegistrantsState extends ConsumerState<RegistrantsScreen> {
 
 /// Create (event == null) or edit an event.
 class EventFormScreen extends ConsumerStatefulWidget {
-  const EventFormScreen({super.key, this.event});
+  const EventFormScreen({super.key, this.event, required this.clubId});
   final Event? event;
+  final String clubId;
   @override
   ConsumerState<EventFormScreen> createState() => _EventFormState();
 }
@@ -374,6 +399,7 @@ class _EventFormState extends ConsumerState<EventFormScreen> {
   late DateTime? _start = widget.event?.startAt.toLocal();
   late DateTime? _end = widget.event?.endAt?.toLocal();
   late DateTime? _deadline = widget.event?.registrationDeadline?.toLocal();
+  late String? _category = widget.event?.category;
   bool _busy = false;
   String? _error;
   late String? _posterUrl = widget.event?.posterUrl;
@@ -390,7 +416,7 @@ class _EventFormState extends ConsumerState<EventFormScreen> {
     });
     try {
       final url = await ref.read(profileRepositoryProvider).uploadImage(
-          'poster', f.path,
+          'poster', f.path, clubId: widget.clubId,
           onProgress: (p) => mounted ? setState(() => _uploadProgress = p) : null);
       if (mounted) setState(() => _posterUrl = url);
     } catch (e) {
@@ -422,7 +448,8 @@ class _EventFormState extends ConsumerState<EventFormScreen> {
         capacity: int.tryParse(_cap.text),
         startAt: _start,
         endAt: _end,
-        deadline: _deadline);
+        deadline: _deadline,
+        category: _category);
     if (err != null) return setState(() => _error = err);
     setState(() {
       _busy = true;
@@ -435,14 +462,15 @@ class _EventFormState extends ConsumerState<EventFormScreen> {
       startAt: _start!,
       endAt: _end!,
       capacity: int.parse(_cap.text),
-      registrationDeadline: _deadline,
+      registrationDeadline: _deadline!,
+      category: _category!,
       posterUrl: _posterUrl,
     );
     final repo = ref.read(clubAdminRepositoryProvider);
     try {
       final e = widget.event;
       if (e == null) {
-        await repo.create(ref.read(authStateProvider).user!.clubId!, input);
+        await repo.create(widget.clubId, input);
       } else {
         await repo.update(e.id, input);
       }
@@ -490,9 +518,18 @@ class _EventFormState extends ConsumerState<EventFormScreen> {
               controller: _cap,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(labelText: 'Capacité')),
+          DropdownButtonFormField<String>(
+            initialValue: _category,
+            decoration: const InputDecoration(labelText: 'Catégorie'),
+            items: [
+              for (final c in eventCategories.entries)
+                DropdownMenuItem(value: c.value, child: Text(c.key)),
+            ],
+            onChanged: (v) => setState(() => _category = v),
+          ),
           _dateTile('Début', _start, (d) => _start = d),
           _dateTile('Fin', _end, (d) => _end = d),
-          _dateTile("Date limite d'inscription (optionnel)", _deadline, (d) => _deadline = d),
+          _dateTile("Date limite d'inscription", _deadline, (d) => _deadline = d),
           if (_error != null)
             Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
           const SizedBox(height: 16),

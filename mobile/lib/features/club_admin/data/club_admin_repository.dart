@@ -2,7 +2,18 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/paged.dart';
 import '../../auth/presentation/auth_providers.dart';
+import '../../clubs/data/clubs_repository.dart';
 import '../../events/domain/event.dart';
+
+/// Category label -> API enum value (shared by forms and filter chips).
+const eventCategories = {
+  'Technologie': 'TECHNOLOGY',
+  'Sciences': 'SCIENCE',
+  'Culture': 'CULTURE',
+  'Sport': 'SPORTS',
+  'Social': 'SOCIAL',
+  'Entrepreneuriat': 'ENTREPRENEURSHIP',
+};
 
 /// Values sent when creating / editing an event.
 class EventInput {
@@ -13,25 +24,27 @@ class EventInput {
     required this.startAt,
     required this.endAt,
     required this.capacity,
-    this.registrationDeadline,
+    required this.registrationDeadline,
+    required this.category,
     this.posterUrl,
   });
   final String? posterUrl;
   final String title, description, location;
   final DateTime startAt, endAt;
   final int capacity;
-  final DateTime? registrationDeadline;
+  final DateTime registrationDeadline;
+  final String category; // TECHNOLOGY|SCIENCE|CULTURE|SPORTS|SOCIAL|ENTREPRENEURSHIP
 
   Map<String, dynamic> toJson() => {
         'title': title,
         'description': description,
         'location': location,
-        'startAt': startAt.toUtc().toIso8601String(),
-        'endAt': endAt.toUtc().toIso8601String(),
+        'startsAt': startAt.toUtc().toIso8601String(),
+        'endsAt': endAt.toUtc().toIso8601String(),
+        'category': category,
+        'registrationDeadline': registrationDeadline.toUtc().toIso8601String(),
         'capacity': capacity,
         if (posterUrl != null) 'posterUrl': posterUrl,
-        if (registrationDeadline != null)
-          'registrationDeadline': registrationDeadline!.toUtc().toIso8601String(),
       };
 }
 
@@ -41,13 +54,15 @@ String? validateEventInput({
   required int? capacity,
   required DateTime? startAt,
   required DateTime? endAt,
-  DateTime? deadline,
+  required DateTime? deadline,
+  required String? category,
 }) {
   if (title.trim().length < 3) return 'Titre trop court (3 caractères min.)';
   if (capacity == null || capacity < 1) return 'Capacité invalide (1 min.)';
-  if (startAt == null || endAt == null) return 'Dates requises';
+  if (category == null) return 'Catégorie requise';
+  if (startAt == null || endAt == null || deadline == null) return 'Dates requises';
   if (!endAt.isAfter(startAt)) return 'La fin doit être après le début';
-  if (deadline != null && deadline.isAfter(startAt)) {
+  if (deadline.isAfter(startAt)) {
     return "La date limite d'inscription doit précéder le début";
   }
   return null;
@@ -67,6 +82,25 @@ class Registrant {
 class ClubAdminRepository {
   ClubAdminRepository(this._dio);
   final Dio _dio;
+
+  /// The API has no "my clubs" route: a club admin can read /clubs/:id/members only
+  /// for clubs they administer, so we probe the visible clubs (403 => not mine).
+  /// TODO(backend): GET /me/clubs would replace this (see docs/TASKS.md).
+  Future<List<Club>> myAdminClubs(String userId) async {
+    final clubs = await fetchPaged(_dio, '/clubs', Club.fromJson, limit: 50);
+    final found = await Future.wait(clubs.items.map((c) async {
+      try {
+        final r = await _dio
+            .get('/clubs/${c.id}/members', queryParameters: {'limit': 50});
+        final list = (r.data['data'] as List).cast<Map<String, dynamic>>();
+        final mine = list.any((m) => m['userId'] == userId && m['role'] == 'ADMIN');
+        return mine ? c : null;
+      } on DioException {
+        return null;
+      }
+    }));
+    return found.whereType<Club>().toList();
+  }
 
   Future<Paged<Event>> myClubEvents(String clubId, int page) =>
       fetchPaged(_dio, '/clubs/$clubId/events', Event.fromJson, page: page);

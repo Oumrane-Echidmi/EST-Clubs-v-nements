@@ -55,6 +55,12 @@ Fonts: Inter + Plus Jakarta Sans bundled in mobile/assets/fonts (variable TTFs, 
 - Pass 4: bundled fonts, category filter chips on Clubs (Tech/Sport/Art/Impact/Social) and Events (Tech & IA/Ateliers/Compétitions) sent as ?category= (ASSUMED param + values), club member count + tags on cards (ASSUMED memberCount, tags[]), .ics fallback (downloads /events/:id/calendar.ics with auth, opens with open_filex)
 - Deliberately NOT done (per owner): Firebase push, super admin club management/role assignment
 
+## Mobile <-> backend contract reconciliation (done against docs/API.md + openapi.json)
+- Fixed: startsAt/endsAt, registrationId, canRegister/canCancel used directly, firstName/lastName (register, profile, auth), password key on reset/change, PATCH approve/reject with rejectionReason, upload clubId for poster/logo, home sections {data,meta}, dashboard data.counts, /me/registrations?tab=, club isFollowed + _count.members, category enums, required category + registrationDeadline on event create
+- Club admin club selection: API has no "my clubs" route, so the app probes GET /clubs/:id/members per visible club (403 = not mine). REQUEST TO BACKEND: add GET /me/clubs (clubs where I am ADMIN) so this can be replaced.
+- Club tags (shown on cards) do not exist in the API: the UI only renders them if a tags field appears.
+- Not verified against the live API (no emulator/server run yet). Line endings: mobile Dart files normalised to LF.
+
 ## Blockers / notes
 
 - Backend contract is now available (see below); frontend integration against the live API remains pending.

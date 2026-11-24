@@ -8,6 +8,7 @@ import '../../../core/network/paged.dart';
 import '../../../core/widgets/event_widgets.dart';
 import '../../../core/widgets/paged_list.dart';
 import '../../../core/widgets/state_views.dart';
+import '../../club_admin/data/club_admin_repository.dart' show eventCategories;
 import '../data/events_repository.dart';
 import '../domain/event.dart';
 import '../domain/registration_state.dart';
@@ -21,7 +22,6 @@ class EventsTab extends ConsumerStatefulWidget {
 class _EventsTabState extends ConsumerState<EventsTab> {
   String _q = '';
   String? _cat;
-  static const _categories = ['Tech & IA', 'Ateliers', 'Compétitions'];
   @override
   Widget build(BuildContext context) => Column(children: [
         Padding(
@@ -35,14 +35,14 @@ class _EventsTabState extends ConsumerState<EventsTab> {
         ),
         const SizedBox(height: 8),
         FilterChipsRow(
-            options: _categories,
+            options: eventCategories.keys.toList(),
             selected: _cat,
             onChanged: (v) => setState(() => _cat = v)),
         Expanded(
           child: PagedListView<Event>(
             key: ValueKey('$_q|$_cat'),
             fetch: (p) =>
-                ref.read(eventsRepositoryProvider).list(p, search: _q, category: _cat),
+                ref.read(eventsRepositoryProvider).list(p, search: _q, category: eventCategories[_cat]),
             emptyMessage: 'Aucun événement trouvé',
             itemBuilder: (c, e) =>
                 EventCard(event: e, onTap: () => c.push('/events/${e.id}')),
