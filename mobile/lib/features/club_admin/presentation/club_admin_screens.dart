@@ -88,8 +88,14 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
                   isThreeLine: e.rejectionReason != null,
                   onTap: () => c.push('/events/${e.id}'),
                   trailing: PopupMenuButton<String>(
-                    onSelected: (v) => v == 'edit' ? _openForm(e) : _delete(e),
+                    onSelected: (v) => switch (v) {
+                      'edit' => _openForm(e),
+                      'regs' => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => RegistrantsScreen(event: e))),
+                      _ => _delete(e),
+                    },
                     itemBuilder: (_) => const [
+                      PopupMenuItem(value: 'regs', child: Text('Inscrits')),
                       PopupMenuItem(value: 'edit', child: Text('Modifier')),
                       PopupMenuItem(value: 'delete', child: Text('Supprimer')),
                     ],
@@ -97,6 +103,60 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
                 ),
               ),
             ),
+    );
+  }
+}
+
+/// Students registered to an event: mark ATTENDED or cancel.
+class RegistrantsScreen extends ConsumerStatefulWidget {
+  const RegistrantsScreen({super.key, required this.event});
+  final Event event;
+  @override
+  ConsumerState<RegistrantsScreen> createState() => _RegistrantsState();
+}
+
+class _RegistrantsState extends ConsumerState<RegistrantsScreen> {
+  int _reload = 0;
+
+  Future<void> _act(Future<void> Function() f) async {
+    try {
+      await f();
+      if (mounted) setState(() => _reload++);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e')));
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final repo = ref.read(clubAdminRepositoryProvider);
+    return Scaffold(
+      appBar: AppBar(title: Text('Inscrits · ${widget.event.title}')),
+      body: PagedListView<Registrant>(
+        key: ValueKey(_reload),
+        fetch: (p) => repo.registrants(widget.event.id, p),
+        emptyMessage: 'Aucun inscrit',
+        itemBuilder: (c, r) => Card(
+          child: ListTile(
+            title: Text(r.name.isEmpty ? r.email : r.name),
+            subtitle: Text('${r.email} · ${r.status}'),
+            trailing: r.status == 'CONFIRMED'
+                ? Row(mainAxisSize: MainAxisSize.min, children: [
+                    IconButton(
+                        tooltip: 'Présent',
+                        icon: const Icon(Icons.check_circle_outline),
+                        onPressed: () => _act(() => repo.markAttended(r.id))),
+                    IconButton(
+                        tooltip: 'Annuler',
+                        icon: const Icon(Icons.cancel_outlined),
+                        onPressed: () => _act(() => repo.cancelRegistration(r.id))),
+                  ])
+                : null,
+          ),
+        ),
+      ),
     );
   }
 }

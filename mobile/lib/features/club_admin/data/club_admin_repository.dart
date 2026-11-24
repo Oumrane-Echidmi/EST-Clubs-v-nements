@@ -53,6 +53,16 @@ String? validateEventInput({
   return null;
 }
 
+class Registrant {
+  Registrant(this.id, this.status, this.name, this.email);
+  final String id, status, name, email;
+  factory Registrant.fromJson(Map<String, dynamic> j) {
+    final u = ((j['user'] ?? j['student'] ?? {}) as Map).cast<String, dynamic>();
+    return Registrant('${j['id']}', '${j['status']}',
+        '${u['fullName'] ?? u['name'] ?? ''}', '${u['email'] ?? ''}');
+  }
+}
+
 /// ASSUMED endpoints (not yet in an OpenAPI file): see docs/TASKS.md.
 class ClubAdminRepository {
   ClubAdminRepository(this._dio);
@@ -66,6 +76,15 @@ class ClubAdminRepository {
 
   Future<void> update(String id, EventInput i) =>
       guarded(() => _dio.patch('/events/$id', data: i.toJson()));
+
+  Future<Paged<Registrant>> registrants(String eventId, int page) => fetchPaged(
+      _dio, '/events/$eventId/registrations', Registrant.fromJson, page: page);
+
+  Future<void> markAttended(String registrationId) => guarded(() =>
+      _dio.patch('/registrations/$registrationId', data: {'status': 'ATTENDED'}));
+
+  Future<void> cancelRegistration(String registrationId) =>
+      guarded(() => _dio.delete('/registrations/$registrationId'));
 
   Future<void> delete(String id) => guarded(() => _dio.delete('/events/$id'));
 }
