@@ -109,18 +109,53 @@ class _DashboardTab extends ConsumerWidget {
                 mainAxisSpacing: 12,
                 crossAxisSpacing: 12,
                 children: [
-                  for (final e in nums)
-                    Card(
-                        child: Center(
-                            child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      Text('${e.value}',
-                          style: Theme.of(context).textTheme.headlineMedium),
-                      Text(e.key),
-                    ]))),
+                  for (final e in nums) _StatTile(label: e.key, value: e.value as num),
                 ],
               );
             },
           );
+}
+
+/// One counter tile of the super-admin dashboard (French label, icon, accent).
+class _StatTile extends StatelessWidget {
+  const _StatTile({required this.label, required this.value});
+  final String label;
+  final num value;
+
+  static const _meta = {
+    'users': ('Utilisateurs', Icons.people_alt_outlined, false),
+    'clubs': ('Clubs', Icons.groups_2_outlined, false),
+    'events': ('Événements', Icons.event_outlined, false),
+    'registrations': ('Inscriptions', Icons.confirmation_number_outlined, false),
+    'pendingClubs': ('Clubs en attente', Icons.hourglass_top, true),
+    'pendingEvents': ('Événements en attente', Icons.pending_actions, true),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final m = _meta[label] ?? (label, Icons.analytics_outlined, false);
+    final warn = m.$3 && value > 0;
+    final accent = warn ? const Color(0xFFF97316) : const Color(0xFF1E3A8A);
+    return Card(
+      color: warn ? const Color(0xFFFFDBCA) : null,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+                color: accent.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(10)),
+            child: Icon(m.$2, color: accent),
+          ),
+          const Spacer(),
+          Text('$value',
+              style: TextStyle(fontSize: 30, fontWeight: FontWeight.w800, color: accent)),
+          Text(m.$1,
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF444651))),
+        ]),
+      ),
+    );
+  }
 }
 
 class _PendingEventsTab extends ConsumerStatefulWidget {

@@ -24,6 +24,10 @@ class EventsRepository {
       fetchPaged(_dio, '/events', Event.fromJson, page: page, query: {
         if (search != null && search.isNotEmpty) 'search': search,
         if (category != null) 'category': category,
+        // Soonest first (the API default is newest first).
+        'from': DateTime.now().toUtc().toIso8601String(), // hide past events
+        'sortBy': 'startsAt',
+        'sortOrder': 'asc',
       });
 
   /// Fallback when the device calendar fails: downloads GET /events/:id/calendar.ics

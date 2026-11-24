@@ -71,6 +71,12 @@ Run it yourself: start the backend (backend/README.md), then
 
 Notes: auth endpoints are throttled to 10 per 15 min per IP (restart the API to reset while testing). On Windows kill the API by port 3000.
 
+## UI pass (Stitch images + demo data)
+- Bundled the Stitch photos (mobile/assets/images: 8 club banners, 8 round logos, event posters, avatar) as fallbacks when the API has no image; resolver in lib/core/widgets/app_images.dart.
+- Home rebuilt to the Stitch order (header avatar, clubs en direct, hero event, theme chips, weekly list, announcements), profile card, French super-admin stat tiles, club admin event list with thumbnails.
+- Backend demo data: `npm run db:seed:demo` (after `db:seed`) adds 170 students, 8 French clubs, 14 events with registrations, announcements, notifications and French titles for the old English seed.
+- Screens were verified visually with headless Chrome (puppeteer script, phone viewport) against the live backend.
+
 ## Build & boot checks (executed)
 
 - `flutter build apk --debug` succeeds (Android SDK 36, manifest has INTERNET + debug-only cleartext for 10.0.2.2); `flutter build web` succeeds and the login screen was rendered in headless Chrome (Stitch look + bundled fonts confirmed visually).
