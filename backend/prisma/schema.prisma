@@ -1,0 +1,219 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+
+}
+enum Role {
+  STUDENT
+  CLUB_ADMIN
+  SUPER_ADMIN
+}
+enum ClubStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+enum Category {
+  TECHNOLOGY
+  SCIENCE
+  CULTURE
+  SPORTS
+  SOCIAL
+  ENTREPRENEURSHIP
+}
+enum MemberRole {
+  ADMIN
+  MEMBER
+}
+enum EventStatus {
+  DRAFT
+  PENDING_APPROVAL
+  PUBLISHED
+  REJECTED
+  CANCELLED
+}
+enum RegistrationStatus {
+  CONFIRMED
+  ATTENDED
+  CANCELLED
+}
+enum NotificationType {
+  NEW_EVENT
+  REGISTRATION_CONFIRMED
+  REGISTRATION_CANCELLED
+  EVENT_UPDATED
+  REMINDER_24H
+  REMINDER_1H
+}
+model User {
+  id String @id @default(uuid()) @db.Uuid
+  email String @unique
+  passwordHash String
+  firstName String
+  lastName String
+  studentId String? @unique
+  avatarUrl String?
+  role Role @default(STUDENT)
+  isActive Boolean @default(true)
+  notifyNewEvents Boolean @default(true)
+  notifyRegistrations Boolean @default(true)
+  notifyEventUpdates Boolean @default(true)
+  notifyReminders Boolean @default(true)
+  pushEnabled Boolean @default(true)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  memberships ClubMember[]
+  follows ClubFollow[]
+  registrations Registration[]
+  notifications Notification[]
+  deviceTokens DeviceToken[]
+  refreshTokens RefreshToken[]
+  resetTokens PasswordResetToken[]
+  announcements Announcement[]
+  events Event[]
+  @@index([role, isActive])
+}
+model Club {
+  id String @id @default(uuid()) @db.Uuid
+  name String @unique
+  description String
+  category Category
+  logoUrl String?
+  contactEmail String?
+  websiteUrl String?
+  socialUrl String?
+  status ClubStatus @default(PENDING)
+  rejectionReason String?
+  isFeatured Boolean @default(false)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  members ClubMember[]
+  followers ClubFollow[]
+  events Event[]
+  announcements Announcement[]
+  @@index([status, category, createdAt])
+}
+model ClubMember {
+  id String @id @default(uuid()) @db.Uuid
+  clubId String @db.Uuid
+  userId String @db.Uuid
+  role MemberRole @default(MEMBER)
+  joinedAt DateTime @default(now()) @db.Timestamptz(3)
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([clubId, userId])
+  @@index([userId, role])
+}
+model ClubFollow {
+  id String @id @default(uuid()) @db.Uuid
+  clubId String @db.Uuid
+  userId String @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([clubId, userId])
+  @@index([userId])
+}
+model Event {
+  id String @id @default(uuid()) @db.Uuid
+  clubId String @db.Uuid
+  createdById String @db.Uuid
+  title String
+  description String
+  category Category
+  posterUrl String?
+  location String
+  startsAt DateTime @db.Timestamptz(3)
+  endsAt DateTime @db.Timestamptz(3)
+  registrationDeadline DateTime @db.Timestamptz(3)
+  capacity Int
+  status EventStatus @default(PENDING_APPROVAL)
+  rejectionReason String?
+  revision Int @default(1)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  club Club @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  createdBy User @relation(fields: [createdById], references: [id], onDelete: Restrict)
+  registrations Registration[]
+  notifications Notification[]
+  @@index([status, startsAt])
+  @@index([clubId, startsAt])
+  @@index([category, startsAt])
+}
+model Registration {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  eventId String @db.Uuid
+  status RegistrationStatus @default(CONFIRMED)
+  version Int @default(1)
+  registeredAt DateTime @default(now()) @db.Timestamptz(3)
+  cancelledAt DateTime? @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  @@unique([userId, eventId])
+  @@index([eventId, status])
+  @@index([userId, status, registeredAt])
+}
+model Announcement {
+  id String @id @default(uuid()) @db.Uuid
+  title String
+  body String
+  clubId String? @db.Uuid
+  authorId String @db.Uuid
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  club Club? @relation(fields: [clubId], references: [id], onDelete: Cascade)
+  author User @relation(fields: [authorId], references: [id], onDelete: Restrict)
+  @@index([clubId, createdAt])
+}
+model Notification {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  eventId String? @db.Uuid
+  type NotificationType
+  title String
+  body String
+  dedupeKey String
+  readAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+  @@unique([userId, dedupeKey])
+  @@index([userId, readAt, createdAt])
+}
+model DeviceToken {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  token String @unique
+  platform String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
+model RefreshToken {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  tokenHash String @unique
+  familyId String @db.Uuid
+  expiresAt DateTime @db.Timestamptz(3)
+  usedAt DateTime? @db.Timestamptz(3)
+  revokedAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
+}
+model PasswordResetToken {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  tokenHash String @unique
+  expiresAt DateTime @db.Timestamptz(3)
+  usedAt DateTime? @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@index([expiresAt])
+}
