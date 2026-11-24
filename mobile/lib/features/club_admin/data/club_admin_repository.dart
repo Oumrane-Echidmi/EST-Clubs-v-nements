@@ -86,6 +86,13 @@ class ClubAdminRepository {
   Future<void> cancelRegistration(String registrationId) =>
       guarded(() => _dio.delete('/registrations/$registrationId'));
 
+  /// ASSUMED: PATCH /clubs/:id with any of description, logoUrl.
+  Future<void> updateClub(String id, {String? description, String? logoUrl}) =>
+      guarded(() => _dio.patch('/clubs/$id', data: {
+            if (description != null) 'description': description,
+            if (logoUrl != null) 'logoUrl': logoUrl,
+          }));
+
   Future<void> delete(String id) => guarded(() => _dio.delete('/events/$id'));
 }
 

@@ -36,12 +36,13 @@ TODO: fonts. google_fonts 8.x does NOT compile with Flutter 3.47 (TextTheme type
 - Event detail widget tests (OPEN confirm/decline, FULL, REGISTERED cancel with backend canCancel)
 - l10n scaffolding: fr (default) + en ARB, Arabic stub, gen-l10n wired in main; only the login screen uses it so far (other screens still have hardcoded French strings -> migrate gradually)
 - One-time onboarding (3 pages, shared_preferences) + first-launch redirect
+- Club info editor (description + logo upload) for club admins
 - 30 tests passing
 
 ## Next (priority order)
 1. Splash/onboarding polish to match login-onboarding.html; AppButton; category/club/date filters on lists
 2. Club admin: Stitch dashboard stats UI (club-admin-dashboard.html); event list/CRUD already done
-3. P1 remaining: club info editor + logo upload, .ics fallback (needs url_launcher or download), notification preferences, super admin club management + role assignment + assign club admins
+3. P1 remaining: .ics fallback (needs url_launcher or download), notification preferences, super admin club management + role assignment + assign club admins
 4. P2: firebase_messaging (optional, must work without config), l10n ARB fr/en/ar, Plus Jakarta Sans + Inter fonts
 5. When backend publishes docs/openapi.json: verify ALL assumed field names/endpoints (auth_repository, event.dart, clubs_repository, home_tab HomeData, registrations status values), consider freezed models
 

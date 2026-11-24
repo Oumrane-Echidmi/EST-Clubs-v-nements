@@ -61,6 +61,12 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
     final clubId = user?.clubId;
     return Scaffold(
       appBar: AppBar(title: const Text('Espace club'), actions: [
+        if (clubId != null)
+          IconButton(
+              tooltip: 'Mon club',
+              icon: const Icon(Icons.edit_note),
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ClubEditScreen(clubId: clubId)))),
         IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => ref.read(authStateProvider.notifier).logout()),
@@ -105,6 +111,77 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
             ),
     );
   }
+}
+
+/// Edit the club description and logo.
+class ClubEditScreen extends ConsumerStatefulWidget {
+  const ClubEditScreen({super.key, required this.clubId});
+  final String clubId;
+  @override
+  ConsumerState<ClubEditScreen> createState() => _ClubEditState();
+}
+
+class _ClubEditState extends ConsumerState<ClubEditScreen> {
+  final _desc = TextEditingController();
+  double? _progress;
+  String? _msg;
+  bool _busy = false;
+  String? _logoUrl;
+
+  Future<void> _pickLogo() async {
+    final f = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (f == null) return;
+    final err = validateImage(f.path, await File(f.path).length());
+    if (err != null) return setState(() => _msg = err);
+    setState(() {
+      _progress = 0;
+      _msg = null;
+    });
+    try {
+      final url = await ref.read(profileRepositoryProvider).uploadImage('logo', f.path,
+          onProgress: (p) => mounted ? setState(() => _progress = p) : null);
+      if (mounted) setState(() => _logoUrl = url);
+    } catch (e) {
+      if (mounted) setState(() => _msg = '$e');
+    } finally {
+      if (mounted) setState(() => _progress = null);
+    }
+  }
+
+  Future<void> _save() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await ref.read(clubAdminRepositoryProvider).updateClub(widget.clubId,
+          description: _desc.text.trim().isEmpty ? null : _desc.text.trim(),
+          logoUrl: _logoUrl);
+      if (mounted) setState(() => _msg = 'Club enregistré');
+    } catch (e) {
+      if (mounted) setState(() => _msg = '$e');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(title: const Text('Mon club')),
+        body: ListView(padding: const EdgeInsets.all(16), children: [
+          OutlinedButton.icon(
+              onPressed: _progress == null ? _pickLogo : null,
+              icon: const Icon(Icons.image_outlined),
+              label: Text(_logoUrl == null ? 'Changer le logo' : 'Logo ajouté ✓')),
+          if (_progress != null) LinearProgressIndicator(value: _progress),
+          const SizedBox(height: 12),
+          TextField(
+              controller: _desc,
+              maxLines: 5,
+              decoration: const InputDecoration(labelText: 'Description')),
+          if (_msg != null) Padding(padding: const EdgeInsets.only(top: 12), child: Text(_msg!)),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: _busy ? null : _save, child: const Text('Enregistrer')),
+        ]),
+      );
 }
 
 /// Students registered to an event: mark ATTENDED or cancel.
