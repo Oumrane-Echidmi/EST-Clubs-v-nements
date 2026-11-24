@@ -1,0 +1,11 @@
+{
+  "@@locale": "fr",
+  "appName": "EST Clubs & Événements",
+  "email": "Email",
+  "password": "Mot de passe",
+  "login": "Se connecter",
+  "forgotPassword": "Mot de passe oublié ?",
+  "createAccount": "Créer un compte",
+  "logout": "Se déconnecter",
+  "retry": "Réessayer"
+}

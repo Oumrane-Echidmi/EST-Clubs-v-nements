@@ -34,6 +34,7 @@ TODO: bundle the fonts (google_fonts or assets) — not done.
 - Add-to-calendar button (add_2_calendar, shown when REGISTERED; .ics fallback is a TODO) and poster upload in event form
 - Club admin registrants screen (mark ATTENDED, cancel registration)
 - Event detail widget tests (OPEN confirm/decline, FULL, REGISTERED cancel with backend canCancel)
+- l10n scaffolding: fr (default) + en ARB, Arabic stub, gen-l10n wired in main; only the login screen uses it so far (other screens still have hardcoded French strings -> migrate gradually)
 - 29 tests passing
 
 ## Next (priority order)

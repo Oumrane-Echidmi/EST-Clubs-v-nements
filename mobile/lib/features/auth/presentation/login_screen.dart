@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import 'auth_providers.dart';
 
 String? validateEmail(String? v) =>
@@ -71,7 +72,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     TextFormField(
                       controller: _email,
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(labelText: 'Email'),
+                      decoration: InputDecoration(labelText: AppLocalizations.of(context).email),
                       validator: validateEmail,
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -79,7 +80,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       controller: _pass,
                       obscureText: true,
                       decoration:
-                          const InputDecoration(labelText: 'Mot de passe'),
+                          InputDecoration(labelText: AppLocalizations.of(context).password),
                       validator: validatePassword,
                     ),
                     if (_error != null)
@@ -97,14 +98,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               height: 20,
                               child:
                                   CircularProgressIndicator(strokeWidth: 2))
-                          : const Text('Se connecter'),
+                          : Text(AppLocalizations.of(context).login),
                     ),
                     TextButton(
                         onPressed: () => context.push('/forgot-password'),
-                        child: const Text('Mot de passe oublié ?')),
+                        child: Text(AppLocalizations.of(context).forgotPassword)),
                     TextButton(
                         onPressed: () => context.push('/register'),
-                        child: const Text('Créer un compte')),
+                        child: Text(AppLocalizations.of(context).createAccount)),
                   ]),
             ),
           ),
