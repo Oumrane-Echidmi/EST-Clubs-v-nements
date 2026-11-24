@@ -55,8 +55,8 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
       await showDialog<bool>(
         context: context,
         builder: (c) => AlertDialog(title: Text(title), content: Text(body), actions: [
-          TextButton(onPressed: () => c.pop(false), child: const Text('Non')),
-          FilledButton(onPressed: () => c.pop(true), child: const Text('Oui')),
+          TextButton(onPressed: () => Navigator.pop(c, false), child: const Text('Non')),
+          FilledButton(onPressed: () => Navigator.pop(c, true), child: const Text('Oui')),
         ]),
       ) ??
       false;

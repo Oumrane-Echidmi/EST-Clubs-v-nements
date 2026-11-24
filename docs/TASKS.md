@@ -33,7 +33,8 @@ TODO: bundle the fonts (google_fonts or assets) — not done.
 - Profile edit (name, student ID), change password, avatar upload with image validation + progress (ProfileRepository.uploadImage reusable for poster/logo; poster/logo UI not wired yet)
 - Add-to-calendar button (add_2_calendar, shown when REGISTERED; .ics fallback is a TODO) and poster upload in event form
 - Club admin registrants screen (mark ATTENDED, cancel registration)
-- 24 tests passing
+- Event detail widget tests (OPEN confirm/decline, FULL, REGISTERED cancel with backend canCancel)
+- 29 tests passing
 
 ## Next (priority order)
 1. Splash/onboarding polish to match login-onboarding.html; AppButton; category/club/date filters on lists
