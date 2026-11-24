@@ -94,6 +94,10 @@ class ProfileTab extends ConsumerWidget {
       const SizedBox(height: 12),
       Card(
         child: Column(children: [
+          if (u?.role == 'CLUB_ADMIN') ...[
+            tile(Icons.shield_outlined, 'Espace bureau du club', () => context.go('/club-admin')),
+            const Divider(height: 1),
+          ],
           tile(Icons.edit_outlined, 'Modifier le profil', () => context.push('/profile/edit')),
           const Divider(height: 1),
           tile(Icons.lock_outline, 'Changer le mot de passe',

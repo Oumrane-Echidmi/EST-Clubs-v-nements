@@ -74,12 +74,14 @@ String? validateEventInput({
 }
 
 class Registrant {
-  Registrant(this.id, this.status, this.name, this.email);
+  Registrant(this.id, this.status, this.name, this.email, {this.studentId});
   final String id, status, name, email;
+  final String? studentId;
   factory Registrant.fromJson(Map<String, dynamic> j) {
     final u = ((j['user'] ?? j['student'] ?? {}) as Map).cast<String, dynamic>();
     return Registrant('${j['id']}', '${j['status']}',
-        '${u['firstName'] ?? ''} ${u['lastName'] ?? ''}'.trim(), '${u['email'] ?? ''}');
+        '${u['firstName'] ?? ''} ${u['lastName'] ?? ''}'.trim(), '${u['email'] ?? ''}',
+        studentId: u['studentId'] as String?);
   }
 }
 
