@@ -5,6 +5,8 @@ import '../../features/auth/presentation/auth_providers.dart';
 import '../../features/auth/presentation/auth_forms.dart';
 import '../../features/auth/presentation/login_screen.dart';
 import '../../features/club_admin/presentation/club_admin_screens.dart';
+import '../../features/notifications/notifications.dart';
+import '../../features/super_admin/super_admin.dart';
 import '../../features/clubs/presentation/clubs_screens.dart';
 import '../../features/events/presentation/events_screens.dart';
 import '../../features/home/presentation/shell_screen.dart';
@@ -70,7 +72,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           builder: (_, __) => const ClubAdminHome()),
       GoRoute(
           path: '/super-admin',
-          builder: (_, __) => const PlaceholderScreen('Administration')),
+          builder: (_, __) => const SuperAdminHome()),
+      GoRoute(
+          path: '/notifications',
+          builder: (_, __) => const NotificationsScreen()),
     ],
   );
 });

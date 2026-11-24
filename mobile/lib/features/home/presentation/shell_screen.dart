@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../clubs/presentation/clubs_screens.dart';
 import '../../events/presentation/events_screens.dart';
+import '../../notifications/notifications.dart';
 import 'home_tab.dart';
 
 /// Placeholder for screens that are not built yet (club admin / super admin).
@@ -59,7 +60,8 @@ class _StudentShellState extends ConsumerState<StudentShell> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: Text(_titles[_i])),
+        appBar: AppBar(
+            title: Text(_titles[_i]), actions: const [NotificationBell()]),
         body: IndexedStack(index: _i, children: _pages),
         bottomNavigationBar: NavigationBar(
           selectedIndex: _i,
