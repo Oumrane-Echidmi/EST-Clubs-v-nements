@@ -69,6 +69,11 @@ Run it yourself: start the backend (backend/README.md), then
 
 Notes: auth endpoints are throttled to 10 per 15 min per IP (restart the API to reset while testing). On Windows kill the API by port 3000.
 
+## Build & boot checks (executed)
+- `flutter build apk --debug` succeeds (Android SDK 36, manifest has INTERNET + debug-only cleartext for 10.0.2.2); `flutter build web` succeeds and the login screen was rendered in headless Chrome (Stitch look + bundled fonts confirmed visually).
+- App boot widget tests: first launch -> onboarding, returning user -> login. Fixed a race where the first-launch onboarding was skipped because the router did not wait for the stored flag.
+- NOT done: no Android emulator/device available here, so authenticated screens were not visually inspected; Firebase push and super-admin club management intentionally excluded.
+
 ## Blockers / notes
 
 - Backend contract is now available (see below); frontend integration against the live API remains pending.

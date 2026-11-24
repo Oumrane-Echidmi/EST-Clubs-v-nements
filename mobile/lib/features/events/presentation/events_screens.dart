@@ -4,7 +4,6 @@ import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/network/paged.dart';
 import '../../../core/widgets/event_widgets.dart';
 import '../../../core/widgets/paged_list.dart';
 import '../../../core/widgets/state_views.dart';

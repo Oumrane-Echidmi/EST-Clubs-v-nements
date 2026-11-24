@@ -52,8 +52,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (_, s) {
       final a = ref.read(authStateProvider);
+      final seen = ref.read(onboardingSeenProvider);
       return redirectFor(
-          loading: a.loading,
+          // Stay on the splash until both the session and the flag are known.
+          loading: a.loading || seen.isLoading,
           role: a.user?.role,
           location: s.matchedLocation,
           seenOnboarding: ref.read(onboardingSeenProvider).value ?? true);
