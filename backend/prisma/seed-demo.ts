@@ -275,6 +275,42 @@ async function main() {
       update: { title: n[1], body: n[2] },
     });
   }
+
+  // --- French titles for the original English seed records ---------------------
+  const frEvents: Record<string, [string, string]> = {
+    'Pending workshop': ['Atelier IA Générative', "Initiation pratique aux modèles génératifs : prompts, outils et cas d'usage étudiants."],
+    'Rejected proposal': ['Soirée Gaming Nocturne', 'Proposition de soirée jeux vidéo ouverte à toutes les filières.'],
+    'Cancelled meetup': ['Rencontre Alumni EST', 'Échanges avec les anciens diplômés sur les parcours et opportunités.'],
+    'Completed seminar': ['Séminaire Cloud & DevOps', 'Retour sur les bonnes pratiques de déploiement continu et de conteneurisation.'],
+    'Ongoing hackathon': ['Hackathon Green Tech', "Défi de 24 heures autour de solutions numériques pour l'environnement."],
+    'Full robotics workshop': ['Atelier Arduino Avancé', 'Capteurs, moteurs et programmation embarquée : atelier pratique à places limitées.'],
+    'Closed registrations': ['Conférence Cybersécurité', 'Menaces actuelles, bonnes pratiques et métiers de la cybersécurité.'],
+    'My upcoming event': ['Forum des Stages EST', 'Rencontrez les entreprises partenaires et déposez vos candidatures de stage.'],
+    'My cancelled registration': ['Tournoi de Futsal Inter-Filières', 'Tournoi par équipes de cinq : ambiance et fair-play garantis.'],
+    'Campus innovation day': ["Journée de l'Innovation Campus", 'Projets étudiants, démonstrations et rencontres avec les startups de la région.'],
+    'Sports tournament': ['Tournoi de Handball Universitaire', 'Compétition inter-écoles sur deux jours avec remise des trophées.'],
+    'Cultural evening': ['Soirée Culturelle Amazighe', 'Musique, danse et gastronomie : célébrons la richesse de notre culture.'],
+    'Community volunteering': ['Journée Bénévolat & Solidarité', 'Actions de terrain avec les associations locales : nettoyage, tutorat et distribution.'],
+    'Entrepreneurship bootcamp': ['Bootcamp Entrepreneuriat', "Trois jours pour transformer une idée en projet : business model, pitch et coaching."],
+    'Science showcase': ['Salon des Sciences & Innovations', 'Expositions de projets scientifiques et démonstrations en direct.'],
+  };
+  for (const [old, [title, description]] of Object.entries(frEvents))
+    await db.event.updateMany({
+      where: { id: id(old) },
+      data: { title, description },
+    });
+  const frAnn: Record<string, [string, string]> = {
+    'announcement:0': ['Bienvenue sur EST Clubs & Événements', 'Découvrez les clubs du campus et inscrivez-vous aux événements.'],
+    'announcement:1': ['Actualité du club Robotique', 'Nouvelle session d\'ateliers Arduino chaque mercredi au FabLab.'],
+    'announcement:2': ['Actualité du club Sciences', 'Appel à projets pour le Salon des Sciences & Innovations.'],
+    'announcement:3': ['Actualité du club Théâtre', 'Les répétitions de la nouvelle création commencent la semaine prochaine.'],
+  };
+  for (const [key, [title, body]] of Object.entries(frAnn))
+    await db.announcement.updateMany({ where: { id: id(key) }, data: { title, body } });
+  await db.notification.updateMany({
+    where: { dedupeKey: { startsWith: 'seed-notification:' } },
+    data: { title: 'Votre événement campus', body: 'Consultez les dernières informations de l\'événement.' },
+  });
   console.log(
     `Demo data ready: ${students.length} demo students, ${clubIds.length} French clubs, ${events.length} events with registrations.`,
   );
