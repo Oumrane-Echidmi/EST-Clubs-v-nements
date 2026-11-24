@@ -22,9 +22,10 @@ TODO: bundle the fonts (google_fonts or assets) — not done.
 - GoRouter role-based redirects, login screen (validated), student bottom-nav shell (stub tabs)
 - Tests (executed, passing): validators, role redirects, error mapping, concurrent-401 single refresh, refresh failure logout
 - Shared LoadingView/EmptyState/ErrorView, RegistrationState enum (7 backend states), server-offset countdown formatter + tests (8 tests total, passing)
+- Register, forgot-password, reset-password screens + repository methods; mobile/README.md for juniors (endpoint field names are assumptions until openapi.json)
 
 ## Next (priority order, P0 first)
-1. Splash/onboarding/register/forgot+reset password screens (match `login-onboarding.html`)
+1. Splash + onboarding screens (register, forgot, reset password are DONE; match login-onboarding.html styling still to polish)
 2. Remaining widgets: AppButton, EventCard, ClubCard, StatusChip, CountdownChip (use formatCountdown + one shared 1s ticker provider)
 3. Home (`home.html`), Clubs (`clubs-directory.html`), Events list/detail with registrationState + countdown (serverTime offset, one shared ticker)
 4. Registrations (register/cancel dialogs, 3 tabs)

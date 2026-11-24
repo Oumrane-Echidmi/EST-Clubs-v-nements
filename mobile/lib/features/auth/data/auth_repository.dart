@@ -43,6 +43,25 @@ class AuthRepository {
         return AuthUser.fromJson(d['user'] as Map<String, dynamic>);
       });
 
+  /// Public sign-up. The backend always creates a STUDENT account.
+  Future<void> register(String fullName, String email, String password) =>
+      _guard(() async {
+        await _dio.post('/auth/register',
+            data: {'fullName': fullName, 'email': email, 'password': password});
+      });
+
+  /// Always succeeds from the user's point of view (backend avoids revealing
+  /// whether the email exists).
+  Future<void> forgotPassword(String email) => _guard(() async {
+        await _dio.post('/auth/forgot-password', data: {'email': email});
+      });
+
+  Future<void> resetPassword(String token, String newPassword) =>
+      _guard(() async {
+        await _dio.post('/auth/reset-password',
+            data: {'token': token, 'newPassword': newPassword});
+      });
+
   Future<AuthUser?> restore() async {
     if (await _tokens.accessToken == null) return null;
     try {

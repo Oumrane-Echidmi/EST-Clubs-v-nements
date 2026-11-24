@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/errors/app_exception.dart';
 import '../../../core/theme/app_theme.dart';
 import 'auth_providers.dart';
@@ -98,6 +99,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                   CircularProgressIndicator(strokeWidth: 2))
                           : const Text('Se connecter'),
                     ),
+                    TextButton(
+                        onPressed: () => context.push('/forgot-password'),
+                        child: const Text('Mot de passe oublié ?')),
+                    TextButton(
+                        onPressed: () => context.push('/register'),
+                        child: const Text('Créer un compte')),
                   ]),
             ),
           ),

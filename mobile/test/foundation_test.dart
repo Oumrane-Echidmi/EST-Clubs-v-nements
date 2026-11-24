@@ -66,6 +66,8 @@ void main() {
   test('role-based redirects', () {
     expect(redirectFor(loading: false, role: null, location: '/student'),
         '/login');
+    expect(redirectFor(loading: false, role: null, location: '/register'), isNull);
+    expect(redirectFor(loading: false, role: null, location: '/forgot-password'), isNull);
     expect(redirectFor(loading: false, role: 'STUDENT', location: '/login'),
         '/student');
     expect(
