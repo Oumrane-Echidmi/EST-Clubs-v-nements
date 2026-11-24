@@ -65,6 +65,28 @@ export class ClubsService {
       q,
     );
   }
+  /** Clubs where the caller has an ADMIN membership (approved clubs first). */
+  async mine(actor: Actor) {
+    const ids = await this.scope.clubIds(actor);
+    if (!ids.length) return [];
+    const clubs = await this.db.club.findMany({
+      where: { id: { in: ids } },
+      orderBy: { name: 'asc' },
+      include: {
+        _count: { select: { followers: true, members: true, events: true } },
+        followers: { where: { userId: actor.id }, select: { id: true } },
+      },
+    });
+    return clubs
+      .map(({ followers, ...club }) => ({
+        ...club,
+        isFollowed: followers.length > 0,
+      }))
+      .sort(
+        (a, b) =>
+          Number(b.status === 'APPROVED') - Number(a.status === 'APPROVED'),
+      );
+  }
   async detail(actor: Actor, id: string) {
     const club = await this.db.club.findUnique({
       where: { id },

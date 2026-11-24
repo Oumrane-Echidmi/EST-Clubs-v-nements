@@ -83,26 +83,14 @@ class ClubAdminRepository {
   ClubAdminRepository(this._dio);
   final Dio _dio;
 
-  /// The API has no "my clubs" route: a club admin can read /clubs/:id/members only
-  /// for clubs they administer, so we probe the visible clubs (403 => not mine).
-  /// TODO(backend): GET /me/clubs would replace this (see docs/TASKS.md).
-  Future<List<Club>> myAdminClubs(String userId) async {
-    final clubs = await fetchPaged(_dio, '/clubs', Club.fromJson, limit: 50);
-    final found = await Future.wait(clubs.items.map((c) async {
-      try {
-        final r = await _dio
-            .get('/clubs/${c.id}/members', queryParameters: {'limit': 50});
-        final list = (r.data['data'] as List).cast<Map<String, dynamic>>();
-        final mine = list.any((m) => m['userId'] == userId && m['role'] == 'ADMIN');
-        return mine ? c : null;
-      } on DioException {
-        return null;
-      }
-    }));
-    // Approved clubs first: only those can host events.
-    return found.whereType<Club>().toList()
-      ..sort((a, b) => (a.status == 'APPROVED' ? 0 : 1).compareTo(b.status == 'APPROVED' ? 0 : 1));
-  }
+  /// Clubs the signed-in user administers (GET /me/clubs): approved first.
+  Future<List<Club>> myAdminClubs(String userId) => guarded(() async {
+        final r = await _dio.get('/me/clubs');
+        return (r.data['data'] as List)
+            .cast<Map<String, dynamic>>()
+            .map(Club.fromJson)
+            .toList();
+      });
 
   Future<Paged<Event>> myClubEvents(String clubId, int page) =>
       fetchPaged(_dio, '/clubs/$clubId/events', Event.fromJson, page: page);

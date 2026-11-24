@@ -71,8 +71,18 @@ export class ClubsController {
     return this.clubs.follow(actor, id, false);
   }
 }
+@ApiTags('Clubs')
+@ApiBearerAuth()
+@Controller('me/clubs')
+export class MyClubsController {
+  constructor(private clubs: ClubsService) {}
+  /** Clubs the signed-in user administers (empty for students). */
+  @Get() mine(@CurrentUser() actor: Actor) {
+    return this.clubs.mine(actor);
+  }
+}
 @Module({
-  controllers: [ClubsController],
+  controllers: [ClubsController, MyClubsController],
   providers: [ClubsService],
   exports: [ClubsService],
 })
