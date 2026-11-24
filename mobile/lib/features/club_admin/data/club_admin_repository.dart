@@ -59,7 +59,7 @@ class Registrant {
   factory Registrant.fromJson(Map<String, dynamic> j) {
     final u = ((j['user'] ?? j['student'] ?? {}) as Map).cast<String, dynamic>();
     return Registrant('${j['id']}', '${j['status']}',
-        '${u['fullName'] ?? u['name'] ?? ''}', '${u['email'] ?? ''}');
+        '${u['firstName'] ?? ''} ${u['lastName'] ?? ''}'.trim(), '${u['email'] ?? ''}');
   }
 }
 

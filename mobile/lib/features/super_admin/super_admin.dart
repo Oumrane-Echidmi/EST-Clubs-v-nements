@@ -13,22 +13,22 @@ class AdminUser {
   final bool isActive;
   factory AdminUser.fromJson(Map<String, dynamic> j) => AdminUser(
         '${j['id']}',
-        '${j['fullName'] ?? j['name'] ?? ''}',
+        '${j['firstName'] ?? ''} ${j['lastName'] ?? ''}'.trim(),
         '${j['email']}',
         '${j['role']}',
         j['isActive'] as bool? ?? true,
       );
 }
 
-/// ASSUMED endpoints: /admin/dashboard, /admin/events, /admin/users (from the
-/// prompt) plus POST /events/:id/approve|reject (NOT in the prompt: confirm).
+/// Endpoints per docs/API.md (approve/reject are PATCH, body rejectionReason).
 class SuperAdminRepository {
   SuperAdminRepository(this._dio);
   final Dio _dio;
 
   Future<Map<String, dynamic>> dashboard() => guarded(() async {
         final r = await _dio.get('/admin/dashboard');
-        return ((r.data['data'] ?? r.data) as Map).cast<String, dynamic>();
+        final d = ((r.data['data'] ?? r.data) as Map).cast<String, dynamic>();
+        return ((d['counts'] ?? d) as Map).cast<String, dynamic>();
       });
 
   Future<Paged<Event>> pendingEvents(int page) => fetchPaged(
@@ -36,9 +36,9 @@ class SuperAdminRepository {
       page: page, query: {'status': 'PENDING_APPROVAL'});
 
   Future<void> approve(String id) =>
-      guarded(() => _dio.post('/events/$id/approve'));
+      guarded(() => _dio.patch('/events/$id/approve'));
   Future<void> reject(String id, String reason) =>
-      guarded(() => _dio.post('/events/$id/reject', data: {'reason': reason}));
+      guarded(() => _dio.patch('/events/$id/reject', data: {'rejectionReason': reason}));
 
   Future<Paged<AdminUser>> users(int page, {String? search}) => fetchPaged(
       _dio, '/admin/users', AdminUser.fromJson,

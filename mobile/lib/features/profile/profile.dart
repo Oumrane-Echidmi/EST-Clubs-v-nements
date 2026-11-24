@@ -20,31 +20,31 @@ String? validateImage(String path, int bytes) {
   return null;
 }
 
-/// ASSUMED endpoints from the prompt: PATCH /me, PATCH /me/password,
-/// POST /uploads/image?kind=avatar|poster|logo (multipart field "file"; response
-/// field "url" is an assumption).
+/// Endpoints per docs/API.md. poster/logo uploads must pass clubId.
 class ProfileRepository {
   ProfileRepository(this._dio);
   final Dio _dio;
 
-  Future<void> update({String? fullName, String? studentId, String? avatarUrl}) =>
+  Future<void> update(
+          {String? firstName, String? lastName, String? studentId, String? avatarUrl}) =>
       guarded(() => _dio.patch('/me', data: {
-            'fullName': ?fullName,
+            'firstName': ?firstName,
+            'lastName': ?lastName,
             'studentId': ?studentId,
             'avatarUrl': ?avatarUrl,
           }));
 
   Future<void> changePassword(String current, String next) => guarded(() =>
       _dio.patch('/me/password',
-          data: {'currentPassword': current, 'newPassword': next}));
+          data: {'currentPassword': current, 'password': next}));
 
   /// Uploads an image and returns its URL. [onProgress] gets 0..1.
   Future<String> uploadImage(String kind, String path,
-          {void Function(double)? onProgress}) =>
+          {String? clubId, void Function(double)? onProgress}) =>
       guarded(() async {
         final form = FormData.fromMap({'file': await MultipartFile.fromFile(path)});
         final r = await _dio.post('/uploads/image',
-            queryParameters: {'kind': kind},
+            queryParameters: {'kind': kind, if (clubId != null) 'clubId': clubId},
             data: form,
             onSendProgress: (sent, total) {
           if (total > 0) onProgress?.call(sent / total);
@@ -64,8 +64,10 @@ class ProfileEditScreen extends ConsumerStatefulWidget {
 }
 
 class _ProfileEditState extends ConsumerState<ProfileEditScreen> {
-  late final _name =
-      TextEditingController(text: ref.read(authStateProvider).user?.fullName);
+  late final _first =
+      TextEditingController(text: ref.read(authStateProvider).user?.firstName);
+  late final _last =
+      TextEditingController(text: ref.read(authStateProvider).user?.lastName);
   final _studentId = TextEditingController();
   double? _progress; // non-null while uploading
   String? _msg;
@@ -101,7 +103,8 @@ class _ProfileEditState extends ConsumerState<ProfileEditScreen> {
     });
     try {
       await ref.read(profileRepositoryProvider).update(
-          fullName: _name.text.trim(),
+          firstName: _first.text.trim(),
+          lastName: _last.text.trim(),
           studentId: _studentId.text.trim().isEmpty ? null : _studentId.text.trim());
       if (mounted) setState(() => _msg = 'Profil enregistré');
     } catch (e) {
@@ -125,7 +128,9 @@ class _ProfileEditState extends ConsumerState<ProfileEditScreen> {
             LinearProgressIndicator(value: _progress),
           ],
           const SizedBox(height: 16),
-          TextField(controller: _name, decoration: const InputDecoration(labelText: 'Nom complet')),
+          TextField(controller: _first, decoration: const InputDecoration(labelText: 'Prénom')),
+          const SizedBox(height: 12),
+          TextField(controller: _last, decoration: const InputDecoration(labelText: 'Nom')),
           const SizedBox(height: 12),
           TextField(
               controller: _studentId,

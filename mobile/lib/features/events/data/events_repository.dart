@@ -49,8 +49,9 @@ class EventsRepository {
   Future<void> cancel(String registrationId) =>
       guarded(() => _dio.delete('/registrations/$registrationId'));
 
-  Future<Paged<Registration>> myRegistrations(int page) =>
-      fetchPaged(_dio, '/me/registrations', Registration.fromJson, page: page);
+  Future<Paged<Registration>> myRegistrations(int page, String tab) => fetchPaged(
+      _dio, '/me/registrations', Registration.fromJson,
+      page: page, query: {'tab': tab});
 }
 
 final eventsRepositoryProvider =

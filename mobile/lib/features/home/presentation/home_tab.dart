@@ -10,8 +10,7 @@ import '../../clubs/data/clubs_repository.dart';
 import '../../clubs/presentation/clubs_screens.dart';
 import '../../events/domain/event.dart';
 
-/// GET /home. Section names are assumptions: upcomingEvents, featuredClubs,
-/// announcements[{id,title}] (see docs/TASKS.md).
+/// GET /home: each section is { data: [...], meta } (see docs/API.md).
 class HomeData {
   HomeData(this.events, this.clubs, this.announcements);
   final List<Event> events;
@@ -20,7 +19,7 @@ class HomeData {
 
   factory HomeData.fromJson(Map<String, dynamic> j) {
     List<T> list<T>(String k, T Function(Map<String, dynamic>) f) =>
-        ((j[k] ?? []) as List).cast<Map<String, dynamic>>().map(f).toList();
+        (((j[k] as Map?)?['data'] ?? []) as List).cast<Map<String, dynamic>>().map(f).toList();
     return HomeData(
       list('upcomingEvents', Event.fromJson),
       list('featuredClubs', Club.fromJson),

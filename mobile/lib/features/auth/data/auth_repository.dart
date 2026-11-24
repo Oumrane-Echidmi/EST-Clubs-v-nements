@@ -8,7 +8,10 @@ class AuthUser {
       required this.email,
       required this.role,
       this.fullName,
-      this.clubId});
+      this.clubId,
+      this.firstName = '',
+      this.lastName = ''});
+  final String firstName, lastName;
   final String id;
 
   /// Club managed by a CLUB_ADMIN (assumed field of /auth/me; verify in openapi).
@@ -20,8 +23,10 @@ class AuthUser {
         id: '${j['id']}',
         email: '${j['email']}',
         role: '${j['role']}',
-        fullName: j['fullName'] as String? ?? j['name'] as String?,
+        fullName: '${j['firstName'] ?? ''} ${j['lastName'] ?? ''}'.trim(),
         clubId: j['clubId'] == null ? null : '${j['clubId']}',
+        firstName: '${j['firstName'] ?? ''}',
+        lastName: '${j['lastName'] ?? ''}',
       );
 }
 
@@ -49,10 +54,15 @@ class AuthRepository {
       });
 
   /// Public sign-up. The backend always creates a STUDENT account.
-  Future<void> register(String fullName, String email, String password) =>
+  Future<void> register(String firstName, String lastName, String email,
+          String password) =>
       _guard(() async {
-        await _dio.post('/auth/register',
-            data: {'fullName': fullName, 'email': email, 'password': password});
+        await _dio.post('/auth/register', data: {
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'password': password
+        });
       });
 
   /// Always succeeds from the user's point of view (backend avoids revealing
@@ -64,7 +74,7 @@ class AuthRepository {
   Future<void> resetPassword(String token, String newPassword) =>
       _guard(() async {
         await _dio.post('/auth/reset-password',
-            data: {'token': token, 'newPassword': newPassword});
+            data: {'token': token, 'password': newPassword});
       });
 
   Future<AuthUser?> restore() async {

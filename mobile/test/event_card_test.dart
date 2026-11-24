@@ -8,7 +8,7 @@ import 'package:est_clubs_events/features/events/domain/registration_state.dart'
 Event _e(String state, {int? seats = 12}) => Event.fromJson({
       'id': '1',
       'title': 'Hackathon EST',
-      'startAt': '2030-01-01T10:00:00Z',
+      'startsAt': '2030-01-01T10:00:00Z',
       'location': 'Amphi A',
       'capacity': 40,
       'availableSeats': seats,

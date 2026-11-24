@@ -198,7 +198,7 @@ class HeroEventCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final now = ref.watch(tickerProvider).value ?? DateTime.now().toUtc();
-    final open = event.registrationState.canRegister;
+    final open = event.canRegister;
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(

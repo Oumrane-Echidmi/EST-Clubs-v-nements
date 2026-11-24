@@ -15,7 +15,7 @@ class Club {
     this.tags = const [],
   });
 
-  /// ASSUMED optional fields (verify with openapi): memberCount, tags[].
+  /// memberCount comes from `_count.members`; the API has no tags field.
   final int? memberCount;
   final List<String> tags;
   final String id;
@@ -31,8 +31,8 @@ class Club {
         description: j['description'] as String?,
         logoUrl: j['logoUrl'] as String?,
         category: j['category'] as String?,
-        isFollowing: j['isFollowing'] as bool? ?? false,
-        memberCount: (j['memberCount'] ?? j['membersCount']) as int?,
+        isFollowing: j['isFollowed'] as bool? ?? false,
+        memberCount: (j['_count'] is Map) ? (j['_count'] as Map)['members'] as int? : null,
         tags: ((j['tags'] ?? const []) as List).map((t) => '$t').toList(),
       );
 }

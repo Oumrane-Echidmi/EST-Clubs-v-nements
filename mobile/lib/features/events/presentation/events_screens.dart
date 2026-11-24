@@ -91,7 +91,7 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
   Widget _action(Event e) {
     final repo = ref.read(eventsRepositoryProvider);
     final s = e.registrationState;
-    if (s.canRegister) {
+    if (e.canRegister) {
       return FilledButton(
         style: FilledButton.styleFrom(
             backgroundColor: const Color(0xFFF97316), minimumSize: const Size.fromHeight(54)),
@@ -211,10 +211,11 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
 class MyRegistrationsTab extends ConsumerWidget {
   const MyRegistrationsTab({super.key});
 
+  // Server-side tab filter (GET /me/registrations?tab=...).
   static const _tabs = {
-    'À venir': 'CONFIRMED',
-    'Terminées': 'ATTENDED',
-    'Annulées': 'CANCELLED',
+    'À venir': 'upcoming',
+    'Terminées': 'completed',
+    'Annulées': 'cancelled',
   };
 
   @override
@@ -226,11 +227,8 @@ class MyRegistrationsTab extends ConsumerWidget {
             child: TabBarView(children: [
               for (final status in _tabs.values)
                 PagedListView<Registration>(
-                  fetch: (p) async {
-                    final page = await ref.read(eventsRepositoryProvider).myRegistrations(p);
-                    return Paged(page.items.where((r) => r.status == status).toList(),
-                        page.page, page.totalPages);
-                  },
+                  fetch: (p) =>
+                      ref.read(eventsRepositoryProvider).myRegistrations(p, status),
                   emptyMessage: 'Aucune inscription',
                   itemBuilder: (c, r) => EventCard(
                       event: r.event, onTap: () => c.push('/events/${r.event.id}')),

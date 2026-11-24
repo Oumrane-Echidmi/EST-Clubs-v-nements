@@ -22,7 +22,13 @@ class Event {
     this.status,
     this.rejectionReason,
     this.clubName,
+    this.canRegister = false,
+    this.category,
   });
+
+  /// Decided by the backend (deadline, capacity, publication). Never recomputed here.
+  final bool canRegister;
+  final String? category;
 
   /// Organizer name (assumed `clubName` or `club.name` in the API).
   final String? clubName;
@@ -66,8 +72,8 @@ class Event {
         id: '${j['id']}',
         title: '${j['title']}',
         description: j['description'] as String?,
-        startAt: DateTime.parse('${j['startAt']}').toUtc(),
-        endAt: _d(j['endAt']),
+        startAt: DateTime.parse('${j['startsAt']}').toUtc(),
+        endAt: _d(j['endsAt']),
         registrationDeadline: _d(j['registrationDeadline']),
         posterUrl: j['posterUrl'] as String?,
         location: j['location'] as String?,
@@ -77,7 +83,9 @@ class Event {
         registrationState:
             RegistrationState.parse(j['registrationState'] as String?),
         serverTime: _d(j['serverTime']),
-        myRegistrationId: j['myRegistrationId'] as String?,
+        myRegistrationId: j['registrationId'] as String?,
+        canRegister: j['canRegister'] as bool? ?? false,
+        category: j['category'] as String?,
         canCancel: j['canCancel'] as bool? ?? false,
         clubName: j['clubName'] as String? ??
             (j['club'] is Map ? (j['club'] as Map)['name'] as String? : null),
