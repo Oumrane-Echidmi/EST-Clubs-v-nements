@@ -24,7 +24,9 @@ docker-compose.yml   Development PostgreSQL and a separate test database
 - Image uploads, calendar exports, announcements and personalized recommendations.
 - Administration statistics and a documented REST API.
 
-Backend endpoints are implemented and tested. Mobile/API integration remains pending; known field and route differences are listed in [integration notes](docs/INTEGRATION.md).
+Backend endpoints are implemented and tested. The mobile app has been reconciled with the API contract and exercised against a running backend by `mobile/test/live_api_test.dart` (see [docs/TASKS.md](docs/TASKS.md) for status and limitations).
+
+**Quick check of the integration:** with the backend running and seeded, run `cd mobile && flutter test test/live_api_test.dart --dart-define=LIVE_API=http://localhost:3000/api --dart-define=SEED_PASSWORD=<your SEED_PASSWORD>`.
 
 ## Requirements
 
@@ -140,4 +142,4 @@ For mobile checks, run `flutter analyze` and `flutter test` from `mobile/`. Mobi
 | [Verification results](docs/VERIFICATION.md) | Executed checks and operational limitations                           |
 | [Security review](docs/SECURITY.md)          | Remaining Prisma CLI dependency advisory and mitigation               |
 
-The referenced original architecture v2 was not supplied; provisional contract choices are identified in the API documentation. Live SMTP/FCM delivery and complete Flutter/API integration have not been verified. Notification dispatch is best effort, the default rate limiter is process-local, and local uploads need durable storage for deployment. The dependency audit has a documented unresolved advisory through Prisma CLI configuration.
+The referenced original architecture v2 was not supplied; provisional contract choices are identified in the API documentation. Live SMTP/FCM delivery has not been verified, and the Flutter app has been exercised against the API only through repository-level live tests (no emulator run yet). Notification dispatch is best effort, the default rate limiter is process-local, and local uploads need durable storage for deployment. The dependency audit has a documented unresolved advisory through Prisma CLI configuration.

@@ -15,6 +15,7 @@ import 'package:est_clubs_events/features/auth/data/auth_repository.dart';
 import 'package:est_clubs_events/features/club_admin/data/club_admin_repository.dart';
 import 'package:est_clubs_events/features/clubs/data/clubs_repository.dart';
 import 'package:est_clubs_events/features/events/data/events_repository.dart';
+import 'package:est_clubs_events/features/home/presentation/home_tab.dart';
 import 'package:est_clubs_events/features/notifications/notifications.dart';
 import 'package:est_clubs_events/features/super_admin/super_admin.dart';
 
@@ -115,6 +116,9 @@ void main() {
     final r = await s.dio.get('/home');
     final home = (r.data['data'] as Map);
     expect(home.keys, containsAll(['upcomingEvents', 'featuredClubs', 'announcements']));
+    final parsed = HomeData.fromJson(home.cast<String, dynamic>());
+    expect(parsed.events, isNotEmpty);
+    expect(parsed.clubs, isNotEmpty);
   }, skip: skip);
 
   test('wrong password maps to an AppException', () async {
