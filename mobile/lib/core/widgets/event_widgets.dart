@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/club_admin/data/club_admin_repository.dart' show categoryLabel;
 import '../../features/events/domain/event.dart';
 import '../../features/events/domain/registration_state.dart';
 import '../theme/app_theme.dart';
@@ -18,9 +19,9 @@ const _days = ['Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.', 'Dim.'];
 const _months = ['Jan.', 'Fév.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sep.', 'Oct.', 'Nov.', 'Déc.'];
 
 /// "Ven. 27 Nov." (device timezone), as in the Stitch cards.
-String formatEventDate(DateTime utc, {bool withTime = false}) {
+String formatEventDate(DateTime utc, {bool withTime = false, bool withYear = false}) {
   final d = utc.toLocal();
-  final s = '${_days[d.weekday - 1]} ${d.day} ${_months[d.month - 1]}';
+  final s = '${_days[d.weekday - 1]} ${d.day} ${_months[d.month - 1]}${withYear ? ' ${d.year}' : ''}';
   return withTime ? '$s • ${_two(d.hour)}:${_two(d.minute)}' : s;
 }
 
@@ -214,8 +215,15 @@ class HeroEventCard extends ConsumerWidget {
                 padding: const EdgeInsets.all(16),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Row(children: [
-                    _Pill(formatCountdown(event.startAt, now, serverOffset: event.serverOffset),
-                        bg: _orange, fg: Colors.white, icon: Icons.timer_outlined),
+                    _Pill(
+                        'Plus que ${formatCountdown(event.startAt, now, serverOffset: event.serverOffset)}',
+                        bg: _orange,
+                        fg: Colors.white,
+                        icon: Icons.timer_outlined),
+                    const Spacer(),
+                    if (event.category != null)
+                      _Pill(categoryLabel(event.category),
+                          bg: Colors.white.withValues(alpha: 0.88), fg: _navy),
                   ]),
                   const Spacer(),
                   Row(children: [
@@ -246,7 +254,7 @@ class HeroEventCard extends ConsumerWidget {
               Row(children: [
                 const Icon(Icons.calendar_month_outlined, color: _navy),
                 const SizedBox(width: 8),
-                Text(formatEventDate(event.startAt),
+                Text(formatEventDate(event.startAt, withYear: true),
                     style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
                 if (event.location != null) ...[
                   const Spacer(),
@@ -260,12 +268,7 @@ class HeroEventCard extends ConsumerWidget {
               ]),
               if (event.fillRatio != null) ...[
                 const SizedBox(height: 12),
-                Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                        color: const Color(0xFFEFF4FF),
-                        borderRadius: BorderRadius.circular(12)),
-                    child: CapacityBar(event)),
+                _HeroCapacityBox(event: event, now: now),
               ],
               const SizedBox(height: 12),
               Container(
@@ -310,4 +313,94 @@ class InfoRow extends StatelessWidget {
           Expanded(child: Text(text, style: const TextStyle(fontWeight: FontWeight.w600))),
         ]),
       );
+}
+
+/// Stitch hero seats box: "142 / 160 inscrits (89%)", "Presque complet !" pill,
+/// navy-to-orange bar, "Il reste seulement N places" and "Fermeture dans 48h".
+class _HeroCapacityBox extends StatelessWidget {
+  const _HeroCapacityBox({required this.event, required this.now});
+  final Event event;
+  final DateTime now;
+
+  String? _closing() {
+    final d = event.registrationDeadline;
+    if (d == null) return null;
+    final left = d.difference(now.add(event.serverOffset));
+    if (left.isNegative) return null;
+    if (left.inHours < 72) return 'Fermeture dans ${left.inHours < 1 ? 1 : left.inHours}h';
+    return 'Fermeture dans ${left.inDays}j';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ratio = event.fillRatio;
+    if (ratio == null) return const SizedBox.shrink();
+    final taken = event.capacity! - event.availableSeats!;
+    final left = event.availableSeats!;
+    final almostFull = ratio >= 0.8 && left > 0;
+    final closing = _closing();
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+          color: const Color(0xFFEFF4FF), borderRadius: BorderRadius.circular(14)),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const Icon(Icons.local_fire_department, size: 18, color: _orange),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text.rich(TextSpan(children: [
+              TextSpan(
+                  text: '$taken / ${event.capacity} inscrits ',
+                  style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
+              TextSpan(
+                  text: '(${(ratio * 100).round()}%)',
+                  style: const TextStyle(fontSize: 12, color: Color(0xFF444651))),
+            ])),
+          ),
+          const SizedBox(width: 6),
+          if (almostFull)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                  color: const Color(0xFFFFDBCA), borderRadius: BorderRadius.circular(20)),
+              child: const Text('Presque complet !',
+                  style: TextStyle(
+                      fontSize: 10.5, fontWeight: FontWeight.w800, color: Color(0xFF9D4300))),
+            ),
+        ]),
+        const SizedBox(height: 10),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: SizedBox(
+            height: 7,
+            child: Stack(children: [
+              const Positioned.fill(child: ColoredBox(color: Color(0xFFDCE9FF))),
+              FractionallySizedBox(
+                widthFactor: ratio,
+                heightFactor: 1,
+                alignment: Alignment.centerLeft,
+                child: const DecoratedBox(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(colors: [_navy, _orange]))),
+              ),
+            ]),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(children: [
+          Expanded(
+            child: Text(
+                left == 0
+                    ? 'Complet'
+                    : (left == 1 ? 'Il reste seulement 1 place' : 'Il reste seulement $left places'),
+                style: const TextStyle(fontSize: 12, color: Color(0xFF444651))),
+          ),
+          if (closing != null)
+            Text(closing,
+                style: const TextStyle(
+                    fontSize: 12, fontWeight: FontWeight.w800, color: Color(0xFF9D4300))),
+        ]),
+      ]),
+    );
+  }
 }
