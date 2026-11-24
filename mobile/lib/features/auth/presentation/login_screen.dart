@@ -120,7 +120,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         padding: const EdgeInsets.only(bottom: 6),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
           Text(l, style: const TextStyle(fontWeight: FontWeight.w700)),
-          if (trailing != null) trailing,
+          ?trailing,
         ]));
     return Scaffold(
       body: SafeArea(

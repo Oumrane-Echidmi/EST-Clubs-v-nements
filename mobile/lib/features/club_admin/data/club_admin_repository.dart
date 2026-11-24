@@ -89,8 +89,8 @@ class ClubAdminRepository {
   /// ASSUMED: PATCH /clubs/:id with any of description, logoUrl.
   Future<void> updateClub(String id, {String? description, String? logoUrl}) =>
       guarded(() => _dio.patch('/clubs/$id', data: {
-            if (description != null) 'description': description,
-            if (logoUrl != null) 'logoUrl': logoUrl,
+            'description': ?description,
+            'logoUrl': ?logoUrl,
           }));
 
   Future<void> delete(String id) => guarded(() => _dio.delete('/events/$id'));

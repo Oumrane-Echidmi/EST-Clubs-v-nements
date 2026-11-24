@@ -13,7 +13,7 @@ Project "EST Clubs & Événements App" (id 16966480898115530928). Exported HTML 
 (PNG screenshots could not be downloaded; re-fetch via Stitch MCP `list_screens` with an API key, never commit the key).
 Tokens (already in `mobile/lib/core/theme/app_theme.dart`): primary #00236F / container #1E3A8A,
 secondary #9D4300 / container #FD761A, surface #F8F9FF, radius 8–16, fonts Plus Jakarta Sans (headlines) + Inter (body).
-TODO: fonts. google_fonts 8.x does NOT compile with Flutter 3.47 (TextTheme type mismatch) -> bundle Plus Jakarta Sans + Inter as assets in pubspec instead.
+Fonts: Inter + Plus Jakarta Sans bundled in mobile/assets/fonts (variable TTFs, OFL licence).
 
 ## Done (branch feature/mobile-foundation)
 - Scaffold, deps, Material 3 theme from Stitch tokens

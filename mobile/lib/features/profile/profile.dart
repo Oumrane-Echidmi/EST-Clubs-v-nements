@@ -29,9 +29,9 @@ class ProfileRepository {
 
   Future<void> update({String? fullName, String? studentId, String? avatarUrl}) =>
       guarded(() => _dio.patch('/me', data: {
-            if (fullName != null) 'fullName': fullName,
-            if (studentId != null) 'studentId': studentId,
-            if (avatarUrl != null) 'avatarUrl': avatarUrl,
+            'fullName': ?fullName,
+            'studentId': ?studentId,
+            'avatarUrl': ?avatarUrl,
           }));
 
   Future<void> changePassword(String current, String next) => guarded(() =>
