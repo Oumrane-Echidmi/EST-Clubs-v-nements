@@ -140,7 +140,7 @@ Mots de passe protégés · connexion à durée limitée et renouvelée automati
 Le serveur est la **seule source de vérité** : le nombre de places restantes est recalculé à chaque consultation, ce qui évite toute erreur de comptage.
 
 ### Organisation du travail
-Répartition en deux parties (mobile / serveur) · interface conçue d'abord sous forme de maquettes puis reproduite fidèlement · documentation partagée · environnement de test avec des données de démonstration réalistes.
+Répartition en deux parties (mobile / serveur) · interface conçue d'abord sous forme de maquettes puis reproduite fidèlement · documentation partagée · données de démonstration réalistes pour présenter l'application.
 
 ### Quelques repères
 - 3 profils d'utilisateurs · 8 clubs · une trentaine d'événements de démonstration · plus de 1 000 inscriptions de démonstration.
