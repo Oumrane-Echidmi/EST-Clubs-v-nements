@@ -84,6 +84,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _email = TextEditingController();
   final _pass = TextEditingController();
   bool _busy = false;
+  bool _hide = true;
   String? _error;
 
   Future<void> _submit() async {
@@ -106,57 +107,105 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final t = AppLocalizations.of(context);
+    const navy = Color(0xFF1E3A8A);
+    const field = Color(0xFFEFF4FF);
+    InputDecoration deco(String hint, IconData icon, {Widget? suffix}) => InputDecoration(
+        hintText: hint,
+        prefixIcon: Icon(icon, color: AppColors.onSurfaceVariant),
+        suffixIcon: suffix,
+        fillColor: field,
+        filled: true);
+    Widget label(String l, [Widget? trailing]) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          Text(l, style: const TextStyle(fontWeight: FontWeight.w700)),
+          if (trailing != null) trailing,
+        ]));
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsetsDirectional.all(AppSpacing.lg),
-            child: Form(
-              key: _form,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const BrandHeader(),
-                    const SizedBox(height: AppSpacing.lg),
-                    TextFormField(
-                      controller: _email,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(labelText: AppLocalizations.of(context).email),
-                      validator: validateEmail,
+        child: SingleChildScrollView(
+          padding: const EdgeInsetsDirectional.all(AppSpacing.md),
+          child: Form(
+            key: _form,
+            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+              const BrandHeader(),
+              const SizedBox(height: AppSpacing.lg),
+              // White form card, as in the Stitch login screen.
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(AppRadius.xl),
+                    boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 2))]),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+                  Row(children: [
+                    const Icon(Icons.lock_outline, color: navy),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                        child: Text('Authentification Étudiant',
+                            style: TextStyle(fontWeight: FontWeight.w800))),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                          color: const Color(0xFFDCE9FF), borderRadius: BorderRadius.circular(20)),
+                      child: const Text('Compte académique UIZ',
+                          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: navy)),
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    TextFormField(
-                      controller: _pass,
-                      obscureText: true,
-                      decoration:
-                          InputDecoration(labelText: AppLocalizations.of(context).password),
-                      validator: validatePassword,
-                    ),
-                    if (_error != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.sm),
-                        child:
-                            Text(_error!, style: TextStyle(color: cs.error)),
-                      ),
-                    const SizedBox(height: AppSpacing.lg),
-                    FilledButton(
-                      onPressed: _busy ? null : _submit,
-                      child: _busy
-                          ? const SizedBox(
-                              width: 20,
-                              height: 20,
-                              child:
-                                  CircularProgressIndicator(strokeWidth: 2))
-                          : Text(AppLocalizations.of(context).login),
-                    ),
-                    TextButton(
-                        onPressed: () => context.push('/forgot-password'),
-                        child: Text(AppLocalizations.of(context).forgotPassword)),
-                    TextButton(
-                        onPressed: () => context.push('/register'),
-                        child: Text(AppLocalizations.of(context).createAccount)),
                   ]),
-            ),
+                  const SizedBox(height: 20),
+                  label('Email institutionnel',
+                      const Text('Obligatoire', style: TextStyle(fontSize: 12, color: AppColors.outline))),
+                  TextFormField(
+                    controller: _email,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: deco('prenom.nom@edu.uiz.ac.ma', Icons.mail_outline),
+                    validator: validateEmail,
+                  ),
+                  const SizedBox(height: 16),
+                  label(
+                      t.password,
+                      GestureDetector(
+                          onTap: () => context.push('/forgot-password'),
+                          child: Text(t.forgotPassword,
+                              style: const TextStyle(
+                                  fontSize: 13, fontWeight: FontWeight.w700, color: navy)))),
+                  TextFormField(
+                    controller: _pass,
+                    obscureText: _hide,
+                    decoration: deco('••••••••', Icons.key_outlined,
+                        suffix: IconButton(
+                            icon: Icon(_hide ? Icons.visibility_outlined : Icons.visibility_off_outlined),
+                            onPressed: () => setState(() => _hide = !_hide))),
+                    validator: validatePassword,
+                  ),
+                  if (_error != null)
+                    Padding(
+                        padding: const EdgeInsets.only(top: AppSpacing.sm),
+                        child: Text(_error!, style: TextStyle(color: cs.error))),
+                  const SizedBox(height: 20),
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(backgroundColor: navy, minimumSize: const Size.fromHeight(56)),
+                    onPressed: _busy ? null : _submit,
+                    icon: _busy
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : const Icon(Icons.login),
+                    label: const Text('Se connecter avec mon compte étudiant',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+                  ),
+                ]),
+              ),
+              const SizedBox(height: 12),
+              TextButton(onPressed: () => context.push('/register'), child: Text(t.createAccount)),
+              const SizedBox(height: 4),
+              Text('Protection des données conforme CNDP & charte numérique UIZ.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: cs.outline)),
+            ]),
           ),
         ),
       ),

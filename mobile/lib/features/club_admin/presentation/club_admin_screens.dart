@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/widgets/paged_list.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../auth/presentation/auth_providers.dart';
+import '../../clubs/data/clubs_repository.dart';
 import '../../events/domain/event.dart';
 import '../data/club_admin_repository.dart';
 
@@ -18,6 +19,122 @@ String statusLabel(String? s) => switch (s) {
       'REJECTED' => 'Refusé',
       _ => s ?? '',
     };
+
+final _firstPageProvider = FutureProvider.autoDispose.family<List<Event>, String>(
+    (ref, clubId) async =>
+        (await ref.watch(clubAdminRepositoryProvider).myClubEvents(clubId, 1)).items);
+
+/// Top of the Stitch club dashboard: "Espace bureau" card, live ticketing alert
+/// for the busiest event, and the big "create event" button.
+class _DashboardHeader extends ConsumerWidget {
+  const _DashboardHeader({required this.clubId, required this.onCreate});
+  final String clubId;
+  final VoidCallback onCreate;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final club = ref.watch(clubDetailProvider(clubId)).value;
+    final events = ref.watch(_firstPageProvider(clubId)).value ?? const <Event>[];
+    final withSeats = events.where((e) => e.fillRatio != null).toList()
+      ..sort((a, b) => b.fillRatio!.compareTo(a.fillRatio!));
+    final hot = withSeats.isEmpty ? null : withSeats.first;
+    const navy = Color(0xFF1E3A8A);
+    const orange = Color(0xFFF97316);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Column(children: [
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+              color: const Color(0xFFDCE9FF), borderRadius: BorderRadius.circular(16)),
+          child: Row(children: [
+            Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(color: navy, borderRadius: BorderRadius.circular(12)),
+                child: const Icon(Icons.shield_outlined, color: Colors.white)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                const Text('ESPACE BUREAU',
+                    style: TextStyle(
+                        color: Color(0xFF9D4300), fontWeight: FontWeight.w800, fontSize: 12)),
+                Text(club?.name ?? '…',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+              ]),
+            ),
+          ]),
+        ),
+        if (hot != null) ...[
+          const SizedBox(height: 12),
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                color: const Color(0xFFFFDBCA), borderRadius: BorderRadius.circular(16)),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                const Icon(Icons.local_fire_department, color: Color(0xFF9D4300)),
+                const SizedBox(width: 6),
+                const Expanded(
+                    child: Text('ALERTE BILLETTERIE EN DIRECT',
+                        style: TextStyle(
+                            color: Color(0xFF9D4300), fontWeight: FontWeight.w800, fontSize: 12))),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration:
+                      BoxDecoration(color: orange, borderRadius: BorderRadius.circular(20)),
+                  child: Text('${(hot.fillRatio! * 100).round()}% RÉSERVÉ',
+                      style: const TextStyle(
+                          color: Colors.white, fontWeight: FontWeight.w800, fontSize: 11)),
+                ),
+              ]),
+              const SizedBox(height: 8),
+              Row(children: [
+                Expanded(
+                    child: Text(hot.title,
+                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20))),
+                Text('${hot.availableSeats} places restantes !',
+                    style: const TextStyle(
+                        color: Color(0xFF9D4300), fontWeight: FontWeight.w700, fontSize: 13)),
+              ]),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                    value: hot.fillRatio,
+                    minHeight: 7,
+                    color: orange,
+                    backgroundColor: Colors.white54),
+              ),
+              const SizedBox(height: 6),
+              Text('${hot.capacity! - hot.availableSeats!} / ${hot.capacity} inscrits confirmés',
+                  style: const TextStyle(
+                      color: Color(0xFF9D4300), fontWeight: FontWeight.w600, fontSize: 13)),
+            ]),
+          ),
+        ],
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          style: FilledButton.styleFrom(
+              backgroundColor: navy, minimumSize: const Size.fromHeight(52)),
+          onPressed: onCreate,
+          icon: const Icon(Icons.add_circle_outline),
+          label: const Text('Créer un nouvel événement de club',
+              style: TextStyle(fontWeight: FontWeight.w800)),
+        ),
+        const Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Padding(
+              padding: EdgeInsets.only(top: 16),
+              child: Text('Mes événements',
+                  style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20))),
+        ),
+      ]),
+    );
+  }
+}
 
 /// Club admin home: list of the club's events with approval status.
 class ClubAdminHome extends ConsumerStatefulWidget {
@@ -54,7 +171,11 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
   Future<void> _openForm([Event? e]) async {
     final saved = await Navigator.of(context).push<bool>(
         MaterialPageRoute(builder: (_) => EventFormScreen(event: e)));
-    if (saved == true && mounted) setState(() => _reload++);
+    if (saved == true && mounted) {
+      final id = ref.read(authStateProvider).user?.clubId;
+      if (id != null) ref.invalidate(_firstPageProvider(id));
+      setState(() => _reload++);
+    }
   }
 
   @override
@@ -73,15 +194,11 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
             icon: const Icon(Icons.logout),
             onPressed: () => ref.read(authStateProvider.notifier).logout()),
       ]),
-      floatingActionButton: clubId == null
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: _openForm,
-              icon: const Icon(Icons.add),
-              label: const Text('Événement')),
       body: clubId == null
           ? const EmptyState(message: "Aucun club associé à ce compte.")
-          : PagedListView<Event>(
+          : Column(children: [
+              _DashboardHeader(clubId: clubId, onCreate: _openForm),
+              Expanded(child: PagedListView<Event>(
               key: ValueKey(_reload),
               fetch: (p) => ref.read(clubAdminRepositoryProvider).myClubEvents(clubId, p),
               emptyMessage: "Aucun événement. Créez le premier !",
@@ -110,7 +227,8 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
                   ),
                 ),
               ),
-            ),
+            )),
+            ]),
     );
   }
 }
