@@ -12,6 +12,8 @@ class EstApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => MaterialApp.router(
         title: 'EST Clubs & Événements',
         theme: buildTheme(Brightness.light),
+        // The Stitch design is light only: ignore the phone's dark mode.
+        themeMode: ThemeMode.light,
         darkTheme: buildTheme(Brightness.dark),
         // French is the default; English and an Arabic stub live in lib/l10n.
         locale: const Locale('fr'),

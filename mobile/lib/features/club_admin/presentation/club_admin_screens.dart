@@ -568,6 +568,7 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
     if (ok != true) return;
     try {
       await ref.read(clubAdminRepositoryProvider).delete(e.id);
+      ref.invalidate(_firstPageProvider);
       if (mounted) setState(() => _reload++);
     } catch (err) {
       if (mounted) {
@@ -585,6 +586,38 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
       setState(() => _reload++);
     }
   }
+
+  Widget _eventTile(Event e) => Card(
+        child: ListTile(
+          leading: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: SizedBox(width: 56, height: 56, child: eventPoster(e))),
+          title: Text(e.title, style: const TextStyle(fontWeight: FontWeight.w800)),
+          subtitle: Text([
+            statusLabel(e.status) +
+                (e.capacity == null
+                    ? ''
+                    : ' · ${e.registeredCount ?? 0}/${e.capacity} inscrits'),
+            if (e.status == 'REJECTED' && e.rejectionReason != null)
+              'Motif : ${e.rejectionReason}',
+          ].join('\n')),
+          isThreeLine: e.rejectionReason != null,
+          onTap: () => context.push('/events/${e.id}'),
+          trailing: PopupMenuButton<String>(
+            onSelected: (v) => switch (v) {
+              'edit' => _openForm(e),
+              'regs' => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => RegistrantsScreen(event: e))),
+              _ => _delete(e),
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(value: 'regs', child: Text('Inscrits')),
+              PopupMenuItem(value: 'edit', child: Text('Modifier')),
+              PopupMenuItem(value: 'delete', child: Text('Supprimer')),
+            ],
+          ),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -619,46 +652,35 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
           ? const LoadingView()
           : clubId == null
           ? const EmptyState(message: "Aucun club administré par ce compte.")
-          : Column(children: [
-              _DashboardHeader(clubId: clubId, onCreate: _openForm),
-              Expanded(child: PagedListView<Event>(
-              key: ValueKey(_reload),
-              fetch: (p) => ref.read(clubAdminRepositoryProvider).myClubEvents(clubId, p),
-              emptyMessage: "Aucun événement. Créez le premier !",
-              itemBuilder: (c, e) => Card(
-                child: ListTile(
-                  leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: SizedBox(width: 56, height: 56, child: eventPoster(e))),
-                  title: Text(e.title,
-                      style: const TextStyle(fontWeight: FontWeight.w800)),
-                  subtitle: Text([
-                    statusLabel(e.status) +
-                        (e.capacity == null
-                            ? ''
-                            : ' · ${e.registeredCount ?? 0}/${e.capacity} inscrits'),
-                    if (e.status == 'REJECTED' && e.rejectionReason != null)
-                      'Motif : ${e.rejectionReason}',
-                  ].join('\n')),
-                  isThreeLine: e.rejectionReason != null,
-                  onTap: () => c.push('/events/${e.id}'),
-                  trailing: PopupMenuButton<String>(
-                    onSelected: (v) => switch (v) {
-                      'edit' => _openForm(e),
-                      'regs' => Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) => RegistrantsScreen(event: e))),
-                      _ => _delete(e),
-                    },
-                    itemBuilder: (_) => const [
-                      PopupMenuItem(value: 'regs', child: Text('Inscrits')),
-                      PopupMenuItem(value: 'edit', child: Text('Modifier')),
-                      PopupMenuItem(value: 'delete', child: Text('Supprimer')),
-                    ],
+          : RefreshIndicator(
+              onRefresh: () async => ref.invalidate(_firstPageProvider),
+              child: ListView(
+                padding: const EdgeInsets.only(bottom: 24),
+                children: [
+                  _DashboardHeader(clubId: clubId, onCreate: _openForm),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: ref.watch(_firstPageProvider(clubId)).when(
+                          loading: () => const Padding(
+                              padding: EdgeInsets.all(24),
+                              child: Center(child: CircularProgressIndicator())),
+                          error: (e, _) => ErrorView(
+                              message: '$e',
+                              onRetry: () => ref.invalidate(_firstPageProvider)),
+                          data: (events) => events.isEmpty
+                              ? const EmptyState(message: 'Aucun événement. Créez le premier !')
+                              : Column(children: [
+                                  for (final e in events)
+                                    Padding(
+                                      padding: const EdgeInsets.only(bottom: 10),
+                                      child: _eventTile(e),
+                                    ),
+                                ]),
+                        ),
                   ),
-                ),
+                ],
               ),
-            )),
-            ]),
+            ),
     );
   }
 }

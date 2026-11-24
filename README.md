@@ -93,6 +93,30 @@ The idempotent development seed creates the following accounts. Each uses the pa
 | Club administrators | `clubadmin1@est.example.edu` through `clubadmin3@est.example.edu` |
 | Students            | `student1@est.example.edu` through `student8@est.example.edu`     |
 
+### Which user and which password to log in with
+
+| To see… | Log in as | Screen you get |
+| --- | --- | --- |
+| The student app | `student1@est.example.edu` | Home, clubs, agenda, my registrations |
+| The club office (dashboard, registrants) | `clubadmin2@est.example.edu` (club "Informatique & Cybersécurité") or `clubadmin1@est.example.edu` | Club dashboard |
+| The administrator (stats, validation, users) | `superadmin@est.example.edu` | Admin dashboard |
+
+**Password for every account above = the value of `SEED_PASSWORD` in `backend/.env`.** It is a local file that is not committed to Git: open it and copy the `SEED_PASSWORD=...` value. To pick your own memorable password, edit that line (8+ characters, with a letter and a number) and run `npm run db:seed` again in `backend/`; the seed accounts are updated with the new password.
+
+Tips:
+- Demo data (French clubs, ~30 events, 170 demo students) comes from `npm run db:seed:demo`, run after `npm run db:seed`.
+- Auth routes are rate-limited (10 logins per 15 minutes per IP). If you get locked out while testing, restart the API.
+- The login screen's "Étudiant / Bureau" switch is only cosmetic; the account decides which space opens.
+- Typing on a phone driven by `adb` can insert stray characters. If you see "Invalid email or password", check the email field for an extra leading character.
+
+### Test on a real Android phone over USB
+
+1. Phone: Developer options → turn on USB debugging (and "Install via USB" on Xiaomi), plug in the cable and accept the prompt.
+2. Build the app so it reaches the API through the cable: `cd mobile && flutter build apk --debug --dart-define=API_BASE_URL=http://localhost:3000/api`.
+3. `adb reverse tcp:3000 tcp:3000`, then `adb install -r build/app/outputs/flutter-apk/app-debug.apk` (adb comes with the Android SDK platform-tools, or with scrcpy).
+4. Optional: `scrcpy` shows the phone screen on the PC.
+5. For Wi-Fi instead of USB, build with `--dart-define=API_BASE_URL=http://<PC_IP>:3000/api`, keep the phone and PC on the same network and allow inbound port 3000 in the firewall.
+
 The seed also creates six approved clubs, one pending club, 15 events, registrations, announcements and notifications. It is disabled in production.
 
 ## Run the mobile application
