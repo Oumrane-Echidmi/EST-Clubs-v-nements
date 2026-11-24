@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../profile/profile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/widgets/paged_list.dart';
@@ -116,6 +119,29 @@ class _EventFormState extends ConsumerState<EventFormScreen> {
   late DateTime? _deadline = widget.event?.registrationDeadline?.toLocal();
   bool _busy = false;
   String? _error;
+  late String? _posterUrl = widget.event?.posterUrl;
+  double? _uploadProgress;
+
+  Future<void> _pickPoster() async {
+    final f = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (f == null) return;
+    final err = validateImage(f.path, await File(f.path).length());
+    if (err != null) return setState(() => _error = err);
+    setState(() {
+      _uploadProgress = 0;
+      _error = null;
+    });
+    try {
+      final url = await ref.read(profileRepositoryProvider).uploadImage(
+          'poster', f.path,
+          onProgress: (p) => mounted ? setState(() => _uploadProgress = p) : null);
+      if (mounted) setState(() => _posterUrl = url);
+    } catch (e) {
+      if (mounted) setState(() => _error = '$e');
+    } finally {
+      if (mounted) setState(() => _uploadProgress = null);
+    }
+  }
 
   Future<DateTime?> _pick(DateTime? initial) async {
     final now = DateTime.now();
@@ -153,6 +179,7 @@ class _EventFormState extends ConsumerState<EventFormScreen> {
       endAt: _end!,
       capacity: int.parse(_cap.text),
       registrationDeadline: _deadline,
+      posterUrl: _posterUrl,
     );
     final repo = ref.read(clubAdminRepositoryProvider);
     try {
@@ -187,6 +214,12 @@ class _EventFormState extends ConsumerState<EventFormScreen> {
         appBar: AppBar(
             title: Text(widget.event == null ? 'Nouvel événement' : "Modifier l'événement")),
         body: ListView(padding: const EdgeInsets.all(16), children: [
+          OutlinedButton.icon(
+              onPressed: _uploadProgress == null ? _pickPoster : null,
+              icon: const Icon(Icons.image_outlined),
+              label: Text(_posterUrl == null ? 'Ajouter une affiche' : 'Affiche ajoutée ✓ (changer)')),
+          if (_uploadProgress != null) LinearProgressIndicator(value: _uploadProgress),
+          const SizedBox(height: 12),
           TextField(controller: _title, decoration: const InputDecoration(labelText: 'Titre')),
           const SizedBox(height: 12),
           TextField(

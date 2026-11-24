@@ -14,7 +14,9 @@ class EventInput {
     required this.endAt,
     required this.capacity,
     this.registrationDeadline,
+    this.posterUrl,
   });
+  final String? posterUrl;
   final String title, description, location;
   final DateTime startAt, endAt;
   final int capacity;
@@ -27,6 +29,7 @@ class EventInput {
         'startAt': startAt.toUtc().toIso8601String(),
         'endAt': endAt.toUtc().toIso8601String(),
         'capacity': capacity,
+        if (posterUrl != null) 'posterUrl': posterUrl,
         if (registrationDeadline != null)
           'registrationDeadline': registrationDeadline!.toUtc().toIso8601String(),
       };

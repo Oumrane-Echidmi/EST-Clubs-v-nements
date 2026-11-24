@@ -31,12 +31,13 @@ TODO: bundle the fonts (google_fonts or assets) — not done.
 - Club admin: own-club event list (status + rejection reason), create/edit/delete event with client validation (assumed endpoints: GET /clubs/:id/events, POST /events, PATCH+DELETE /events/:id; AuthUser.clubId from /auth/me)
 - Notifications center + unread badge (student app bar); Super admin: stats tiles, pending-event approve/reject (reason), user search + activate/deactivate. Assumed endpoints incl. POST /events/:id/approve|reject (NOT in prompt: ask backend dev)
 - Profile edit (name, student ID), change password, avatar upload with image validation + progress (ProfileRepository.uploadImage reusable for poster/logo; poster/logo UI not wired yet)
+- Add-to-calendar button (add_2_calendar, shown when REGISTERED; .ics fallback is a TODO) and poster upload in event form
 - 24 tests passing
 
 ## Next (priority order)
 1. Splash/onboarding polish to match login-onboarding.html; AppButton; category/club/date filters on lists
 2. Club admin: Stitch dashboard stats UI (club-admin-dashboard.html); event list/CRUD already done
-3. P1 remaining: poster/logo upload buttons (club admin forms), add_2_calendar + .ics fallback, notification preferences, club admin registrants (mark ATTENDED), super admin club management + role assignment + assign club admins
+3. P1 remaining: logo upload (club editor), .ics fallback (needs url_launcher or download), notification preferences, club admin registrants (mark ATTENDED), super admin club management + role assignment + assign club admins
 4. P2: firebase_messaging (optional, must work without config), l10n ARB fr/en/ar, Plus Jakarta Sans + Inter fonts
 5. When backend publishes docs/openapi.json: verify ALL assumed field names/endpoints (auth_repository, event.dart, clubs_repository, home_tab HomeData, registrations status values), consider freezed models
 

@@ -1,3 +1,4 @@
+import 'package:add_2_calendar/add_2_calendar.dart' as cal;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -109,6 +110,22 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
     return StatusChip(s); // FULL, ENDED, ... : display only
   }
 
+  /// Adds the event to the device calendar (add_2_calendar).
+  /// TODO: fallback to GET /events/:id/calendar.ics when this fails.
+  Future<void> _addToCalendar(Event e) async {
+    final ok = await cal.Add2Calendar.addEvent2Cal(cal.Event(
+      title: e.title,
+      description: e.description ?? '',
+      location: e.location ?? '',
+      startDate: e.startAt.toLocal(),
+      endDate: (e.endAt ?? e.startAt.add(const Duration(hours: 1))).toLocal(),
+    ));
+    if (!ok && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Impossible d'ajouter au calendrier")));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final async = ref.watch(eventDetailProvider(widget.id));
@@ -136,6 +153,11 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
           Text(e.description ?? ''),
           const SizedBox(height: 24),
           _action(e),
+          if (e.registrationState == RegistrationState.registered)
+            TextButton.icon(
+                onPressed: () => _addToCalendar(e),
+                icon: const Icon(Icons.event_available),
+                label: const Text('Ajouter au calendrier')),
         ]),
       ),
     );
