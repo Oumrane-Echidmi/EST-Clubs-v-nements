@@ -22,7 +22,7 @@ S = STUDENT; C = CLUB_ADMIN scoped through ClubMember.role=ADMIN; A = SUPER_ADMI
 | GET/PATCH   | /me                              | Any        | Profile: firstName, lastName, studentId, avatarUrl; no role/email changes                                                                                                      |
 | PATCH       | /me/password                     | Any        | currentPassword, password; revokes refresh sessions                                                                                                                            |
 | PATCH       | /me/notification-preferences     | Any        | notifyNewEvents, notifyRegistrations, notifyEventUpdates, notifyReminders, pushEnabled booleans                                                                                |
-| GET         | /me/clubs                        | Any        | Clubs where the caller is an ADMIN member (approved first, with counts and isFollowed); empty array for students and non-members                                              |
+| GET         | /me/clubs                        | Any        | Paginated ADMIN clubs (approved first by default, with counts and isFollowed); empty page for students/non-members                                                             |
 | GET         | /clubs                           | Any        | search, category, status; sorts createdAt/name; students see approved clubs only; club admins also see their own pending/rejected clubs                                        |
 | POST        | /clubs                           | C/A        | name, description, category, optional logoUrl/contactEmail/websiteUrl/socialUrl; C creates PENDING and is assigned ADMIN membership, A creates APPROVED                        |
 | GET         | /clubs/{id}                      | Any        | Visibility enforced; includes isFollowed and counts                                                                                                                            |
@@ -135,3 +135,12 @@ Full-event response:
 ```json
 { "error": { "code": "EVENT_FULL", "message": "No available seats" } }
 ```
+
+## Club administrator discovery and dashboard (additive contract)
+
+This increment extends club discovery and adds a scoped dashboard without renaming existing fields:
+
+- `GET /api/me/clubs`: Any active authenticated user; students receive an empty page. Administrators receive only clubs where the current user has an ADMIN ClubMember row, including pending/rejected clubs. Uses the normal Club list schema and pagination; supports category/status/search and sorts createdAt/name. A super administrator's unassigned campus clubs remain available through /api/admin/clubs. A user with no ADMIN memberships receives an empty page. Default order preserves the existing approved-first, alphabetical behavior across page boundaries; providing sortBy selects the requested standard order instead. The response still has data as an array, with additive pagination metadata (default limit 20, max 50).
+- `GET /api/clubs/{id}/dashboard`: owning CLUB_ADMIN or SUPER_ADMIN. Returns `clubId`, counts (`members`, `followers`, `events`, `publishedEvents`, `pendingEvents`, `activeRegistrations`) and up to 20 upcoming published `eventFillRates`, each containing `eventId`, `title`, `startsAt`, `capacity`, `registeredCount`, `availableSeats` and `fillRate` (0-1). Registrations count CONFIRMED and ATTENDED; cancelled registrations are excluded. Event fill rates are grouped, without per-event count queries. Students cannot access this resource; foreign club administrators receive FORBIDDEN.
+
+The dashboard is a bounded aggregate rather than a general event list; use /clubs/{id}/events for paginated events. Authorization is checked against current database roles and ADMIN memberships. Membership removal/demotion immediately removes discovery and protected club access. Event `canRegister` is false for administrators because the register route is student-only.

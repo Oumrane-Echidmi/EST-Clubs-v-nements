@@ -10,16 +10,22 @@ Flutter can now target the routes in OpenAPI. Events include registrationId, can
 
 The missing original architecture v2 must be compared with the provisional choices documented in API.md. API contract changes should be agreed here before implementation. No mobile source or screens were changed by the backend implementation, and no end-to-end Flutter integration has been claimed.
 
-## Mobile assumptions to reconcile after merge
+## Initial mobile assumptions and upstream reconciliation
 
-The mobile commits on GitHub main were inspected before backend merge. They were developed before the API contract existed. Frontend ownership is preserved; the following changes belong to the mobile integration pass:
+The following list records the initial differences found before the first backend merge. Newer mobile commits now reconcile these names/routes, consume /me/clubs and report six passing repository-level live API tests. Those results belong to the frontend stream; no Flutter tests were rerun by this backend increment. The new scoped dashboard is available for the next UI integration pass:
 
 - Event.fromJson and EventInput currently use startAt/endAt; the API uses startsAt/endsAt. Current registration field is registrationId rather than myRegistrationId.
 - Auth register/profile code assumes fullName. API requests use firstName/lastName; responses expose those fields. Reset and change-password use password rather than newPassword.
-- Club-admin event creation must include category and registrationDeadline. The backend requires both. Admin ownership is ClubMember-based; AuthUser.clubId is not a backend field. The frontend needs to select its ADMIN memberships instead of assuming a single club ID.
+- Club-admin event creation must include category and registrationDeadline. The backend requires both. Admin ownership is ClubMember-based; AuthUser.clubId is not a backend field. The frontend should use GET /api/me/clubs to select its ADMIN memberships instead of assuming a single club ID.
 - Mobile moderation assumes POST approve/reject; backend routes are PATCH /events/{id}/approve and PATCH /events/{id}/reject.
 - Poster/logo uploads must supply clubId query in addition to kind; avatars only require kind.
 - Home returns paginated section objects. Adapt HomeData to upcomingEvents, featuredClubs, announcements and recommendedEvents, each with data/meta.
 - Dashboard counters are nested under data.counts. Review the other user/club fields against OpenAPI.
 
-These differences are documented before any compatibility changes. No live Flutter/API integration was executed and no mobile files were changed by this backend stream.
+These initial differences remain documented for reference. No mobile files were changed by this backend stream.
+
+## Backend club administrator increment
+
+Ready backend routes: `GET /api/me/clubs` discovers the caller's ADMIN memberships and supports normal club filters/pagination; `GET /api/clubs/{id}/dashboard` supplies scoped counts and up to 20 chronological event fill rates. The discovery response uses the existing paginated Club schema. This provides a real route for club selection instead of the mobile assumption that AuthUser has one clubId. Other field/route mismatches above still require the frontend integration pass.
+
+Upstream compatibility is preserved: /me/clubs keeps data as an array, returns an empty page for students and places approved clubs first by default. Pagination metadata and query parameters are additive. Mobile currently reads the first page; a user managing more than 20 clubs should paginate (up to 50 per request).

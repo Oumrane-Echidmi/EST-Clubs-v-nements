@@ -213,6 +213,28 @@ export function completeContract(document: OpenAPIObject) {
       mimeType: enumeration('image/webp'),
       size: num(),
     }),
+    ClubDashboard: object({
+      clubId: uuid(),
+      counts: object({
+        members: num(),
+        followers: num(),
+        events: num(),
+        publishedEvents: num(),
+        pendingEvents: num(),
+        activeRegistrations: num(),
+      }),
+      eventFillRates: array(
+        object({
+          eventId: uuid(),
+          title: str(),
+          startsAt: date(),
+          capacity: num(),
+          registeredCount: num(),
+          availableSeats: num(),
+          fillRate: { type: 'number', minimum: 0, maximum: 1 },
+        }),
+      ),
+    }),
     Dashboard: object({
       counts: object({
         users: num(),
@@ -266,6 +288,7 @@ export function completeContract(document: OpenAPIObject) {
         (method === 'get' &&
           [
             '/api/clubs',
+            '/api/me/clubs',
             '/api/events',
             '/api/me/registrations',
             '/api/me/notifications',
@@ -278,7 +301,8 @@ export function completeContract(document: OpenAPIObject) {
           /\/(members|registrations|events)$/.test(path) &&
           !path.includes('/auth/'));
       let data: SchemaObject;
-      if (path === '/api/home') data = ref('Home');
+      if (path === '/api/clubs/{id}/dashboard') data = ref('ClubDashboard');
+      else if (path === '/api/home') data = ref('Home');
       else if (path === '/api/admin/dashboard') data = ref('Dashboard');
       else if (path === '/api/uploads/image') data = ref('Upload');
       else if (
@@ -377,7 +401,8 @@ export function completeContract(document: OpenAPIObject) {
           ? 'SUPER_ADMIN'
           : path.endsWith('/register')
             ? 'STUDENT'
-            : (method === 'post' &&
+            : path === '/api/clubs/{id}/dashboard' ||
+                (method === 'post' &&
                   (path === '/api/events' ||
                     path === '/api/clubs' ||
                     path === '/api/announcements')) ||

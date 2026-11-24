@@ -27,6 +27,15 @@ export class ClubsController {
   @Get() list(@CurrentUser() actor: Actor, @Query() q: ClubQuery) {
     return this.clubs.list(actor, q, actor.role === 'SUPER_ADMIN');
   }
+  @Roles('CLUB_ADMIN', 'SUPER_ADMIN')
+  @ClubScope()
+  @Get(':id/dashboard')
+  dashboard(
+    @CurrentUser() actor: Actor,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.clubs.dashboard(actor, id);
+  }
   @Get(':id') detail(
     @CurrentUser() actor: Actor,
     @Param('id', ParseUUIDPipe) id: string,
@@ -76,9 +85,8 @@ export class ClubsController {
 @Controller('me/clubs')
 export class MyClubsController {
   constructor(private clubs: ClubsService) {}
-  /** Clubs the signed-in user administers (empty for students). */
-  @Get() mine(@CurrentUser() actor: Actor) {
-    return this.clubs.mine(actor);
+  @Get() mine(@CurrentUser() actor: Actor, @Query() q: ClubQuery) {
+    return this.clubs.mine(actor, q);
   }
 }
 @Module({
