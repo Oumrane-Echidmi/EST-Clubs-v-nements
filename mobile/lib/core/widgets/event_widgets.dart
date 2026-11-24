@@ -290,3 +290,22 @@ class HeroEventCard extends ConsumerWidget {
     );
   }
 }
+
+/// Public poster (placeholder gradient when there is no image).
+Widget eventPoster(Event e) => _poster(e);
+
+/// Icon + text row used on the event detail page.
+class InfoRow extends StatelessWidget {
+  const InfoRow(this.icon, this.text, {super.key});
+  final IconData icon;
+  final String text;
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4),
+        child: Row(children: [
+          Icon(icon, size: 20, color: _navy),
+          const SizedBox(width: 10),
+          Expanded(child: Text(text, style: const TextStyle(fontWeight: FontWeight.w600))),
+        ]),
+      );
+}

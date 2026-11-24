@@ -83,6 +83,8 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
     final s = e.registrationState;
     if (s.canRegister) {
       return FilledButton(
+        style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFFF97316), minimumSize: const Size.fromHeight(54)),
         onPressed: _busy
             ? null
             : () async {
@@ -137,9 +139,19 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
             message: '$err',
             onRetry: () => ref.invalidate(eventDetailProvider(widget.id))),
         data: (e) => ListView(padding: const EdgeInsets.all(16), children: [
-          EventCard(event: e),
+          ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: AspectRatio(aspectRatio: 16 / 9, child: eventPoster(e))),
           const SizedBox(height: 16),
-          Text(e.title, style: Theme.of(context).textTheme.headlineSmall),
+          if (e.clubName != null)
+            Text(e.clubName!,
+                style: const TextStyle(
+                    color: Color(0xFF9D4300), fontWeight: FontWeight.w800, fontSize: 13)),
+          Text(e.title,
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w800)),
           const SizedBox(height: 8),
           if (e.registrationState == RegistrationState.open ||
               e.registrationState == RegistrationState.registered)
@@ -147,10 +159,25 @@ class _EventDetailState extends ConsumerState<EventDetailScreen> {
                 alignment: AlignmentDirectional.centerStart,
                 child: CountdownChip(target: e.startAt, serverOffset: e.serverOffset)),
           const SizedBox(height: 8),
-          if (e.capacity != null)
-            Text('Capacité : ${e.capacity} · Inscrits : ${e.registeredCount ?? '-'} · Places : ${e.availableSeats ?? '-'}'),
-          const SizedBox(height: 8),
-          Text(e.description ?? ''),
+          InfoRow(Icons.calendar_month_outlined, formatEventDate(e.startAt, withTime: true)),
+          if (e.location != null) InfoRow(Icons.place_outlined, e.location!),
+          if (e.registrationDeadline != null)
+            InfoRow(Icons.hourglass_bottom,
+                "Inscriptions jusqu'au ${formatEventDate(e.registrationDeadline!, withTime: true)}"),
+          if (e.fillRatio != null) ...[
+            const SizedBox(height: 12),
+            Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    color: const Color(0xFFEFF4FF), borderRadius: BorderRadius.circular(12)),
+                child: CapacityBar(e)),
+          ],
+          if ((e.description ?? '').isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Text('À propos', style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w800)),
+            const SizedBox(height: 4),
+            Text(e.description!),
+          ],
           const SizedBox(height: 24),
           _action(e),
           if (e.registrationState == RegistrationState.registered)
