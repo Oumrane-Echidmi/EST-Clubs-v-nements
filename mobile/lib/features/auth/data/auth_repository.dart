@@ -7,8 +7,12 @@ class AuthUser {
       {required this.id,
       required this.email,
       required this.role,
-      this.fullName});
+      this.fullName,
+      this.clubId});
   final String id;
+
+  /// Club managed by a CLUB_ADMIN (assumed field of /auth/me; verify in openapi).
+  final String? clubId;
   final String email;
   final String role; // STUDENT | CLUB_ADMIN | SUPER_ADMIN
   final String? fullName;
@@ -17,6 +21,7 @@ class AuthUser {
         email: '${j['email']}',
         role: '${j['role']}',
         fullName: j['fullName'] as String? ?? j['name'] as String?,
+        clubId: j['clubId'] == null ? null : '${j['clubId']}',
       );
 }
 

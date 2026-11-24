@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/auth_providers.dart';
 import '../../features/auth/presentation/auth_forms.dart';
 import '../../features/auth/presentation/login_screen.dart';
+import '../../features/club_admin/presentation/club_admin_screens.dart';
 import '../../features/clubs/presentation/clubs_screens.dart';
 import '../../features/events/presentation/events_screens.dart';
 import '../../features/home/presentation/shell_screen.dart';
@@ -66,7 +67,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/student', builder: (_, __) => const StudentShell()),
       GoRoute(
           path: '/club-admin',
-          builder: (_, __) => const PlaceholderScreen('Espace club')),
+          builder: (_, __) => const ClubAdminHome()),
       GoRoute(
           path: '/super-admin',
           builder: (_, __) => const PlaceholderScreen('Administration')),

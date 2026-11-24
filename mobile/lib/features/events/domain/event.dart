@@ -19,7 +19,13 @@ class Event {
     this.serverTime,
     this.myRegistrationId,
     this.canCancel = false,
+    this.status,
+    this.rejectionReason,
   });
+
+  /// Approval status for admins: PENDING_APPROVAL | PUBLISHED | REJECTED ...
+  final String? status;
+  final String? rejectionReason;
 
   final String id;
   final String title;
@@ -64,5 +70,7 @@ class Event {
         serverTime: _d(j['serverTime']),
         myRegistrationId: j['myRegistrationId'] as String?,
         canCancel: j['canCancel'] as bool? ?? false,
+        status: j['status'] as String?,
+        rejectionReason: j['rejectionReason'] as String?,
       );
 }

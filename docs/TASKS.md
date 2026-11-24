@@ -28,11 +28,12 @@ TODO: bundle the fonts (google_fonts or assets) — not done.
 ## Done (student flow)
 - Reusable PagedListView (loading/error+retry/empty/pull-to-refresh/infinite scroll), Paged + fetchPaged helpers
 - Clubs tab + club detail (follow/unfollow, club events), Events tab + search, event detail with backend registrationState, countdown, register/cancel confirm dialogs (no double submit, reload after), My registrations (3 tabs), Home (/home), Profile + logout
-- 14 tests passing
+- Club admin: own-club event list (status + rejection reason), create/edit/delete event with client validation (assumed endpoints: GET /clubs/:id/events, POST /events, PATCH+DELETE /events/:id; AuthUser.clubId from /auth/me)
+- 20 tests passing
 
 ## Next (priority order)
 1. Splash/onboarding polish to match login-onboarding.html; AppButton; category/club/date filters on lists
-2. Club admin: dashboard (club-admin-dashboard.html), own events list, create/edit/delete event, approval status + rejection reason (route /club-admin is still a placeholder)
+2. Club admin: Stitch dashboard stats UI (club-admin-dashboard.html); event list/CRUD already done
 3. P1: notifications center + badge, uploads (poster/logo/avatar), add_2_calendar + .ics fallback, profile edit/password/preferences, club admin registrants (mark ATTENDED), super admin screens
 4. P2: firebase_messaging (optional, must work without config), l10n ARB fr/en/ar, Plus Jakarta Sans + Inter fonts
 5. When backend publishes docs/openapi.json: verify ALL assumed field names/endpoints (auth_repository, event.dart, clubs_repository, home_tab HomeData, registrations status values), consider freezed models
