@@ -11,7 +11,7 @@ Executed on Windows, Node 24.22.0, npm 11.20.0, Docker 29.6.2, Docker Compose 5.
 - Live curl smoke passed: seed login, club-admin event creation, super-admin approval, follower notification, published detail, registration, decreased seat availability, cancellation and restored availability. The smoke event was deleted afterward.
 - OpenAPI JSON exported with request DTOs, response schemas, role descriptions, nullability, pagination and error envelopes.
 
-Final verification: lint passed, strict TypeScript build passed, 10 unit tests passed, and all 28 PostgreSQL integration tests passed (zero skipped). OpenAPI export succeeded.
+Initial backend verification: lint passed, strict TypeScript build passed, 10 unit tests passed, and all 28 PostgreSQL integration tests passed (zero skipped). OpenAPI export succeeded.
 
 ## Limitations
 
@@ -22,3 +22,11 @@ Final verification: lint passed, strict TypeScript build passed, 10 unit tests p
 - Scheduler windows tolerate short delays, not outages lasting more than the window. Default rate limiting is per process. Local uploads require a durable volume and no automatic orphan cleanup is provided.
 - Audit reports three high entries for one underlying Effect advisory through Prisma CLI configuration. Reachability, mitigation and review date are documented in SECURITY.md. This is not a clean audit.
 - A Windows command used to print seed counts initially failed during disconnect because of shell interpolation after correctly returning the counts; seed itself succeeded. A first curl attempt was blocked by the sandbox; the permitted rerun passed.
+
+## Club administrator continuation
+
+Added paginated managed-club discovery and a scoped club dashboard with counts and grouped event fill rates. Administrator event responses now correctly return canRegister=false. The new tests first failed against the previous backend, including the reproduced administrator eligibility bug, then passed after implementation.
+
+Latest execution: strict build passed, ESLint/Prettier passed, 10 unit tests passed and 38 PostgreSQL integration tests passed across four suites. The original 20-student registration capacity test remains unchanged and passed. The new dashboard boundary test exercises 22 additional upcoming events and verifies the 20-result cap and chronological ordering. OpenAPI was regenerated. Backend Git attributes now enforce LF to prevent Windows checkout formatting failures.
+
+The continuation curl smoke also passed against the running updated API, including managed-club discovery and scoped dashboard data.

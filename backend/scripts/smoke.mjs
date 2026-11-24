@@ -39,7 +39,7 @@ function main() {
   const superAdmin = login('superadmin@est.example.edu');
   const call = (session, method, path, data) =>
     curl(method, path, data, session.accessToken);
-  const clubs = call(admin, 'GET', '/clubs?limit=50');
+  const clubs = call(admin, 'GET', '/me/clubs?limit=50');
   const club = clubs.find((c) => c.name === 'EST Robotics');
   assert.ok(club);
   call(student, 'POST', `/clubs/${club.id}/follow`);
@@ -59,6 +59,11 @@ function main() {
     assert.equal(event.status, 'PENDING_APPROVAL');
     const approved = call(superAdmin, 'PATCH', `/events/${event.id}/approve`);
     assert.equal(approved.status, 'PUBLISHED');
+    const dashboard = call(admin, 'GET', '/clubs/' + club.id + '/dashboard');
+    assert.equal(dashboard.clubId, club.id);
+    assert.ok(dashboard.counts.publishedEvents > 0);
+    assert.ok(dashboard.eventFillRates.length <= 20);
+    assert.equal(approved.canRegister, false);
     const before = call(student, 'GET', `/events/${event.id}`);
     assert.equal(before.availableSeats, 5);
     const registration = call(student, 'POST', `/events/${event.id}/register`);
@@ -78,7 +83,7 @@ function main() {
       ),
     );
     console.log(
-      'PASS curl smoke: login, pending event, approval, follower notification, event detail, registration, decreased seats, cancellation, restored seats.',
+      'PASS curl smoke: managed clubs, scoped dashboard, login, pending event, approval, follower notification, event detail, registration, decreased seats, cancellation, restored seats.',
     );
   } finally {
     call(superAdmin, 'DELETE', `/events/${event.id}`);

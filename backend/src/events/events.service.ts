@@ -45,16 +45,20 @@ export class EventsService {
     const countMap = new Map(counts.map((c) => [c.eventId, c._count._all]));
     const registrationMap = new Map(registrations.map((r) => [r.eventId, r]));
     const now = new Date();
-    return events.map((event) => ({
-      ...event,
-      ...eventState(
+    return events.map((event) => {
+      const state = eventState(
         event,
         countMap.get(event.id) ?? 0,
         registrationMap.get(event.id) ?? null,
         now,
         this.config.cancellationMinutes,
-      ),
-    }));
+      );
+      return {
+        ...event,
+        ...state,
+        canRegister: actor.role === 'STUDENT' && state.canRegister,
+      };
+    });
   }
   async list(actor: Actor, q: EventQuery) {
     const where: Prisma.EventWhereInput = {

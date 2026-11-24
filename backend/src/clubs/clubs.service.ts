@@ -28,6 +28,18 @@ export class ClubsService {
               ...(ownIds.length ? [{ id: { in: ownIds } }] : []),
             ],
           };
+    return this.listVisible(actor, q, visible);
+  }
+  async managed(actor: Actor, q: ClubQuery) {
+    return this.listVisible(actor, q, {
+      members: { some: { userId: actor.id, role: 'ADMIN' } },
+    });
+  }
+  private async listVisible(
+    actor: Actor,
+    q: ClubQuery,
+    visible: Prisma.ClubWhereInput,
+  ) {
     const where: Prisma.ClubWhereInput = {
       AND: [
         visible,
@@ -63,6 +75,86 @@ export class ClubsService {
       })),
       total,
       q,
+    );
+  }
+  async dashboard(actor: Actor, id: string) {
+    await this.scope.assertClub(actor, id);
+    return this.db.$transaction(
+      async (tx) => {
+        const club = await tx.club.findUnique({
+          where: { id },
+          include: {
+            _count: {
+              select: { members: true, followers: true, events: true },
+            },
+          },
+        });
+        if (!club) throw new ApiError('NOT_FOUND', 'Club not found', 404);
+        const active: Prisma.RegistrationWhereInput = {
+          status: { in: ['CONFIRMED', 'ATTENDED'] },
+        };
+        const [statuses, activeRegistrations, events] = await Promise.all([
+          tx.event.groupBy({
+            by: ['status'],
+            where: { clubId: id },
+            _count: { _all: true },
+          }),
+          tx.registration.count({
+            where: { ...active, event: { clubId: id } },
+          }),
+          tx.event.findMany({
+            where: {
+              clubId: id,
+              status: 'PUBLISHED',
+              startsAt: { gt: new Date() },
+            },
+            select: { id: true, title: true, startsAt: true, capacity: true },
+            orderBy: [{ startsAt: 'asc' }, { id: 'asc' }],
+            take: 20,
+          }),
+        ]);
+        const counts = events.length
+          ? await tx.registration.groupBy({
+              by: ['eventId'],
+              where: {
+                ...active,
+                eventId: { in: events.map((event) => event.id) },
+              },
+              _count: { _all: true },
+            })
+          : [];
+        const countMap = new Map(
+          counts.map((count) => [count.eventId, count._count._all]),
+        );
+        return {
+          clubId: id,
+          counts: {
+            members: club._count.members,
+            followers: club._count.followers,
+            events: club._count.events,
+            publishedEvents:
+              statuses.find((group) => group.status === 'PUBLISHED')?._count
+                ._all ?? 0,
+            pendingEvents:
+              statuses.find((group) => group.status === 'PENDING_APPROVAL')
+                ?._count._all ?? 0,
+            activeRegistrations,
+          },
+          eventFillRates: events.map((event) => {
+            const registeredCount = countMap.get(event.id) ?? 0;
+            return {
+              eventId: event.id,
+              title: event.title,
+              startsAt: event.startsAt,
+              capacity: event.capacity,
+              registeredCount,
+              availableSeats: event.capacity - registeredCount,
+              fillRate: registeredCount / event.capacity,
+            };
+          }),
+        };
+      },
+      { isolationLevel: Prisma.TransactionIsolationLevel.RepeatableRead },
     );
   }
   async detail(actor: Actor, id: string) {

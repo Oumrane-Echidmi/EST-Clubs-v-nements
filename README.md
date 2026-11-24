@@ -122,7 +122,7 @@ With a running API and seeded development database, run `npm run test:smoke` for
 
 The completed backend verification recorded:
 
-- 10 passing unit tests and 28 passing PostgreSQL integration tests.
+- 10 passing unit tests and 38 passing PostgreSQL integration tests.
 - A capacity race with 20 distinct students: exactly five successful registrations, 15 `EVENT_FULL` responses and five active database registrations.
 - Successful migrations, two idempotent seed runs, lint, build and OpenAPI export.
 - A successful live curl smoke test covering registration, cancellation, seat availability, event approval and follower notifications.

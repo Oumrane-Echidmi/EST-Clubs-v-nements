@@ -134,3 +134,12 @@ Full-event response:
 ```json
 { "error": { "code": "EVENT_FULL", "message": "No available seats" } }
 ```
+
+## Club administrator discovery and dashboard (additive contract)
+
+The next backend increment adds two routes without renaming existing fields:
+
+- `GET /api/me/clubs`: CLUB_ADMIN or SUPER_ADMIN; returns only clubs where the current user has an ADMIN ClubMember row, including pending/rejected clubs. Uses the normal Club list schema and pagination; supports category/status/search and sorts createdAt/name. A super administrator's unassigned campus clubs remain available through /api/admin/clubs. A user with no ADMIN memberships receives an empty page.
+- `GET /api/clubs/{id}/dashboard`: owning CLUB_ADMIN or SUPER_ADMIN. Returns `clubId`, counts (`members`, `followers`, `events`, `publishedEvents`, `pendingEvents`, `activeRegistrations`) and up to 20 upcoming published `eventFillRates`, each containing `eventId`, `title`, `startsAt`, `capacity`, `registeredCount`, `availableSeats` and `fillRate` (0-1). Registrations count CONFIRMED and ATTENDED; cancelled registrations are excluded. Event fill rates are grouped, without per-event count queries. Students cannot access this resource; foreign club administrators receive FORBIDDEN.
+
+The dashboard is a bounded aggregate rather than a general event list; use /clubs/{id}/events for paginated events. Authorization is checked against current database roles and ADMIN memberships. Membership removal/demotion immediately removes discovery and protected club access. Event `canRegister` is false for administrators because the register route is student-only.

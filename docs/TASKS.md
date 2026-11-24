@@ -68,7 +68,7 @@ Backend P0, P1 and P2 are implemented in backend/. API contract: API.md and open
 
 - Strict TypeScript build and ESLint/Prettier checks passed.
 - 10 unit tests passed in the completed unit run; final repetition after review is recorded in VERIFICATION.md.
-- Final PostgreSQL integration run: 28 passed, zero skipped or weakened tests.
+- Latest PostgreSQL integration run: 38 passed, zero skipped or weakened tests.
 - Mandatory capacity race: 20 distinct students, 5 successes, 15 EVENT_FULL failures, exactly 5 active database registrations.
 - SQL migrations applied to isolated development/test databases.
 - Idempotent seed ran twice: 12 accounts, 7 clubs, 15 events.
@@ -80,3 +80,11 @@ Backend P0, P1 and P2 are implemented in backend/. API contract: API.md and open
 Backend endpoints are ready for the frontend developer to integrate against the published contract. Mobile has not been tested against the live API. The mobile code on GitHub main was inspected; concrete field/route mismatches are listed in INTEGRATION.md for the frontend owner.
 
 Original architecture v2 was not supplied. Provisional choices are recorded in API.md. External SMTP/FCM delivery remains unverified without credentials. Prisma CLI's remaining Effect advisory and review deadline are documented in SECURITY.md. Additional operational limitations are in VERIFICATION.md.
+
+## Club administrator backend increment
+
+- Added GET /api/me/clubs for paginated discovery of the caller's ADMIN club memberships, including pending/rejected clubs and normal category/status/search filters.
+- Added GET /api/clubs/{id}/dashboard with scoped membership/follower/event/registration totals and up to 20 chronological upcoming event fill rates. Counts use a consistent database snapshot and grouped registrations.
+- Corrected event canRegister to remain false for administrators, matching the student-only registration route.
+- Added 10 PostgreSQL integration tests covering discovery, role restrictions, membership revocation, accurate occupancy counts, empty dashboards, bounded results and OpenAPI response contracts.
+- Build, lint, 10 unit tests and all 38 integration tests passed. No mobile source changed; frontend should replace its assumed AuthUser.clubId with the new discovery route.

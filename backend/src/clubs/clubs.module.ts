@@ -27,6 +27,15 @@ export class ClubsController {
   @Get() list(@CurrentUser() actor: Actor, @Query() q: ClubQuery) {
     return this.clubs.list(actor, q, actor.role === 'SUPER_ADMIN');
   }
+  @Roles('CLUB_ADMIN', 'SUPER_ADMIN')
+  @ClubScope()
+  @Get(':id/dashboard')
+  dashboard(
+    @CurrentUser() actor: Actor,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.clubs.dashboard(actor, id);
+  }
   @Get(':id') detail(
     @CurrentUser() actor: Actor,
     @Param('id', ParseUUIDPipe) id: string,
@@ -71,8 +80,18 @@ export class ClubsController {
     return this.clubs.follow(actor, id, false);
   }
 }
+@ApiTags('Clubs')
+@ApiBearerAuth()
+@Roles('CLUB_ADMIN', 'SUPER_ADMIN')
+@Controller('me/clubs')
+export class ManagedClubsController {
+  constructor(private clubs: ClubsService) {}
+  @Get() list(@CurrentUser() actor: Actor, @Query() q: ClubQuery) {
+    return this.clubs.managed(actor, q);
+  }
+}
 @Module({
-  controllers: [ClubsController],
+  controllers: [ClubsController, ManagedClubsController],
   providers: [ClubsService],
   exports: [ClubsService],
 })
