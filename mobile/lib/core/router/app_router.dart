@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/auth_providers.dart';
 import '../../features/auth/presentation/auth_forms.dart';
 import '../../features/auth/presentation/login_screen.dart';
+import '../../features/clubs/presentation/clubs_screens.dart';
+import '../../features/events/presentation/events_screens.dart';
 import '../../features/home/presentation/shell_screen.dart';
 
 String _homeFor(String role) => role == 'STUDENT'
@@ -55,6 +57,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: '/reset-password',
           builder: (_, __) => const ResetPasswordScreen()),
+      GoRoute(
+          path: '/events/:id',
+          builder: (_, s) => EventDetailScreen(s.pathParameters['id']!)),
+      GoRoute(
+          path: '/clubs/:id',
+          builder: (_, s) => ClubDetailScreen(s.pathParameters['id']!)),
       GoRoute(path: '/student', builder: (_, __) => const StudentShell()),
       GoRoute(
           path: '/club-admin',

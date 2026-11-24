@@ -25,14 +25,17 @@ TODO: bundle the fonts (google_fonts or assets) — not done.
 - Register, forgot-password, reset-password screens + repository methods; mobile/README.md for juniors (endpoint field names are assumptions until openapi.json)
 - Event model, EventCard (poster-first), StatusChip, CountdownChip, shared 1s tickerProvider + tests (11 tests total, passing)
 
-## Next (priority order, P0 first)
-1. Splash + onboarding screens (register, forgot, reset password are DONE; match login-onboarding.html styling still to polish)
-2. Remaining widgets: AppButton, ClubCard (EventCard, StatusChip, CountdownChip + shared tickerProvider are DONE in core/widgets/event_widgets.dart)
-3. Home (`home.html`), Clubs (`clubs-directory.html`), Events list/detail with registrationState + countdown (serverTime offset, one shared ticker)
-4. Registrations (register/cancel dialogs, 3 tabs)
-5. Club admin dashboard (`club-admin-dashboard.html`) + event CRUD
-6. P1: notifications, uploads, calendar, profile, super admin. P2: firebase_messaging (NOT added yet; must work without config), l10n ARB fr/en/ar (not set up yet)
-7. Typed models: freezed/json_serializable once `docs/openapi.json` exists (backend owner). Auth field names in `auth_repository.dart` are assumptions (`accessToken`, `refreshToken`, `user`) — verify.
+## Done (student flow)
+- Reusable PagedListView (loading/error+retry/empty/pull-to-refresh/infinite scroll), Paged + fetchPaged helpers
+- Clubs tab + club detail (follow/unfollow, club events), Events tab + search, event detail with backend registrationState, countdown, register/cancel confirm dialogs (no double submit, reload after), My registrations (3 tabs), Home (/home), Profile + logout
+- 14 tests passing
+
+## Next (priority order)
+1. Splash/onboarding polish to match login-onboarding.html; AppButton; category/club/date filters on lists
+2. Club admin: dashboard (club-admin-dashboard.html), own events list, create/edit/delete event, approval status + rejection reason (route /club-admin is still a placeholder)
+3. P1: notifications center + badge, uploads (poster/logo/avatar), add_2_calendar + .ics fallback, profile edit/password/preferences, club admin registrants (mark ATTENDED), super admin screens
+4. P2: firebase_messaging (optional, must work without config), l10n ARB fr/en/ar, Plus Jakarta Sans + Inter fonts
+5. When backend publishes docs/openapi.json: verify ALL assumed field names/endpoints (auth_repository, event.dart, clubs_repository, home_tab HomeData, registrations status values), consider freezed models
 
 ## Blockers / notes
 - No backend / openapi.json in repo yet; nothing was tested against a real API.
