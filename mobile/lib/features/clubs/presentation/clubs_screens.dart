@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/widgets/app_images.dart';
 import '../../../core/widgets/event_widgets.dart';
 import '../../../core/widgets/paged_list.dart';
 import '../../../core/widgets/state_views.dart';
@@ -21,24 +21,43 @@ class ClubCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Container(
-              height: 96,
-              alignment: Alignment.topLeft,
-              padding: const EdgeInsets.all(12),
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)])),
-              child: club.category == null
-                  ? null
-                  : Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                          color: Colors.white, borderRadius: BorderRadius.circular(20)),
-                      child: Text(categoryLabel(club.category),
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF1E3A8A)))),
+            SizedBox(
+              height: 140,
+              child: Stack(fit: StackFit.expand, children: [
+                photo(url: null, asset: clubBannerAsset(club.name, club.category)),
+                const DecoratedBox(
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [Color(0x66000000), Color(0x00000000), Color(0x99000000)]))),
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    if (club.category != null)
+                      Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.92),
+                              borderRadius: BorderRadius.circular(20)),
+                          child: Row(mainAxisSize: MainAxisSize.min, children: [
+                            const Icon(Icons.verified, size: 13, color: Color(0xFF1E3A8A)),
+                            const SizedBox(width: 4),
+                            Text(categoryLabel(club.category),
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF1E3A8A))),
+                          ])),
+                    const Spacer(),
+                    CircleAvatar(
+                        radius: 16,
+                        backgroundColor: Colors.white.withValues(alpha: 0.9),
+                        child: Icon(
+                            club.isFollowing ? Icons.favorite : Icons.favorite_border,
+                            size: 18,
+                            color: club.isFollowing ? const Color(0xFFF97316) : const Color(0xFF444651))),
+                  ]),
+                ),
+              ]),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
@@ -47,14 +66,9 @@ class ClubCard extends StatelessWidget {
                   CircleAvatar(
                     radius: 22,
                     backgroundColor: const Color(0xFFDCE1FF),
-                    backgroundImage: club.logoUrl == null
-                        ? null
-                        : CachedNetworkImageProvider(club.logoUrl!),
-                    child: club.logoUrl == null
-                        ? Text(club.name[0],
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w800, color: Color(0xFF00236F)))
-                        : null,
+                    backgroundImage: photoProvider(
+                        url: club.logoUrl,
+                        asset: clubLogoAsset(club.name, club.category)),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
@@ -152,10 +166,9 @@ class ClubStory extends StatelessWidget {
                     shape: BoxShape.circle, color: Theme.of(context).colorScheme.surface),
                 child: CircleAvatar(
                   radius: 26,
-                  backgroundImage: club.logoUrl == null
-                      ? null
-                      : CachedNetworkImageProvider(club.logoUrl!),
-                  child: club.logoUrl == null ? Text(club.name[0]) : null,
+                  backgroundImage: photoProvider(
+                      url: club.logoUrl,
+                      asset: clubLogoAsset(club.name, club.category)),
                 ),
               ),
             ),

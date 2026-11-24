@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/widgets/app_images.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../clubs/presentation/clubs_screens.dart';
 import '../../events/presentation/events_screens.dart';
@@ -22,29 +23,96 @@ class PlaceholderScreen extends ConsumerWidget {
       );
 }
 
+/// Round avatar with the green "online" dot, as in the Stitch header.
+class HeaderAvatar extends ConsumerWidget {
+  const HeaderAvatar({super.key});
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final u = ref.watch(authStateProvider).user;
+    return Stack(clipBehavior: Clip.none, children: [
+      CircleAvatar(
+          radius: 17,
+          backgroundImage:
+              photoProvider(url: u?.avatarUrl, asset: profileAvatarAsset)),
+      Positioned(
+        right: -1,
+        bottom: -1,
+        child: Container(
+          width: 11,
+          height: 11,
+          decoration: BoxDecoration(
+              color: const Color(0xFF10B981),
+              shape: BoxShape.circle,
+              border: Border.all(color: Colors.white, width: 1.5)),
+        ),
+      ),
+    ]);
+  }
+}
+
 class ProfileTab extends ConsumerWidget {
   const ProfileTab({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final u = ref.watch(authStateProvider).user;
+    Widget tile(IconData icon, String label, VoidCallback onTap) => ListTile(
+        leading: Icon(icon, color: const Color(0xFF1E3A8A)),
+        title: Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: onTap);
+    final roleLabel = u?.role == 'CLUB_ADMIN'
+        ? 'Bureau du club'
+        : (u?.role == 'SUPER_ADMIN' ? 'Administrateur' : 'Étudiant EST');
     return ListView(padding: const EdgeInsets.all(16), children: [
-      ListTile(
-          leading: const CircleAvatar(child: Icon(Icons.person)),
-          title: Text(u?.fullName ?? u?.email ?? ''),
-          subtitle: Text(u?.email ?? '')),
-      ListTile(
-          leading: const Icon(Icons.edit_outlined),
-          title: const Text('Modifier le profil'),
-          onTap: () => context.push('/profile/edit')),
-      ListTile(
-          leading: const Icon(Icons.lock_outline),
-          title: const Text('Changer le mot de passe'),
-          onTap: () => context.push('/profile/password')),
+      Card(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(children: [
+            CircleAvatar(
+                radius: 44,
+                backgroundImage:
+                    photoProvider(url: u?.avatarUrl, asset: profileAvatarAsset)),
+            const SizedBox(height: 12),
+            Text(u?.fullName ?? '',
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(fontWeight: FontWeight.w800)),
+            Text(u?.email ?? '', style: const TextStyle(color: Color(0xFF444651))),
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+              decoration: BoxDecoration(
+                  color: const Color(0xFFDCE9FF), borderRadius: BorderRadius.circular(20)),
+              child: Text(roleLabel,
+                  style: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF1E3A8A))),
+            ),
+          ]),
+        ),
+      ),
+      const SizedBox(height: 12),
+      Card(
+        child: Column(children: [
+          tile(Icons.edit_outlined, 'Modifier le profil', () => context.push('/profile/edit')),
+          const Divider(height: 1),
+          tile(Icons.lock_outline, 'Changer le mot de passe',
+              () => context.push('/profile/password')),
+          const Divider(height: 1),
+          tile(Icons.notifications_outlined, 'Notifications',
+              () => context.push('/notifications')),
+        ]),
+      ),
       const SizedBox(height: 16),
       OutlinedButton.icon(
+          style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFFBA1A1A),
+              side: const BorderSide(color: Color(0xFFBA1A1A)),
+              minimumSize: const Size.fromHeight(52),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
           onPressed: () => ref.read(authStateProvider.notifier).logout(),
           icon: const Icon(Icons.logout),
-          label: const Text('Se déconnecter')),
+          label: const Text('Se déconnecter', style: TextStyle(fontWeight: FontWeight.w700))),
     ]);
   }
 }
@@ -90,7 +158,7 @@ class _StudentShellState extends ConsumerState<StudentShell> {
                       fontWeight: FontWeight.w500,
                       color: Theme.of(context).colorScheme.onSurfaceVariant)),
             ]),
-            actions: const [NotificationBell()]),
+            actions: const [NotificationBell(), HeaderAvatar(), SizedBox(width: 12)]),
         body: IndexedStack(index: _i, children: _pages),
         bottomNavigationBar: NavigationBar(
           selectedIndex: _i,

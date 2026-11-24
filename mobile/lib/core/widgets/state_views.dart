@@ -49,7 +49,12 @@ class ErrorView extends StatelessWidget {
 /// navy with white text, the others light blue. [selected] == null means "Tous".
 class FilterChipsRow extends StatelessWidget {
   const FilterChipsRow(
-      {super.key, required this.options, required this.selected, required this.onChanged});
+      {super.key,
+      required this.options,
+      required this.selected,
+      required this.onChanged,
+      this.padding = const EdgeInsets.symmetric(horizontal: 16)});
+  final EdgeInsets padding;
   final List<String> options;
   final String? selected;
   final ValueChanged<String?> onChanged;
@@ -75,7 +80,7 @@ class FilterChipsRow extends StatelessWidget {
       height: 44,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        padding: padding,
         children: [
           chip('Tous', selected == null, () => onChanged(null)),
           for (final o in options) chip(o, selected == o, () => onChanged(o)),

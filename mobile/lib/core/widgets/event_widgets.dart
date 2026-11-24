@@ -1,9 +1,9 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../features/events/domain/event.dart';
 import '../../features/events/domain/registration_state.dart';
 import '../theme/app_theme.dart';
+import 'app_images.dart';
 
 /// ONE shared clock for the whole app: emits every second.
 /// Every CountdownChip watches this, so we never create many timers.
@@ -87,20 +87,11 @@ class CapacityBar extends StatelessWidget {
   }
 }
 
-Widget _poster(Event e, {double? size}) => e.posterUrl == null
-    ? Container(
-        width: size,
-        height: size,
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [_navy, Color(0xFF3B82F6)])),
-        child: const Icon(Icons.event, color: Colors.white, size: 32))
-    : CachedNetworkImage(
-        imageUrl: e.posterUrl!,
-        width: size,
-        height: size,
-        fit: BoxFit.cover,
-        placeholder: (_, _) => const ColoredBox(color: Colors.black12),
-        errorWidget: (_, _, _) => const Icon(Icons.broken_image));
+Widget _poster(Event e, {double? size}) => photo(
+    url: e.posterUrl,
+    asset: eventPosterAsset(e.id, e.category, clubName: e.clubName),
+    width: size,
+    height: size);
 
 class _Pill extends StatelessWidget {
   const _Pill(this.text, {required this.bg, required this.fg, this.icon});
@@ -177,7 +168,12 @@ class EventCard extends StatelessWidget {
             const SizedBox(height: 12),
             Align(
               alignment: AlignmentDirectional.centerEnd,
-              child: _Pill(full ? 'Voir les détails' : 'Détails & Inscription',
+              child: _Pill(
+                  full
+                      ? 'Voir les détails'
+                      : (event.registrationState == RegistrationState.registered
+                          ? 'Voir mon inscription'
+                          : 'Détails & Inscription'),
                   bg: full ? const Color(0xFFFFDBCA) : const Color(0xFFE5EEFF),
                   fg: full ? AppColors.secondary : AppColors.primary),
             ),
@@ -222,9 +218,15 @@ class HeroEventCard extends ConsumerWidget {
                         bg: _orange, fg: Colors.white, icon: Icons.timer_outlined),
                   ]),
                   const Spacer(),
-                  if (event.clubName != null)
-                    Text('Organisé par ${event.clubName}',
-                        style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                  Row(children: [
+                    const _Pill('OFFICIEL UIZ', bg: Color(0xFF1E3A8A), fg: Colors.white),
+                    const SizedBox(width: 8),
+                    if (event.clubName != null)
+                      Flexible(
+                          child: Text('Organisé par ${event.clubName}',
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(color: Colors.white70, fontSize: 12))),
+                  ]),
                   const SizedBox(height: 4),
                   Text(event.title.toUpperCase(),
                       maxLines: 2,

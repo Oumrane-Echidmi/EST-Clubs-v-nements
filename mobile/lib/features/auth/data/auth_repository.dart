@@ -10,8 +10,10 @@ class AuthUser {
       this.fullName,
       this.clubId,
       this.firstName = '',
-      this.lastName = ''});
+      this.lastName = '',
+      this.avatarUrl});
   final String firstName, lastName;
+  final String? avatarUrl;
   final String id;
 
   /// Club managed by a CLUB_ADMIN (assumed field of /auth/me; verify in openapi).
@@ -27,6 +29,7 @@ class AuthUser {
         clubId: j['clubId'] == null ? null : '${j['clubId']}',
         firstName: '${j['firstName'] ?? ''}',
         lastName: '${j['lastName'] ?? ''}',
+        avatarUrl: j['avatarUrl'] as String?,
       );
 }
 
