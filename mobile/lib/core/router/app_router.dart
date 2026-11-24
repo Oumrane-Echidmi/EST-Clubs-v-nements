@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/auth_providers.dart';
 import '../../features/auth/presentation/auth_forms.dart';
 import '../../features/auth/presentation/login_screen.dart';
+import '../../features/auth/presentation/onboarding_screen.dart';
 import '../../features/club_admin/presentation/club_admin_screens.dart';
 import '../../features/notifications/notifications.dart';
 import '../../features/profile/profile.dart';
@@ -20,11 +21,15 @@ String _homeFor(String role) => role == 'STUDENT'
 
 /// Pure redirect logic, unit-testable. The server stays the authority on authz.
 String? redirectFor(
-    {required bool loading, required String? role, required String location}) {
+    {required bool loading,
+    required String? role,
+    required String location,
+    bool seenOnboarding = true}) {
   if (loading) return location == '/splash' ? null : '/splash';
   if (role == null) {
     // Pages a signed-out user may open.
-    const publicPaths = ['/login', '/register', '/forgot-password', '/reset-password'];
+    const publicPaths = ['/welcome', '/login', '/register', '/forgot-password', '/reset-password'];
+    if (location == '/splash' && !seenOnboarding) return '/welcome';
     return publicPaths.contains(location) ? null : '/login';
   }
   if (location == '/login' || location == '/splash') return _homeFor(role);
@@ -37,6 +42,8 @@ String? redirectFor(
   return null;
 }
 
+final onboardingSeenProvider = FutureProvider<bool>((_) => onboardingSeen());
+
 final routerProvider = Provider<GoRouter>((ref) {
   final refresh = ValueNotifier(0);
   ref.listen(authStateProvider, (_, __) => refresh.value++);
@@ -46,13 +53,17 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (_, s) {
       final a = ref.read(authStateProvider);
       return redirectFor(
-          loading: a.loading, role: a.user?.role, location: s.matchedLocation);
+          loading: a.loading,
+          role: a.user?.role,
+          location: s.matchedLocation,
+          seenOnboarding: ref.read(onboardingSeenProvider).value ?? true);
     },
     routes: [
       GoRoute(
           path: '/splash',
           builder: (_, __) => const Scaffold(
               body: Center(child: CircularProgressIndicator()))),
+      GoRoute(path: '/welcome', builder: (_, __) => const OnboardingScreen()),
       GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
       GoRoute(path: '/register', builder: (_, __) => const RegisterScreen()),
       GoRoute(

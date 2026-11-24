@@ -55,6 +55,7 @@ class FakeAdapter implements HttpClientAdapter {
 }
 
 void main() {
+  onboardingTests();
   test('validators', () {
     expect(validateEmail('a@b.co'), isNull);
     expect(validateEmail('nope'), isNotNull);
@@ -117,5 +118,13 @@ void main() {
     await expectLater(dio.get('/data'), throwsA(isA<DioException>()));
     expect(await t.accessToken, isNull);
     expect(expired, isTrue);
+  });
+}
+
+void onboardingTests() {
+  test('first launch goes to welcome, afterwards to login', () {
+    expect(redirectFor(loading: false, role: null, location: '/splash', seenOnboarding: false), '/welcome');
+    expect(redirectFor(loading: false, role: null, location: '/splash', seenOnboarding: true), '/login');
+    expect(redirectFor(loading: false, role: null, location: '/welcome', seenOnboarding: false), isNull);
   });
 }

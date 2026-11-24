@@ -13,7 +13,7 @@ Project "EST Clubs & Événements App" (id 16966480898115530928). Exported HTML 
 (PNG screenshots could not be downloaded; re-fetch via Stitch MCP `list_screens` with an API key, never commit the key).
 Tokens (already in `mobile/lib/core/theme/app_theme.dart`): primary #00236F / container #1E3A8A,
 secondary #9D4300 / container #FD761A, surface #F8F9FF, radius 8–16, fonts Plus Jakarta Sans (headlines) + Inter (body).
-TODO: bundle the fonts (google_fonts or assets) — not done.
+TODO: fonts. google_fonts 8.x does NOT compile with Flutter 3.47 (TextTheme type mismatch) -> bundle Plus Jakarta Sans + Inter as assets in pubspec instead.
 
 ## Done (branch feature/mobile-foundation)
 - Scaffold, deps, Material 3 theme from Stitch tokens
@@ -35,7 +35,8 @@ TODO: bundle the fonts (google_fonts or assets) — not done.
 - Club admin registrants screen (mark ATTENDED, cancel registration)
 - Event detail widget tests (OPEN confirm/decline, FULL, REGISTERED cancel with backend canCancel)
 - l10n scaffolding: fr (default) + en ARB, Arabic stub, gen-l10n wired in main; only the login screen uses it so far (other screens still have hardcoded French strings -> migrate gradually)
-- 29 tests passing
+- One-time onboarding (3 pages, shared_preferences) + first-launch redirect
+- 30 tests passing
 
 ## Next (priority order)
 1. Splash/onboarding polish to match login-onboarding.html; AppButton; category/club/date filters on lists
