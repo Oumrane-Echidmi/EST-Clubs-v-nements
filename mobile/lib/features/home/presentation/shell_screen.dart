@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../auth/presentation/auth_providers.dart';
 import '../../clubs/presentation/clubs_screens.dart';
 import '../../events/presentation/events_screens.dart';
@@ -31,6 +32,14 @@ class ProfileTab extends ConsumerWidget {
           leading: const CircleAvatar(child: Icon(Icons.person)),
           title: Text(u?.fullName ?? u?.email ?? ''),
           subtitle: Text(u?.email ?? '')),
+      ListTile(
+          leading: const Icon(Icons.edit_outlined),
+          title: const Text('Modifier le profil'),
+          onTap: () => context.push('/profile/edit')),
+      ListTile(
+          leading: const Icon(Icons.lock_outline),
+          title: const Text('Changer le mot de passe'),
+          onTap: () => context.push('/profile/password')),
       const SizedBox(height: 16),
       OutlinedButton.icon(
           onPressed: () => ref.read(authStateProvider.notifier).logout(),

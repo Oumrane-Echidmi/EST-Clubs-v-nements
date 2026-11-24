@@ -30,12 +30,13 @@ TODO: bundle the fonts (google_fonts or assets) — not done.
 - Clubs tab + club detail (follow/unfollow, club events), Events tab + search, event detail with backend registrationState, countdown, register/cancel confirm dialogs (no double submit, reload after), My registrations (3 tabs), Home (/home), Profile + logout
 - Club admin: own-club event list (status + rejection reason), create/edit/delete event with client validation (assumed endpoints: GET /clubs/:id/events, POST /events, PATCH+DELETE /events/:id; AuthUser.clubId from /auth/me)
 - Notifications center + unread badge (student app bar); Super admin: stats tiles, pending-event approve/reject (reason), user search + activate/deactivate. Assumed endpoints incl. POST /events/:id/approve|reject (NOT in prompt: ask backend dev)
-- 22 tests passing
+- Profile edit (name, student ID), change password, avatar upload with image validation + progress (ProfileRepository.uploadImage reusable for poster/logo; poster/logo UI not wired yet)
+- 24 tests passing
 
 ## Next (priority order)
 1. Splash/onboarding polish to match login-onboarding.html; AppButton; category/club/date filters on lists
 2. Club admin: Stitch dashboard stats UI (club-admin-dashboard.html); event list/CRUD already done
-3. P1 remaining: uploads (poster/logo/avatar), add_2_calendar + .ics fallback, profile edit/password/preferences, club admin registrants (mark ATTENDED), super admin club management + role assignment + assign club admins
+3. P1 remaining: poster/logo upload buttons (club admin forms), add_2_calendar + .ics fallback, notification preferences, club admin registrants (mark ATTENDED), super admin club management + role assignment + assign club admins
 4. P2: firebase_messaging (optional, must work without config), l10n ARB fr/en/ar, Plus Jakarta Sans + Inter fonts
 5. When backend publishes docs/openapi.json: verify ALL assumed field names/endpoints (auth_repository, event.dart, clubs_repository, home_tab HomeData, registrations status values), consider freezed models
 
