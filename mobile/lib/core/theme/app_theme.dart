@@ -39,6 +39,30 @@ ThemeData buildTheme(Brightness brightness) {
     useMaterial3: true,
     colorScheme: scheme,
     scaffoldBackgroundColor: scheme.surface,
+    // Stitch look: flat surface app bar with a bold primary title.
+    appBarTheme: AppBarTheme(
+      backgroundColor: scheme.surface,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      titleTextStyle: TextStyle(
+          color: scheme.primary, fontSize: 20, fontWeight: FontWeight.w800),
+    ),
+    // White rounded cards with a soft shadow.
+    cardTheme: CardThemeData(
+      color: light ? Colors.white : null,
+      elevation: 1.5,
+      shadowColor: Colors.black12,
+      margin: EdgeInsets.zero,
+      surfaceTintColor: Colors.transparent,
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppRadius.lg)),
+    ),
+    navigationBarTheme: NavigationBarThemeData(
+      backgroundColor: light ? Colors.white : null,
+      indicatorColor: light ? const Color(0xFFDCE1FF) : null,
+      surfaceTintColor: Colors.transparent,
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       border: OutlineInputBorder(

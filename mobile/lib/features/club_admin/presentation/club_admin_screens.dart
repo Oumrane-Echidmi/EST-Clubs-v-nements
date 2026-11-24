@@ -10,6 +10,8 @@ import '../../auth/presentation/auth_providers.dart';
 import '../../events/domain/event.dart';
 import '../data/club_admin_repository.dart';
 
+
+
 String statusLabel(String? s) => switch (s) {
       'PENDING_APPROVAL' => 'En attente',
       'PUBLISHED' => 'Publié',

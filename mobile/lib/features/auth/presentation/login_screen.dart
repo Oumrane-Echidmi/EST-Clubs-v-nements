@@ -18,6 +18,61 @@ String? validatePassword(String? v) => (v == null ||
     ? '8 caractères minimum, avec lettre et chiffre'
     : null;
 
+/// Brand block from the Stitch login screen: school pill, logo tile with the
+/// orange ticket badge, app name and tagline.
+class BrandHeader extends StatelessWidget {
+  const BrandHeader({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Column(children: [
+      Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+            color: const Color(0xFFEFF4FF),
+            borderRadius: BorderRadius.circular(AppRadius.xl)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          Icon(Icons.verified, size: 15, color: cs.primary),
+          const SizedBox(width: 6),
+          Flexible(
+              child: Text('École Supérieure de Technologie',
+                  style: TextStyle(
+                      color: cs.primary, fontSize: 12, fontWeight: FontWeight.w700))),
+        ]),
+      ),
+      const SizedBox(height: AppSpacing.md),
+      Stack(clipBehavior: Clip.none, children: [
+        Container(
+          width: 96,
+          height: 96,
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppRadius.xl),
+              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 12, offset: Offset(0, 4))]),
+          child: Icon(Icons.school, size: 48, color: cs.primary),
+        ),
+        Positioned(
+          right: -6,
+          bottom: -6,
+          child: CircleAvatar(
+              radius: 14,
+              backgroundColor: AppColors.secondaryContainer,
+              child: const Icon(Icons.local_activity, size: 16, color: Colors.white)),
+        ),
+      ]),
+      const SizedBox(height: AppSpacing.md),
+      Text('EST Clubs & Événements',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+              color: AppColors.onSurface, fontWeight: FontWeight.w800)),
+      const SizedBox(height: 4),
+      Text('Le portail officiel de la vie associative et étudiante',
+          textAlign: TextAlign.center,
+          style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
+    ]);
+  }
+}
+
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
   @override
@@ -61,13 +116,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Text('EST Clubs & Événements',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headlineMedium
-                            ?.copyWith(
-                                color: cs.primary,
-                                fontWeight: FontWeight.w800)),
+                    const BrandHeader(),
                     const SizedBox(height: AppSpacing.lg),
                     TextFormField(
                       controller: _email,

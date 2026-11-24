@@ -37,6 +37,7 @@ TODO: fonts. google_fonts 8.x does NOT compile with Flutter 3.47 (TextTheme type
 - l10n scaffolding: fr (default) + en ARB, Arabic stub, gen-l10n wired in main; only the login screen uses it so far (other screens still have hardcoded French strings -> migrate gradually)
 - One-time onboarding (3 pages, shared_preferences) + first-launch redirect
 - Club info editor (description + logo upload) for club admins
+- Stitch styling pass 1: theme (app bar, white cards, nav bar), branded login header, home greeting + season chip + round club stories. NEXT: match club directory + club admin dashboard screens, event card details from the HTML
 - 30 tests passing
 
 ## Next (priority order)

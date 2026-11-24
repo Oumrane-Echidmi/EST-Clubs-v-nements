@@ -52,9 +52,44 @@ class HomeTab extends ConsumerWidget {
       data: (h) => RefreshIndicator(
         onRefresh: () async => ref.invalidate(homeProvider),
         child: ListView(padding: const EdgeInsets.all(16), children: [
-          Text('Bonjour ${user?.fullName ?? ''} 👋',
-              style: Theme.of(context).textTheme.headlineSmall),
+          Row(children: [
+            Expanded(
+                child: Text('Bonjour ${user?.fullName ?? ''} 👋',
+                    style: Theme.of(context)
+                        .textTheme
+                        .headlineSmall
+                        ?.copyWith(fontWeight: FontWeight.w800))),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+              decoration: BoxDecoration(
+                  color: const Color(0xFFFFDBCA),
+                  borderRadius: BorderRadius.circular(20)),
+              child: Row(mainAxisSize: MainAxisSize.min, children: [
+                const Icon(Icons.local_fire_department, size: 14, color: Color(0xFF341100)),
+                Text(' Saison ${DateTime.now().year}',
+                    style: const TextStyle(
+                        fontSize: 11, fontWeight: FontWeight.w700, color: Color(0xFF341100))),
+              ]),
+            ),
+          ]),
           const SizedBox(height: 16),
+          if (h.clubs.isNotEmpty) ...[
+            Text('Clubs en direct',
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            const SizedBox(height: 8),
+            SizedBox(
+              height: 92,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                itemCount: h.clubs.length,
+                separatorBuilder: (_, _) => const SizedBox(width: 12),
+                itemBuilder: (c, i) => ClubStory(
+                    club: h.clubs[i], onTap: () => c.push('/clubs/${h.clubs[i].id}')),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           for (final a in h.announcements)
             Card(child: ListTile(leading: const Icon(Icons.campaign), title: Text(a))),
           Text('Événements à venir', style: Theme.of(context).textTheme.titleMedium),

@@ -30,6 +30,49 @@ class ClubCard extends StatelessWidget {
       );
 }
 
+/// Round club avatar with the Stitch gradient ring (blue -> orange).
+class ClubStory extends StatelessWidget {
+  const ClubStory({super.key, required this.club, this.onTap});
+  final Club club;
+  final VoidCallback? onTap;
+  @override
+  Widget build(BuildContext context) => InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(40),
+        child: SizedBox(
+          width: 68,
+          child: Column(children: [
+            Container(
+              padding: const EdgeInsets.all(2),
+              decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [Color(0xFF1E3A8A), Color(0xFFFD761A)])),
+              child: Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle, color: Theme.of(context).colorScheme.surface),
+                child: CircleAvatar(
+                  radius: 26,
+                  backgroundImage: club.logoUrl == null
+                      ? null
+                      : CachedNetworkImageProvider(club.logoUrl!),
+                  child: club.logoUrl == null ? Text(club.name[0]) : null,
+                ),
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(club.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600)),
+          ]),
+        ),
+      );
+}
+
 /// Search box + paged list. Same pattern is used by the events tab.
 class ClubsTab extends ConsumerStatefulWidget {
   const ClubsTab({super.key});
