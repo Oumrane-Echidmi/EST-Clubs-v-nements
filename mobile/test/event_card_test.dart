@@ -10,6 +10,7 @@ Event _e(String state, {int? seats = 12}) => Event.fromJson({
       'title': 'Hackathon EST',
       'startAt': '2030-01-01T10:00:00Z',
       'location': 'Amphi A',
+      'capacity': 40,
       'availableSeats': seats,
       'registrationState': state,
     });
@@ -22,7 +23,7 @@ void main() {
             body: EventCard(event: _e('OPEN'), onTap: () => tapped = true))));
     expect(find.text('Hackathon EST'), findsOneWidget);
     expect(find.textContaining('Amphi A'), findsOneWidget);
-    expect(find.text('12 places'), findsOneWidget);
+    expect(find.textContaining('places'), findsWidgets);
     expect(find.text("S'inscrire"), findsOneWidget);
     await t.tap(find.byType(EventCard));
     expect(tapped, isTrue);

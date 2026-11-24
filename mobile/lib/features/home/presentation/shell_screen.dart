@@ -58,7 +58,7 @@ class StudentShell extends ConsumerStatefulWidget {
 
 class _StudentShellState extends ConsumerState<StudentShell> {
   int _i = 0;
-  static const _titles = ['Accueil', 'Clubs', 'Événements', 'Mes inscriptions', 'Profil'];
+  static const _titles = ['Accueil', 'Clubs', 'Agenda', 'Mes inscriptions', 'Profil'];
   static const _pages = <Widget>[
     HomeTab(),
     ClubsTab(),
@@ -70,7 +70,27 @@ class _StudentShellState extends ConsumerState<StudentShell> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
-            title: Text(_titles[_i]), actions: const [NotificationBell()]),
+            toolbarHeight: 64,
+            title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(mainAxisSize: MainAxisSize.min, children: [
+                const Text('EST Clubs'),
+                const SizedBox(width: 6),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                      color: const Color(0x80FFDBCA), borderRadius: BorderRadius.circular(10)),
+                  child: const Text('UIZ',
+                      style: TextStyle(
+                          fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF9D4300))),
+                ),
+              ]),
+              Text(_titles[_i],
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            ]),
+            actions: const [NotificationBell()]),
         body: IndexedStack(index: _i, children: _pages),
         bottomNavigationBar: NavigationBar(
           selectedIndex: _i,
@@ -78,8 +98,8 @@ class _StudentShellState extends ConsumerState<StudentShell> {
           destinations: const [
             NavigationDestination(icon: Icon(Icons.home_outlined), label: 'Accueil'),
             NavigationDestination(icon: Icon(Icons.groups_outlined), label: 'Clubs'),
-            NavigationDestination(icon: Icon(Icons.event_outlined), label: 'Événements'),
-            NavigationDestination(icon: Icon(Icons.confirmation_number_outlined), label: 'Inscriptions'),
+            NavigationDestination(icon: Icon(Icons.event_outlined), label: 'Agenda'),
+            NavigationDestination(icon: Icon(Icons.confirmation_number_outlined), label: 'Pass'),
             NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profil'),
           ],
         ),

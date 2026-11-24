@@ -95,8 +95,14 @@ class HomeTab extends ConsumerWidget {
           Text('Événements à venir', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           if (h.events.isEmpty) const EmptyState(message: 'Aucun événement à venir'),
-          for (final e in h.events) ...[
-            EventCard(event: e, onTap: () => context.push('/events/${e.id}')),
+          if (h.events.isNotEmpty) ...[
+            HeroEventCard(
+                event: h.events.first,
+                onTap: () => context.push("/events/${h.events.first.id}")),
+            const SizedBox(height: 16),
+          ],
+          for (final e in h.events.skip(1)) ...[
+            EventCard(event: e, onTap: () => context.push("/events/${e.id}")),
             const SizedBox(height: 12),
           ],
           Text('Clubs à découvrir', style: Theme.of(context).textTheme.titleMedium),

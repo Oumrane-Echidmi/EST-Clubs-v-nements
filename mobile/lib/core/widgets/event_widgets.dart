@@ -10,6 +10,20 @@ import '../theme/app_theme.dart';
 final tickerProvider = StreamProvider<DateTime>((ref) =>
     Stream.periodic(const Duration(seconds: 1), (_) => DateTime.now().toUtc()));
 
+const _orange = Color(0xFFF97316); // Stitch CTA orange
+const _navy = AppColors.primaryContainer;
+
+String _two(int n) => n.toString().padLeft(2, '0');
+const _days = ['Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.', 'Dim.'];
+const _months = ['Jan.', 'Fév.', 'Mars', 'Avr.', 'Mai', 'Juin', 'Juil.', 'Août', 'Sep.', 'Oct.', 'Nov.', 'Déc.'];
+
+/// "Ven. 27 Nov." (device timezone), as in the Stitch cards.
+String formatEventDate(DateTime utc, {bool withTime = false}) {
+  final d = utc.toLocal();
+  final s = '${_days[d.weekday - 1]} ${d.day} ${_months[d.month - 1]}';
+  return withTime ? '$s • ${_two(d.hour)}:${_two(d.minute)}' : s;
+}
+
 class StatusChip extends StatelessWidget {
   const StatusChip(this.state, {super.key});
   final RegistrationState state;
@@ -42,7 +56,70 @@ class CountdownChip extends ConsumerWidget {
   }
 }
 
-/// Poster-first card. It only DISPLAYS backend state; tapping is up to the caller.
+/// Seats bar from the Stitch cards: "32 / 40 places réservées" + "8 places libres".
+class CapacityBar extends StatelessWidget {
+  const CapacityBar(this.event, {super.key});
+  final Event event;
+  @override
+  Widget build(BuildContext context) {
+    final r = event.fillRatio;
+    if (r == null) return const SizedBox.shrink();
+    final taken = event.capacity! - event.availableSeats!;
+    final full = event.availableSeats == 0;
+    final color = full ? _orange : (r > 0.85 ? _orange : _navy);
+    return Column(children: [
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text('$taken / ${event.capacity} places réservées',
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13)),
+        Text(full ? 'Complet' : '${event.availableSeats} places libres',
+            style: TextStyle(
+                color: full ? _orange : Colors.green.shade700,
+                fontWeight: FontWeight.w700,
+                fontSize: 13)),
+      ]),
+      const SizedBox(height: 6),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(8),
+        child: LinearProgressIndicator(
+            value: r, minHeight: 6, color: color, backgroundColor: const Color(0xFFDCE9FF)),
+      ),
+    ]);
+  }
+}
+
+Widget _poster(Event e, {double? size}) => e.posterUrl == null
+    ? Container(
+        width: size,
+        height: size,
+        decoration: const BoxDecoration(
+            gradient: LinearGradient(colors: [_navy, Color(0xFF3B82F6)])),
+        child: const Icon(Icons.event, color: Colors.white, size: 32))
+    : CachedNetworkImage(
+        imageUrl: e.posterUrl!,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        placeholder: (_, _) => const ColoredBox(color: Colors.black12),
+        errorWidget: (_, _, _) => const Icon(Icons.broken_image));
+
+class _Pill extends StatelessWidget {
+  const _Pill(this.text, {required this.bg, required this.fg, this.icon});
+  final String text;
+  final Color bg, fg;
+  final IconData? icon;
+  @override
+  Widget build(BuildContext context) => Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(20)),
+        child: Row(mainAxisSize: MainAxisSize.min, children: [
+          if (icon != null) ...[Icon(icon, size: 15, color: fg), const SizedBox(width: 5)],
+          Text(text, style: TextStyle(color: fg, fontWeight: FontWeight.w700, fontSize: 12)),
+        ]),
+      );
+}
+
+/// Compact list card (Stitch "Cette semaine à l'EST"): thumbnail, club, title,
+/// status, date/place, seats bar and action pill. It only DISPLAYS backend state.
 class EventCard extends StatelessWidget {
   const EventCard({super.key, required this.event, this.onTap});
   final Event event;
@@ -50,39 +127,162 @@ class EventCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final local = event.startAt.toLocal();
+    final full = event.registrationState == RegistrationState.full;
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          AspectRatio(
-            aspectRatio: 16 / 9,
-            child: event.posterUrl == null
-                ? Container(
-                    color: AppColors.primaryContainer,
-                    child: const Icon(Icons.event, color: Colors.white, size: 48))
-                : CachedNetworkImage(
-                    imageUrl: event.posterUrl!,
-                    fit: BoxFit.cover,
-                    placeholder: (_, _) => const ColoredBox(color: Colors.black12),
-                    errorWidget: (_, _, _) => const Icon(Icons.broken_image)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: SizedBox(width: 64, height: 64, child: _poster(event, size: 64))),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  if (event.clubName != null)
+                    Text(event.clubName!,
+                        style: const TextStyle(
+                            color: AppColors.secondary, fontWeight: FontWeight.w700, fontSize: 12)),
+                  Text(event.title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w800, height: 1.15)),
+                ]),
+              ),
+              const SizedBox(width: 8),
+              StatusChip(event.registrationState),
+            ]),
+            const SizedBox(height: 12),
+            Row(children: [
+              const Icon(Icons.schedule, size: 16, color: _navy),
+              const SizedBox(width: 6),
+              Text(formatEventDate(event.startAt, withTime: true),
+                  style: const TextStyle(fontWeight: FontWeight.w500)),
+              if (event.location != null) ...[
+                const Spacer(),
+                const Icon(Icons.place_outlined, size: 16, color: _navy),
+                const SizedBox(width: 4),
+                Flexible(
+                    child: Text(event.location!,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w500))),
+              ],
+            ]),
+            if (event.fillRatio != null) ...[
+              const SizedBox(height: 12),
+              CapacityBar(event),
+            ],
+            const SizedBox(height: 12),
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: _Pill(full ? 'Voir les détails' : 'Détails & Inscription',
+                  bg: full ? const Color(0xFFFFDBCA) : const Color(0xFFE5EEFF),
+                  fg: full ? AppColors.secondary : AppColors.primary),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// Featured event (Stitch hero): full-bleed poster with dark gradient, orange
+/// countdown, title, seats box and the big orange CTA.
+class HeroEventCard extends ConsumerWidget {
+  const HeroEventCard({super.key, required this.event, this.onTap});
+  final Event event;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final now = ref.watch(tickerProvider).value ?? DateTime.now().toUtc();
+    final open = event.registrationState.canRegister;
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          SizedBox(
+            height: 210,
+            child: Stack(fit: StackFit.expand, children: [
+              _poster(event),
+              const DecoratedBox(
+                  decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [Color(0x66000000), Color(0xE6001540)]))),
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Row(children: [
+                    _Pill(formatCountdown(event.startAt, now, serverOffset: event.serverOffset),
+                        bg: _orange, fg: Colors.white, icon: Icons.timer_outlined),
+                  ]),
+                  const Spacer(),
+                  if (event.clubName != null)
+                    Text('Organisé par ${event.clubName}',
+                        style: const TextStyle(color: Colors.white70, fontSize: 12)),
+                  const SizedBox(height: 4),
+                  Text(event.title.toUpperCase(),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w800,
+                          height: 1.1)),
+                ]),
+              ),
+            ]),
           ),
           Padding(
-            padding: const EdgeInsetsDirectional.all(AppSpacing.md),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(event.title,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
-              const SizedBox(height: AppSpacing.xs),
-              Text('${local.day.toString().padLeft(2, '0')}/${local.month.toString().padLeft(2, '0')}/${local.year}'
-                  '${event.location == null ? '' : ' · ${event.location}'}'),
-              const SizedBox(height: AppSpacing.sm),
+            padding: const EdgeInsets.all(16),
+            child: Column(children: [
               Row(children: [
-                StatusChip(event.registrationState),
-                const Spacer(),
-                if (event.availableSeats != null)
-                  Text('${event.availableSeats} places'),
+                const Icon(Icons.calendar_month_outlined, color: _navy),
+                const SizedBox(width: 8),
+                Text(formatEventDate(event.startAt),
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                if (event.location != null) ...[
+                  const Spacer(),
+                  const Icon(Icons.place_outlined, size: 18, color: _navy),
+                  const SizedBox(width: 4),
+                  Flexible(
+                      child: Text(event.location!,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.w600))),
+                ],
               ]),
+              if (event.fillRatio != null) ...[
+                const SizedBox(height: 12),
+                Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                        color: const Color(0xFFEFF4FF),
+                        borderRadius: BorderRadius.circular(12)),
+                    child: CapacityBar(event)),
+              ],
+              const SizedBox(height: 12),
+              Container(
+                height: 52,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                    color: open ? _orange : const Color(0xFFE5EEFF),
+                    borderRadius: BorderRadius.circular(12)),
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  Icon(open ? Icons.bolt : Icons.info_outline,
+                      color: open ? Colors.white : AppColors.primary),
+                  const SizedBox(width: 6),
+                  Text(open ? 'Réserver ma place en 1 clic' : event.registrationState.label,
+                      style: TextStyle(
+                          color: open ? Colors.white : AppColors.primary,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 17)),
+                ]),
+              ),
             ]),
           ),
         ]),

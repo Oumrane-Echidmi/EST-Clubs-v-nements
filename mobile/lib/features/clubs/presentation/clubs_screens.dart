@@ -12,20 +12,92 @@ class ClubCard extends StatelessWidget {
   const ClubCard({super.key, required this.club, this.onTap});
   final Club club;
   final VoidCallback? onTap;
+  /// Stitch directory card: gradient banner with category pill, logo tile + name,
+  /// description, then a status line and an orange/navy action button.
   @override
   Widget build(BuildContext context) => Card(
-        child: ListTile(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
           onTap: onTap,
-          leading: CircleAvatar(
-            backgroundImage: club.logoUrl == null
-                ? null
-                : CachedNetworkImageProvider(club.logoUrl!),
-            child: club.logoUrl == null ? Text(club.name[0]) : null,
-          ),
-          title: Text(club.name),
-          subtitle: Text(club.category ?? club.description ?? '',
-              maxLines: 1, overflow: TextOverflow.ellipsis),
-          trailing: const Icon(Icons.chevron_right),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Container(
+              height: 96,
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)])),
+              child: club.category == null
+                  ? null
+                  : Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                          color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                      child: Text(club.category!,
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF1E3A8A)))),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  CircleAvatar(
+                    radius: 22,
+                    backgroundColor: const Color(0xFFDCE1FF),
+                    backgroundImage: club.logoUrl == null
+                        ? null
+                        : CachedNetworkImageProvider(club.logoUrl!),
+                    child: club.logoUrl == null
+                        ? Text(club.name[0],
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w800, color: Color(0xFF00236F)))
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                      child: Text(club.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w800))),
+                ]),
+                if (club.description != null) ...[
+                  const SizedBox(height: 10),
+                  Text(club.description!,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                ],
+                const SizedBox(height: 12),
+                Row(children: [
+                  if (club.isFollowing) ...[
+                    const Icon(Icons.circle, size: 8, color: Colors.green),
+                    const SizedBox(width: 6),
+                    const Text('Suivi actif',
+                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  ],
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                    decoration: BoxDecoration(
+                        color: club.isFollowing
+                            ? const Color(0xFF1E3A8A)
+                            : const Color(0xFFF97316),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      Text(club.isFollowing ? 'Voir' : 'Découvrir',
+                          style: const TextStyle(
+                              color: Colors.white, fontWeight: FontWeight.w800, fontSize: 13)),
+                      const SizedBox(width: 4),
+                      const Icon(Icons.arrow_forward, size: 15, color: Colors.white),
+                    ]),
+                  ),
+                ]),
+              ]),
+            ),
+          ]),
         ),
       );
 }

@@ -37,7 +37,7 @@ TODO: fonts. google_fonts 8.x does NOT compile with Flutter 3.47 (TextTheme type
 - l10n scaffolding: fr (default) + en ARB, Arabic stub, gen-l10n wired in main; only the login screen uses it so far (other screens still have hardcoded French strings -> migrate gradually)
 - One-time onboarding (3 pages, shared_preferences) + first-launch redirect
 - Club info editor (description + logo upload) for club admins
-- Stitch styling pass 1: theme (app bar, white cards, nav bar), branded login header, home greeting + season chip + round club stories. NEXT: match club directory + club admin dashboard screens, event card details from the HTML
+- Stitch styling pass 2 (compared against the real Stitch screenshots): hero event card (orange countdown, seats box, orange CTA), compact event cards with seats bar + status chip + action pill, directory-style club cards (banner, category pill, CTA), branded header "EST Clubs UIZ", nav labels Accueil/Clubs/Agenda/Pass/Profil. NOT yet styled to Stitch: category filter chips, club tags/members meta (need backend fields), club admin dashboard (club-admin-dashboard.html), event detail, login form container. Visual check on a device/emulator still pending.
 - 30 tests passing
 
 ## Next (priority order)

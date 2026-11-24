@@ -21,7 +21,16 @@ class Event {
     this.canCancel = false,
     this.status,
     this.rejectionReason,
+    this.clubName,
   });
+
+  /// Organizer name (assumed `clubName` or `club.name` in the API).
+  final String? clubName;
+
+  /// 0..1 share of seats taken, null when capacity is unknown.
+  double? get fillRatio => (capacity == null || availableSeats == null || capacity == 0)
+      ? null
+      : ((capacity! - availableSeats!) / capacity!).clamp(0.0, 1.0);
 
   /// Approval status for admins: PENDING_APPROVAL | PUBLISHED | REJECTED ...
   final String? status;
@@ -70,6 +79,8 @@ class Event {
         serverTime: _d(j['serverTime']),
         myRegistrationId: j['myRegistrationId'] as String?,
         canCancel: j['canCancel'] as bool? ?? false,
+        clubName: j['clubName'] as String? ??
+            (j['club'] is Map ? (j['club'] as Map)['name'] as String? : null),
         status: j['status'] as String?,
         rejectionReason: j['rejectionReason'] as String?,
       );
