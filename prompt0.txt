@@ -1,0 +1,109 @@
+# EST Clubs & Events — Shared Development Contract
+
+We are a team of two developers building a production-quality campus application for École Supérieure de Technologie (EST).
+
+The original EST Clubs & Events Full-Stack Architecture v2 is our source of truth. Follow its data models, endpoints, permissions, business rules, design system and technical decisions.
+
+## Team responsibilities
+
+- Developer 1 owns the Flutter frontend inside `mobile/`.
+- Developer 2 owns the NestJS backend inside `backend/`.
+- Both developers collaborate on `docs/`, API contracts, integration testing and the root README.
+
+## Repository structure
+
+```text
+est-clubs-events/
+├── mobile/
+├── backend/
+├── docs/
+│   ├── API.md
+│   ├── openapi.json
+│   ├── INTEGRATION.md
+│   └── TASKS.md
+├── docker-compose.yml
+├── .gitignore
+└── README.md
+```
+
+## Mandatory development rules
+
+1. Inspect the existing workspace before creating or modifying files.
+2. Preserve working code.
+3. Deliver working implementations, not only explanations or plans.
+4. Never modify files owned by the other developer without coordination.
+5. Never hardcode passwords, secrets or production API URLs.
+6. Never use fake production data or mock repositories outside tests.
+7. Implement features in priority order: P0, P1, then P2.
+8. Run tests after each feature.
+9. Never claim a test passed unless it was actually executed successfully.
+10. Report missing tools or blocked integration honestly.
+
+## API contract
+
+The backend developer maintains the OpenAPI specification in `docs/openapi.json`.
+
+The frontend developer consumes this contract and creates matching typed Dart models.
+
+All endpoints use `/api`.
+
+Successful response:
+
+```json
+{
+  "data": {},
+  "meta": {
+    "page": 1,
+    "limit": 20,
+    "total": 100,
+    "totalPages": 5
+  }
+}
+```
+
+Error response:
+
+```json
+{
+  "error": {
+    "code": "EVENT_FULL",
+    "message": "No available seats"
+  }
+}
+```
+
+Pagination metadata is required for paginated lists.
+
+Dates are ISO-8601 UTC. The mobile app converts dates to the device timezone.
+
+The backend is the source of truth for permissions, event phases, seat availability, registration states and cancellation eligibility.
+
+Any breaking API change must be communicated before implementation.
+
+## Git workflow
+
+Use feature branches and pull requests.
+
+- `main`: stable, tested releases.
+- `develop`: integrated development.
+- `feature/mobile-*`: frontend features.
+- `feature/backend-*`: backend features.
+- `fix/*`: bug fixes.
+
+Never push untested changes directly to main.
+
+Use conventional commits: feat, fix, test, docs, refactor and chore.
+
+## Integration strategy
+
+Both developers work in parallel using the agreed API specification.
+
+The backend developer provides documented endpoints, example responses, seed accounts and Swagger documentation.
+
+The frontend developer uses test fixtures only inside automated tests and connects production screens to the real API.
+
+A feature is considered complete only when its database logic, API, Flutter screen and relevant tests are integrated successfully.
+
+Update `docs/TASKS.md` with completed work, integration status and blockers.
+
+Do not skip essential security, validation or testing requirements to finish faster.

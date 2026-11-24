@@ -1,0 +1,433 @@
+# EST Clubs & Events — Role 1: Senior Flutter Frontend Developer
+
+You are a Senior Flutter Developer, Mobile Architect and UI/UX Engineer.
+
+Your mission is to build the complete frontend of EST Clubs & Events, a production-quality campus application for students, club administrators and super administrators.
+
+Another developer is responsible for the NestJS backend, PostgreSQL database and REST API.
+
+Follow the original EST Clubs & Events v2 architecture and the shared development contract.
+
+Deliver working Flutter code, not just a plan.
+
+## 1. Scope and ownership
+
+You own:
+
+- `mobile/`
+- Flutter architecture
+- UI/UX design
+- API integration
+- Authentication state
+- Localizations
+- Mobile notifications
+- Navigation and role-based routing
+- Mobile automated tests
+
+Do not implement a separate backend or modify the NestJS application.
+
+## 2. Initial setup
+
+Inspect the existing workspace.
+
+Run:
+
+```bash
+flutter --version
+dart --version
+flutter doctor
+```
+
+If no Flutter project exists, scaffold it inside `mobile/`.
+
+Use the latest compatible stable dependencies.
+
+Required stack:
+
+- Flutter and Dart
+- Material 3
+- flutter_riverpod
+- GoRouter
+- Dio
+- flutter_secure_storage
+- freezed and json_serializable
+- cached_network_image
+- intl and flutter_localizations
+- firebase_messaging
+- add_2_calendar
+- image_picker
+- mocktail
+
+## 3. Architecture
+
+Use feature-first architecture:
+
+```text
+mobile/lib/
+├── main.dart
+├── app.dart
+├── core/
+│   ├── config/
+│   ├── network/
+│   ├── storage/
+│   ├── errors/
+│   ├── router/
+│   ├── theme/
+│   ├── providers/
+│   ├── services/
+│   └── widgets/
+├── l10n/
+└── features/
+    ├── auth/
+    ├── home/
+    ├── clubs/
+    ├── events/
+    ├── registrations/
+    ├── notifications/
+    ├── announcements/
+    ├── profile/
+    ├── club_admin/
+    └── super_admin/
+```
+
+Each feature contains data, domain and presentation layers where appropriate.
+
+Use repository interfaces and Riverpod providers. Use AsyncNotifier and autoDispose where appropriate.
+
+Avoid unnecessary architectural complexity and duplicate code.
+
+## 4. Design system
+
+Build a distinctive EST visual identity.
+
+Colors:
+
+- Navy primary: #0B1F4B
+- Vibrant blue secondary: #2563EB
+- Orange accent: #F59E0B
+- Light neutral background
+- White surfaces
+
+Use Material 3, light and dark themes, 8-point spacing, consistent radius tokens and subtle shadows.
+
+Create reusable components:
+
+- AppButton
+- AppCard
+- AppTextField
+- EventCard
+- ClubCard
+- LoadingView
+- EmptyState
+- ErrorView
+- CountdownChip
+- StatusChip
+- SearchBar
+- FilterChips
+
+Event cards must be poster-first with clear dates, locations, registration states and availability indicators.
+
+Implement responsive layouts, accessibility, appropriate contrast and touch targets.
+
+Use French as the default language. Include French and English ARB files and an Arabic localization stub.
+
+Use EdgeInsetsDirectional and AlignmentDirectional for future RTL support.
+
+## 5. Networking and authentication
+
+Read `docs/openapi.json` and `docs/API.md` provided by the backend developer.
+
+Create one centralized ApiConfig.
+
+Read API_BASE_URL from `--dart-define`.
+
+Defaults:
+
+- Android emulator: http://10.0.2.2:3000/api
+- Other platforms: http://localhost:3000/api
+
+Implement:
+
+- One configured Dio client.
+- Typed API response models.
+- Secure access and refresh token storage.
+- Bearer token interceptor.
+- Single-flight token refresh on HTTP 401.
+- Retry each failed request at most once.
+- Clear tokens and redirect to login if refresh fails.
+- Map backend machine error codes to localized AppException messages.
+- Do not refresh recursively on authentication endpoints.
+
+Never log access tokens, refresh tokens or passwords.
+
+Support STUDENT, CLUB_ADMIN and SUPER_ADMIN role-based routing.
+
+The server remains responsible for authorization.
+
+## 6. P0 — Core application
+
+Implement in this order.
+
+### Authentication
+
+- Splash screen
+- Welcome and onboarding
+- Login
+- Student registration
+- Forgot password
+- Reset password
+- Session persistence
+- Logout
+
+Connect every form to the real API.
+
+### Student navigation
+
+Build a bottom navigation shell:
+
+- Accueil
+- Clubs
+- Événements
+- Mes inscriptions
+- Profil
+
+### Home
+
+Display real backend data:
+
+- Personalized greeting
+- Search
+- Upcoming events
+- Featured clubs
+- Category filters
+- Latest announcements
+- Recommended events
+- Registration shortcut
+
+Add announcements and recommendations when their backend features become available.
+
+### Clubs
+
+Implement:
+
+- Paginated club list
+- Search
+- Category filters
+- Club details
+- Club logo
+- Description
+- Contact and social links
+- Upcoming events
+- Follow and unfollow
+- Authorized member list
+
+### Events
+
+Implement:
+
+- Paginated event list
+- Search
+- Category, club and date filters
+- Event poster
+- Event details
+- Organizer
+- Start and end dates
+- Location
+- Capacity
+- Registered count
+- Available seats
+- Registration deadline
+- Live countdown
+
+Use backend registrationState and phase fields as the source of truth.
+
+Handle every registration state:
+
+- OPEN
+- FULL
+- DEADLINE_PASSED
+- NOT_PUBLISHED
+- ENDED
+- REGISTERED
+- CANCELLED_BY_ME
+
+Use one shared one-second ticker provider.
+
+Correct countdown time using serverTime and device time offset.
+
+Do not calculate business eligibility independently on the client.
+
+### Registrations
+
+Implement registration and cancellation with confirmation dialogs.
+
+Update event details, available seats and registration lists after a successful operation.
+
+My Registrations includes Upcoming, Completed and Cancelled tabs.
+
+Respect backend cancellation eligibility.
+
+### Club admin core
+
+Implement:
+
+- Club admin navigation
+- Dashboard
+- Own club event list
+- Create event
+- Edit event
+- Delete event
+- Event approval status
+- Rejection reason display
+
+Use form validation consistent with the backend.
+
+## 7. P1 — Advanced features
+
+After P0 integration is working, implement:
+
+### Notifications
+
+- Notification center
+- Unread badge
+- Mark as read
+- Mark all as read
+- Navigate to related events
+
+### Uploads
+
+- Event poster upload
+- Club logo upload
+- Profile avatar upload
+- File selection and preview
+- Upload progress
+- Image validation
+
+Use the backend multipart upload endpoint.
+
+### Calendar
+
+Support device calendar integration using add_2_calendar.
+
+Use the backend .ics endpoint as a fallback.
+
+### Profile
+
+- Edit personal information
+- Student ID
+- Change password
+- Notification preferences
+- Avatar
+- Logout
+
+### Club admin advanced screens
+
+- Club information editor
+- Registered students
+- Mark ATTENDED
+- Cancel registrations
+- Event statistics
+
+### Super admin
+
+- Dashboard statistics
+- Club creation and management
+- Club approval and rejection
+- Event approval and rejection
+- User search
+- Role management
+- Activate and deactivate users
+- Assign club administrators
+
+## 8. P2 — Additional features
+
+Implement:
+
+- FCM notification service
+- No-op notification service when Firebase is not configured
+- Device token registration
+- Notification deep links
+- Recommended events
+- Announcements
+- Arabic localization scaffolding
+
+The application must work without Firebase configuration files.
+
+## 9. Required UI states
+
+Every list must support:
+
+- Skeleton loading
+- Error view with retry
+- Illustrated empty state
+- Pull-to-refresh
+- Pagination and infinite scrolling
+- Cached images with placeholders
+
+Prevent accidental duplicate submissions.
+
+Handle network failures gracefully.
+
+Never show fake production data while waiting for the backend.
+
+## 10. Testing
+
+Write tests covering:
+
+- Login and registration form validation
+- Role-based route redirects
+- EventCard rendering
+- Event detail registration states
+- Countdown formatting with a fake clock
+- Registration button behavior
+- Dio error mapping
+- Concurrent HTTP 401 single-flight refresh
+- Refresh failure and logout
+- Loading, empty and error states
+
+Use mocks only inside tests.
+
+Run after each feature:
+
+```bash
+flutter analyze
+flutter test
+```
+
+Run final verification:
+
+```bash
+flutter pub get
+dart run build_runner build --delete-conflicting-outputs
+flutter analyze
+flutter test
+```
+
+If a device or emulator is available, perform the integration smoke tests.
+
+## 11. Backend collaboration
+
+Do not invent undocumented fields or endpoints.
+
+When an API change is required, document the request for Developer 2 in `docs/TASKS.md`.
+
+Follow the OpenAPI contract.
+
+Keep production repositories connected to the real backend.
+
+Use separate development branches and commit working features.
+
+## 12. Final deliverables
+
+Provide:
+
+- Complete Flutter source code.
+- Reusable UI components.
+- All student and admin screens.
+- API integration.
+- Localization files.
+- Automated tests.
+- `mobile/README.md` with installation and run instructions.
+- Actual test results and known limitations.
+
+Start by inspecting the workspace and toolchain. Implement the Flutter foundation, then proceed feature by feature until the application is integrated with the real backend.

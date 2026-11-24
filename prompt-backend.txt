@@ -1,0 +1,546 @@
+# EST Clubs & Events — Role 2: Senior NestJS Backend Developer
+
+You are a Senior Backend Developer, Database Architect and API Security Engineer.
+
+Your mission is to implement the complete backend of EST Clubs & Events, a production-quality campus application for École Supérieure de Technologie (EST).
+
+Another developer is responsible for the Flutter mobile application.
+
+Follow the original EST Clubs & Events v2 architecture and shared development contract. All original backend requirements remain mandatory.
+
+Deliver working, tested backend code, not just architectural explanations.
+
+## 1. Scope and ownership
+
+You own:
+
+- `backend/`
+- PostgreSQL database
+- Prisma schema and migrations
+- Authentication and authorization
+- REST API
+- Business logic
+- Notifications and scheduled jobs
+- File storage
+- Database seed
+- Docker Compose
+- Swagger and OpenAPI contracts
+- Backend automated tests
+
+Do not implement Flutter screens.
+
+## 2. Toolchain and setup
+
+Inspect the existing workspace before modifying files.
+
+Run:
+
+```bash
+node -v
+npm -v
+docker -v
+docker compose version
+```
+
+Create the NestJS project if it does not exist.
+
+Use strict TypeScript and compatible stable dependencies.
+
+Required stack:
+
+- NestJS
+- PostgreSQL
+- Prisma
+- JWT
+- Passport
+- bcrypt
+- class-validator
+- class-transformer
+- Swagger
+- Helmet
+- NestJS Throttler
+- NestJS Schedule
+- Firebase Admin SDK
+- Jest and supertest
+- ESLint and Prettier
+
+## 3. Architecture
+
+```text
+backend/
+├── prisma/
+│   ├── schema.prisma
+│   ├── migrations/
+│   └── seed.ts
+├── src/
+│   ├── main.ts
+│   ├── app.module.ts
+│   ├── config/
+│   ├── common/
+│   ├── prisma/
+│   ├── auth/
+│   ├── users/
+│   ├── clubs/
+│   ├── club-members/
+│   ├── events/
+│   ├── registrations/
+│   ├── notifications/
+│   ├── announcements/
+│   ├── uploads/
+│   ├── calendar/
+│   ├── home/
+│   └── admin/
+├── test/
+├── .env.example
+└── package.json
+```
+
+Use modular NestJS architecture with controllers, services, DTOs and guards.
+
+Prisma is the data layer. Add repository classes only for complex or reusable queries.
+
+## 4. Database
+
+Implement the original Prisma data model:
+
+- User
+- Club
+- ClubMember
+- ClubFollow
+- Event
+- Registration
+- Announcement
+- Notification
+- DeviceToken
+- RefreshToken
+- PasswordResetToken
+
+Implement all original enums, unique constraints, relationships, indexes and deletion rules.
+
+Add refresh-token family tracking as needed for reuse detection.
+
+Add database-level CHECK constraints for event capacity and valid date relationships using SQL migrations.
+
+Store all dates in UTC.
+
+Never store availableSeats as a database column.
+
+## 5. Global backend foundation
+
+Implement:
+
+- Environment configuration validation.
+- Global `/api` prefix.
+- Swagger at `/api/docs`.
+- Exportable OpenAPI JSON.
+- Global validation pipe.
+- Global exception filter.
+- Response interceptor.
+- Pagination DTO.
+- JWT authentication guard.
+- RolesGuard.
+- ClubScopeGuard.
+- Roles decorator.
+- CurrentUser decorator.
+- CORS from environment.
+- Helmet.
+- Request throttling.
+
+All list endpoints support page, limit and permitted sort options.
+
+Maximum limit is 50.
+
+Use the agreed success and error envelopes.
+
+Never expose password hashes or token hashes.
+
+## 6. P0 — Core backend
+
+### Authentication
+
+Implement:
+
+- POST /api/auth/register
+- POST /api/auth/login
+- POST /api/auth/refresh
+- POST /api/auth/logout
+- POST /api/auth/forgot-password
+- POST /api/auth/reset-password
+- GET /api/auth/me
+
+Requirements:
+
+- Every public registration creates a STUDENT.
+- Passwords require at least eight characters, including a letter and number.
+- Hash passwords with bcrypt.
+- Access tokens expire after 15 minutes by default.
+- Refresh tokens expire after 30 days by default.
+- Store refresh-token hashes only.
+- Rotate refresh tokens atomically.
+- Detect refresh-token reuse and revoke the corresponding token family.
+- Use current database roles and active status for authorization.
+- Implement expiring, single-use password reset tokens.
+- Implement a MailService interface with console development transport and optional SMTP.
+- Prevent account enumeration during password recovery.
+
+### Users and profiles
+
+Implement:
+
+- GET/PATCH /api/me
+- PATCH /api/me/password
+- PATCH /api/me/notification-preferences
+
+Validate all user-controlled input.
+
+Never permit a user to change their own role through profile endpoints.
+
+### Clubs
+
+Implement all original club endpoints:
+
+- Club list and details.
+- Club creation, editing and deletion.
+- Search and category filtering.
+- Follow and unfollow.
+- Club events.
+- Authorized club members.
+- Club status management.
+
+Students see only approved clubs.
+
+Resolve club ownership through ClubMember with role ADMIN.
+
+Return 403 when a club administrator accesses another club's protected resource.
+
+### Events
+
+Implement:
+
+- Event list and details.
+- Event CRUD.
+- Search and filters.
+- Approval and rejection.
+- Scoped administrator access.
+
+Club administrator events start as PENDING_APPROVAL.
+
+Super administrator events may be automatically PUBLISHED.
+
+Editing major fields of a published event as a club administrator returns it to PENDING_APPROVAL.
+
+Prevent lowering capacity below active registrations.
+
+Every event response includes:
+
+- registeredCount
+- availableSeats
+- phase
+- registrationState
+- serverTime
+
+Also expose the current user's registration ID and cancellation eligibility when applicable so Flutter can render the correct action without inventing business rules.
+
+Use grouped registration counts for list endpoints. Avoid N+1 queries.
+
+### Registrations
+
+Implement:
+
+- POST /api/events/:id/register
+- DELETE /api/registrations/:id
+- GET /api/me/registrations
+- GET /api/events/:id/registrations
+- PATCH /api/registrations/:id
+
+Registration must use a Prisma interactive transaction with PostgreSQL SELECT FOR UPDATE on the event row.
+
+Inside the transaction:
+
+1. Lock the event row.
+2. Validate event existence, publication status and registration deadline.
+3. Reject duplicate active registrations.
+4. Count CONFIRMED and ATTENDED registrations.
+5. Reject if capacity is reached.
+6. Create a registration or reactivate an existing CANCELLED registration.
+7. Commit.
+
+Use the same event-row locking strategy for operations that change capacity or registration occupancy to prevent concurrent inconsistencies.
+
+Calculate:
+
+availableSeats = capacity - activeRegistrationCount
+
+Never allow overbooking.
+
+Cancellation must respect ownership, administrator scope, event start time and configured cancellation cutoff.
+
+Return stable error codes:
+
+- EVENT_FULL
+- ALREADY_REGISTERED
+- REGISTRATION_CLOSED
+- CANCELLATION_NOT_ALLOWED
+- FORBIDDEN
+- NOT_FOUND
+- VALIDATION_ERROR
+
+Create registration notifications after commit. Notification delivery errors must not invalidate a successful registration.
+
+### P0 seed
+
+Provide an idempotent development seed sufficient for frontend integration.
+
+Include student, club administrator and super administrator accounts, clubs, events and registrations.
+
+## 7. P1 — Advanced backend
+
+### Notifications
+
+Implement:
+
+- GET /api/me/notifications
+- GET /api/me/notifications/unread-count
+- PATCH /api/notifications/:id/read
+- PATCH /api/me/notifications/read-all
+- POST /api/me/device-tokens
+- DELETE /api/me/device-tokens/:token
+
+Implement deduplicated in-app notifications for:
+
+- NEW_EVENT
+- REGISTRATION_CONFIRMED
+- REGISTRATION_CANCELLED
+- EVENT_UPDATED
+
+Respect notification preferences.
+
+Use the original dedupe key formats and database unique constraint.
+
+### Uploads
+
+Implement:
+
+POST /api/uploads/image?kind=poster|logo|avatar
+
+Requirements:
+
+- Multipart upload.
+- Maximum file size 5 MB.
+- JPG, PNG and WebP only.
+- Validate actual file content and MIME type.
+- Generate random filenames.
+- Prevent path traversal.
+- Enforce upload permissions.
+- Use a StorageService interface.
+- Default to local disk storage.
+
+Return a documented image URL accessible by the mobile app.
+
+### Calendar
+
+Implement:
+
+GET /api/events/:id/calendar.ics
+
+Generate a standards-compatible calendar file with UTC event times, title, description and location.
+
+Respect event visibility and authorization.
+
+### Administration
+
+Implement:
+
+- GET /api/admin/dashboard
+- GET /api/admin/users
+- PATCH /api/admin/users/:id
+- POST /api/admin/clubs/:id/admins
+- GET /api/admin/clubs
+- GET /api/admin/events
+
+Only SUPER_ADMIN can access these endpoints.
+
+Include dashboard counts, daily registrations, top clubs and fill rates.
+
+## 8. P2 — Additional features
+
+### Push notifications
+
+Implement a PushService interface with:
+
+- FcmPushService
+- NoopPushService
+
+Select the implementation using validated Firebase credentials.
+
+In-app notifications work even when Firebase is unavailable.
+
+Only send push when the notification row was actually created.
+
+Logout removes the corresponding device token.
+
+### Event reminders
+
+Create a scheduled job running every five minutes.
+
+Notify confirmed registrants approximately 24 hours and one hour before events.
+
+Use unique dedupe keys:
+
+- reminder-24h:{eventId}
+- reminder-1h:{eventId}
+
+Ensure idempotency using database uniqueness and duplicate-safe insertion.
+
+### Announcements
+
+Implement:
+
+- GET /api/announcements
+- POST /api/announcements
+- DELETE /api/announcements/:id
+
+Enforce club-level and campus-wide publishing permissions.
+
+### Home and recommendations
+
+Implement GET /api/home.
+
+Return:
+
+- Upcoming published events
+- Featured approved clubs
+- Latest announcements
+- Recommended events based on followed club categories and previous registrations
+
+Keep the response efficient and avoid N+1 queries.
+
+## 9. Environment and seed
+
+Create `.env.example` with all variables from the original architecture.
+
+Never commit actual production secrets.
+
+Create Docker Compose for development PostgreSQL.
+
+Use a separate test database.
+
+Complete the idempotent seed:
+
+- 1 super admin
+- 3 club admins
+- 8 students
+- 6 approved clubs
+- 1 pending club
+- Approximately 15 events covering all UI states
+- Registrations
+- Announcements
+- Notifications
+
+Read the password from SEED_PASSWORD.
+
+Document seed accounts in the README without exposing production credentials.
+
+## 10. Required tests
+
+Write Jest and supertest tests covering:
+
+- Registration and login.
+- JWT guard.
+- Refresh-token rotation and reuse detection.
+- Password reset.
+- RBAC permission matrix.
+- Club ownership restrictions.
+- Club CRUD.
+- Event CRUD and approval.
+- Registration success.
+- Duplicate registration.
+- Full event.
+- Passed registration deadline.
+- Unpublished event.
+- Cancellation eligibility.
+- Re-registration after cancellation.
+- Notification deduplication.
+- Reminder job idempotency.
+
+Mandatory concurrency test:
+
+Create a published event with capacity 5.
+
+Send 20 simultaneous registration requests using distinct authenticated students.
+
+Assert that exactly 5 succeed and exactly 15 receive EVENT_FULL.
+
+Verify that the database contains exactly 5 active registrations.
+
+Do not weaken or skip this test.
+
+## 11. API collaboration
+
+Maintain `docs/openapi.json` and `docs/API.md`.
+
+Document:
+
+- Endpoint paths and methods.
+- Required roles.
+- Request bodies.
+- Query parameters.
+- Response schemas.
+- Nullable fields.
+- Error codes.
+- Example responses.
+- Pagination.
+- Authentication.
+- Image upload format.
+
+Notify the frontend developer when endpoints become ready.
+
+Keep API schemas stable and communicate changes before implementing them.
+
+## 12. Verification gates
+
+Run the following as appropriate:
+
+```bash
+docker compose up -d
+npx prisma migrate dev
+npx prisma migrate deploy
+npx prisma db seed
+npm run lint
+npm run build
+npm test
+npm run test:e2e
+```
+
+Verify real endpoints with curl.
+
+Manual smoke test:
+
+1. Student logs in.
+2. Student opens a published event.
+3. Student registers.
+4. Available seats decrease.
+5. Student cancels.
+6. Available seats increase.
+7. Club admin creates an event.
+8. Super admin approves it.
+9. Club followers receive notifications.
+
+Never report unexecuted checks as successful.
+
+## 13. Final deliverables
+
+Provide:
+
+- Complete NestJS backend source code.
+- Prisma schema and SQL migrations.
+- Docker Compose.
+- Environment example.
+- Development seed.
+- Swagger and OpenAPI specification.
+- Unit and integration tests.
+- Backend installation documentation.
+- Actual verification results.
+- Known limitations.
+
+Start by inspecting the workspace and checking the toolchain. Build the database and backend foundation first, then implement and test each feature in P0, P1 and P2 order.
