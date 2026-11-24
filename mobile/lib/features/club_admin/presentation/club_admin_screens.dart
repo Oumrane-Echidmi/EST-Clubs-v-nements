@@ -4,6 +4,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../profile/profile.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/widgets/event_widgets.dart';
 import '../../../core/widgets/paged_list.dart';
 import '../../../core/widgets/state_views.dart';
 import '../../auth/presentation/auth_providers.dart';
@@ -244,9 +245,16 @@ class _ClubAdminHomeState extends ConsumerState<ClubAdminHome> {
               emptyMessage: "Aucun événement. Créez le premier !",
               itemBuilder: (c, e) => Card(
                 child: ListTile(
-                  title: Text(e.title),
+                  leading: ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: SizedBox(width: 56, height: 56, child: eventPoster(e))),
+                  title: Text(e.title,
+                      style: const TextStyle(fontWeight: FontWeight.w800)),
                   subtitle: Text([
-                    statusLabel(e.status),
+                    statusLabel(e.status) +
+                        (e.capacity == null
+                            ? ''
+                            : ' · ${e.registeredCount ?? 0}/${e.capacity} inscrits'),
                     if (e.status == 'REJECTED' && e.rejectionReason != null)
                       'Motif : ${e.rejectionReason}',
                   ].join('\n')),
